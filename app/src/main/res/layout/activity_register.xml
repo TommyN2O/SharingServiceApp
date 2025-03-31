@@ -147,40 +147,46 @@
 
     <!-- Already have an account? Login Link -->
 
+
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/phone_layout"
+        android:id="@+id/age_layout"
         android:layout_width="376dp"
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/rounded_corner"
-        android:hint="@string/phone_nr_entry"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.514"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_layout">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/phone"
+            android:id="@+id/age"
             android:layout_width="390dp"
             android:layout_height="wrap_content"
             android:background="@color/clear"
-            android:inputType="phone" />
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Select Date"
+            android:onClick="showDatePicker" />
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/register_button"
         android:layout_width="367dp"
         android:layout_height="44dp"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="@color/black"
+        android:layout_marginTop="36dp"
         android:background="@drawable/round_btn_black"
+        android:backgroundTint="@color/black"
         android:text="@string/continue_btn"
         android:textAllCaps="true"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.477"
+        app:layout_constraintHorizontal_bias="0.545"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_terms" />
+        app:layout_constraintTop_toBottomOf="@+id/text_terms"
+        app:layout_constraintVertical_bias="0.217" />
 
     <TextView
         android:id="@+id/text_terms"
@@ -191,8 +197,7 @@
         android:textColor="@color/blacktxt"
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.566"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/age_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
