@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <!-- Title Text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filter"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Select Day Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Day:"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_marginTop="16dp" />
+
+    <!-- Day Picker Spinner -->
+    <Spinner
+        android:id="@+id/spinner_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_edittext"
+        android:padding="10dp" />
+
+    <!-- Time of Day Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time of Day:"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_marginTop="16dp" />
+
+    <!-- Radio Buttons for Time of Day -->
+    <RadioGroup
+        android:id="@+id/radio_time_of_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/radio_morning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Morning"
+            android:paddingEnd="8dp"
+            android:textColor="#333333" />
+
+        <RadioButton
+            android:id="@+id/radio_afternoon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Afternoon"
+            android:paddingEnd="8dp"
+            android:textColor="#333333" />
+
+        <RadioButton
+            android:id="@+id/radio_evening"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Evening"
+            android:paddingEnd="8dp"
+            android:textColor="#333333" />
+    </RadioGroup>
+
+    <!-- Specific Time Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Specific Time:"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_marginTop="16dp" />
+
+    <!-- Specific Time Picker Spinner -->
+    <Spinner
+        android:id="@+id/spinner_specific_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_edittext"
+        android:padding="10dp" />
+
+    <!-- City Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City:"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_marginTop="16dp" />
+
+    <!-- City Picker Spinner -->
+    <Spinner
+        android:id="@+id/spinner_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_edittext"
+        android:padding="10dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Price Range Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Price Range ($):"
+        android:textSize="16sp"
+        android:textColor="#666666" />
+
+    <!-- SeekBar for Price Range -->
+    <SeekBar
+        android:id="@+id/seekbar_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:layout_marginTop="8dp" />
+
+    <!-- Apply Filters Button -->
+    <Button
+        android:id="@+id/btn_apply_filters"
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_corner"
+        android:text="Apply Filters"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
+
+</LinearLayout>

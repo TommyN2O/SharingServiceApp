@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <item
+            android:id="@+id/menu_home"
+            android:title="Home"
+            android:icon="@drawable/home"
+            />
+
+        <item
+            android:id="@+id/menu_tasks"
+            android:title="Tasks"
+            android:icon="@drawable/tasks"
+            />
+
+        <item
+            android:id="@+id/menu_messages"
+            android:title="Messages"
+            android:icon="@drawable/messeges"
+            />
+
+        <item
+            android:id="@+id/menu_more"
+            android:title="More"
+            android:icon="@drawable/menu"
+            />
+    </menu>

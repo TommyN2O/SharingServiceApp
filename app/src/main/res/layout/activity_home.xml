@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textDirection="anyRtl"
+    tools:context=".activitys.HomeActivity">
+
+
+    <!-- Adds spacing between letters for a sleek look -->
+
+    <TextView
+        android:id="@+id/welcome_title"
+        android:layout_width="188dp"
+        android:layout_height="36dp"
+        android:layout_marginBottom="4dp"
+        android:letterSpacing="0.05"
+        android:text="@string/app_title"
+        android:textAlignment="center"
+        android:textColor="@color/my_light_primary"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- You can use a search icon here -->
+
+    <ImageView
+        android:id="@+id/search_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="20dp"
+        android:src="@android:drawable/ic_search_category_default"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/welcome_title"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- RecyclerView with GridLayoutManager (2 items per row) -->
+
+    <!-- Toolbar -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="674dp"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/search_button"
+        android:padding="10dp"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="395dp"
+        android:layout_height="79dp"
+        android:background="@color/white"
+        app:itemIconSize="32dp"
+        app:itemIconTint="@color/dark_gray"
+        app:itemTextColor="@color/dark_gray"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+        app:layout_constraintVertical_bias="1.0"
+        app:menu="@menu/menu_home" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

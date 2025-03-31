@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:radius="8dp"
+    app:cardCornerRadius="12dp"
+    android:elevation="4dp"
+    tools:context=".activitys.HelperListActivity">
+
+    <!-- list_help_item_tasker -->
+
+    <!-- Name -->
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/circle_border"
+        android:contentDescription="Profile Image"
+        android:src="@drawable/user"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/person_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="John Doe"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/profile_image"
+        app:layout_constraintTop_toTopOf="@id/profile_image"
+        android:layout_marginStart="16dp" />
+
+    <!-- City -->
+    <TextView
+        android:id="@+id/city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New York"
+        android:textColor="@color/grey"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@id/profile_image"
+        app:layout_constraintTop_toBottomOf="@id/person_name"
+        android:layout_marginStart="16dp" />
+
+    <!-- Description (Dynamic Height) -->
+
+    <!-- LinearLayout for Budget, Due Date, and Category -->
+
+    <TextView
+        android:id="@+id/short_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:ellipsize="none"
+        android:lineSpacingExtra="4dp"
+        android:maxLines="10"
+        android:text="Professional cleaner with 5 years of experience."
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/city" />
+
+    <LinearLayout
+        android:id="@+id/task_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/short_description">
+
+        <!-- Budget (Bold Text) -->
+        <TextView
+            android:id="@+id/budget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Budget: $100"
+            android:textColor="@color/blacktxt"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:background="@drawable/rounded_corner"
+            android:padding="5dp"
+            android:layout_marginEnd="5dp"/>
+
+        <!-- Due Date (Bold Text) -->
+        <TextView
+            android:id="@+id/due_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Due: 2025-05-01"
+            android:textColor="@color/blacktxt"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:background="@drawable/rounded_corner"
+            android:padding="5dp"
+            android:layout_marginEnd="5dp"/>
+
+        <!-- Category (Bold Text) -->
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category:Cleaning"
+            android:textColor="@color/blacktxt"
+            android:background="@drawable/rounded_corner"
+            android:padding="5dp"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Gallery of Added Photos (Only if there are photos) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/task_info_layout"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
+
+    <!-- Send Offer Button -->
+    <Button
+        android:id="@+id/btn_send_offer"
+        android:layout_width="218dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_corner"
+        android:text="Send Offer"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gallery" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

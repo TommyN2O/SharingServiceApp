@@ -1,0 +1,44 @@
+<resources>
+
+    <string name="app_name">SharingServiceApp</string>
+    <!--             Register               -->
+    <string name="reg_title">Create an Account</string>
+    <string name="reg_welcome">Welcome to NestHelper!</string>
+    <string name="reg_info_create">where help is just a click away. Connect, share, and get the services you need!"</string>
+    <string name="user_entry"> Username</string>
+    <string name="first_name_entry">First Name</string>
+    <string name="surname_entry">Last Name</string>
+    <string name="phone_nr_entry">Phone number</string>
+    <string name="email_entry">Email</string>
+    <string name="psw_entry"> Password</string>
+    <string name="continue_btn">Continue</string>
+    <string name="reg_terms">By continuing, you agree to NestHelper’s Terms and Privacy Policy. You can delete your account in your settings</string>
+    <string name="reg_btn">Registration</string>
+    <!--    -->
+    <!--               Main                    -->
+    <string name="welcome_title">Welcome to NestHelper!</string>
+    <string name="welcome_intro">Create an account and find help in just a click away. Connect, share, and get the services you need!</string>
+    <string name="creatacc_btn">Create an account</string>
+    <string name="con_w_google_btn">Continue with Google</string>
+    <string name="reg_info_have_acc">Already have an account?</string>
+    <string name="login_btn">Log in</string>
+    <!--    -->
+    <!--                    Login                    -->
+    <string name="login_logo">Log in</string>
+    <string name="login_psw_forget">Forgot password? - Reset password</string>
+    <!---->
+    <!--                 Reset password    -->
+    <string name="reset_psw_logo">Password reset</string>
+    <string name="reset_psw_info">Enter your email address to receive a link to reset your password.</string>
+    <string name="email_sent_main_info">Reset link has been sent!</string>
+    <string name="email_sent_info">To reset the password, go to your email and press on the confirmation link.</string>
+    <string name="code">Code</string>
+    <string name="resend_email_btn">Resend Email</string>
+    <string name="new_psw_entry">New Password</string>
+    <string name="repeat_new_psw_entry">Repeat New Password</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="reset_psw_new_info">Choose a new password for this account. This password will replace the old one: everything else about the user account will remain unchanged.</string>
+    <!---->
+    <!--                   Home                           -->
+    <string name="app_title">NestHelper</string>
+</resources>
