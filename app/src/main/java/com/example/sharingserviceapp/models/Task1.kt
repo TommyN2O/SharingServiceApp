@@ -1,6 +1,6 @@
 package com.example.sharingserviceapp.models
 
-data class Task(
+data class Task1(
     val taskName: String,
     val taskCategory: String,
     val taskTime: String,

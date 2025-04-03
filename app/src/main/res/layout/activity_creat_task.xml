@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- ScrollView for the content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title (Centered "Request") and Back Button on the same level -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <!-- Back Button (Larger and Aligned to the left) -->
+                <ImageButton
+                    android:id="@+id/btn_back"
+                    android:layout_width="53dp"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/chevron_arrow_left" />
+
+                <!-- Title (Centered "Request") -->
+                <TextView
+                    android:layout_width="253dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="80dp"
+                    android:text="Request"
+                    android:textAlignment="center"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- "Describe Your Task" label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Describe Your Task"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Task Description Input -->
+            <EditText
+                android:id="@+id/edit_task_description"
+                android:layout_width="match_parent"
+                android:layout_height="83dp"
+                android:background="@drawable/rounded_edittext"
+                android:gravity="top|start"
+                android:hint="Enter task details..."
+                android:inputType="textMultiLine"
+                android:maxLines="6"
+                android:minLines="4"
+                android:padding="12dp"
+                android:textSize="16sp" />
+
+            <!-- Category Picker -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:layout_marginTop="8dp"/>
+
+            <Spinner
+                android:id="@+id/spinner_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edittext"
+                android:padding="8dp"/>
+
+            <!-- Budget -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Budget ($)"
+                android:layout_marginTop="8dp"/>
+
+            <EditText
+                android:id="@+id/edit_budget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Enter your budget"
+                android:background="@drawable/rounded_edittext"/>
+
+            <!-- Location -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:layout_marginTop="8dp"/>
+
+            <EditText
+                android:id="@+id/edit_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter location"
+                android:background="@drawable/rounded_edittext"/>
+
+            <!-- Date Picker -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Date"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Time Picker -->
+
+            <Button
+                android:id="@+id/btn_select_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pick a Date" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Time"
+                android:layout_marginTop="8dp"/>
+
+            <Spinner
+                android:id="@+id/spinner_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edittext"
+                android:padding="8dp"/>
+
+            <!-- Photo Gallery -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload Photos"
+                android:layout_marginTop="8dp"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="67dp"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:id="@+id/gallery_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
+            <Button
+                android:id="@+id/btn_add_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Photo"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Submit Button (Fixed Position) -->
+    <Button
+        android:id="@+id/btn_submit_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Request"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

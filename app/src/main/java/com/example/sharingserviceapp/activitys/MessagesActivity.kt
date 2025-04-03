@@ -24,16 +24,6 @@ class MessagesActivity : AppCompatActivity() {
         recyclerMessages = findViewById(R.id.recycler_messages)
         recyclerMessages.layoutManager = LinearLayoutManager(this)
 
-        // Sample data
-        messageList.add(Message("John Doe", "Hey, I can help!", "12:45 PM"))
-        messageList.add(Message("Jane Smith", "Great! Let's discuss details.", "10:30 AM"))
-
-        messageAdapter = MessageAdapter(messageList) { message ->
-            val intent = Intent(this, ChatActivity::class.java)
-            intent.putExtra("senderName", message.senderName)
-            startActivity(intent)
-        }
-
         recyclerMessages.adapter = messageAdapter
 
 

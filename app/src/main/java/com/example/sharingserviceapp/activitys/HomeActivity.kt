@@ -1,92 +1,89 @@
 package com.example.sharingserviceapp.activitys
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toast
-import com.example.sharingserviceapp.R
-import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.sharingserviceapp.R
 import com.example.sharingserviceapp.adapters.CategoryAdapter
 import com.example.sharingserviceapp.models.Category
+import com.example.sharingserviceapp.network.ApiServiceInstance
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class HomeActivity : AppCompatActivity() {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var categoryAdapter: CategoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        // Get the Search Button
+
         val searchButton: ImageView = findViewById(R.id.search_button)
-//
-        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+        recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        // Sample Data for Merged List
-        val categories = listOf(
-            Category("Cleaning", R.drawable.clean_category),
-            Category("Painting", R.drawable.clean_category),
-            Category("Help Moving", R.drawable.clean_category),
-            Category("Furniture Assembly", R.drawable.clean_category),
-            Category("Yard Work", R.drawable.clean_category),
-            Category("Heavy Lifting", R.drawable.clean_category),
-            Category("Business", R.drawable.clean_category),
-            Category("Travel", R.drawable.clean_category)
-        )
+        fetchCategories()
 
-        // Set up CategoryAdapter and pass the selected category to HelperListActivity
-        val categoryAdapter = CategoryAdapter(categories) { categoryName ->
-            val intent = Intent(this, HelperListActivity::class.java)
-            intent.putExtra("category_name", categoryName) // Pass category name
-            startActivity(intent)
-        }
-
-        recyclerView.adapter = categoryAdapter
-
-//
-
-
-        // Set an OnClickListener to trigger search functionality
         searchButton.setOnClickListener {
-            // Add your search functionality here, like opening a search bar
             Toast.makeText(this, "Search button clicked", Toast.LENGTH_SHORT).show()
         }
-//
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.menu_home
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_home -> {
-                    // Handle home item click
                     startActivity(Intent(this, HomeActivity::class.java))
                     finish()
-                    return@setOnNavigationItemSelectedListener true
+                    true
                 }
-
                 R.id.menu_tasks -> {
-                    // Handle tasks item click
                     startActivity(Intent(this, TasksActivity::class.java))
-                    finish()// Check here
-                    return@setOnNavigationItemSelectedListener true
+                    finish()
+                    true
                 }
-
                 R.id.menu_messages -> {
-                    // Handle messages item click
                     startActivity(Intent(this, MessagesActivity::class.java))
                     finish()
-                    return@setOnNavigationItemSelectedListener true
+                    true
                 }
-
                 R.id.menu_more -> {
                     startActivity(Intent(this, MoreActivity::class.java))
                     finish()
-                    return@setOnNavigationItemSelectedListener true
+                    true
                 }
-
                 else -> false
             }
         }
+    }
+
+    private fun fetchCategories() {
+        val apiService = ApiServiceInstance.Auth.apiServices
+        apiService.getCategories().enqueue(object : Callback<List<Category>> {
+            override fun onResponse(call: Call<List<Category>>, response: Response<List<Category>>) {
+                if (response.isSuccessful) {
+                    val categories = response.body() ?: emptyList()
+                    categoryAdapter = CategoryAdapter(categories) { categoryName ->
+                        val intent = Intent(this@HomeActivity, HelperListActivity::class.java)
+                        intent.putExtra("category_id", categoryName.id)
+                        intent.putExtra("category_name", categoryName.name)
+                        startActivity(intent)
+                    }
+                    recyclerView.adapter = categoryAdapter
+                } else {
+                    Toast.makeText(this@HomeActivity, "Failed to load categories", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<Category>>, t: Throwable) {
+                Toast.makeText(this@HomeActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

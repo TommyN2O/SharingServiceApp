@@ -26,9 +26,9 @@ class MessageAdapter(private val messages: List<Message>, private val onClick: (
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messages[position]
-        holder.txtSenderName.text = message.senderName
-        holder.txtLastMessage.text = message.lastMessage
-        holder.txtTime.text = message.time
+//        holder.txtSenderName.text = message.senderName
+//        holder.txtLastMessage.text = message.lastMessage
+//        holder.txtTime.text = message.time
 
         holder.itemView.setOnClickListener { onClick(message) }
     }

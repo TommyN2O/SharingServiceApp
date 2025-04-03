@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Top Section: Back Arrow, Title, and Menu Button -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Back Arrow -->
+        <ImageView
+            android:id="@+id/back_arrow"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="15dp"
+            android:contentDescription="Back"
+            android:src="@drawable/chevron_arrow_left" />
+
+        <!-- Title: Your Tasker Profile -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:text="Your Tasker Profile"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Menu Button (Right side) -->
+        <ImageView
+            android:id="@+id/menu_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="9dp"
+            android:contentDescription="Menu"
+            android:src="@drawable/ic_menu"
+            android:clickable="true"
+            android:focusable="true" />
+    </RelativeLayout>
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Profile Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <!-- Profile Image (Left) -->
+                <ImageView
+                    android:id="@+id/detail_profile_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginEnd="16dp"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/circle_border"/>
+
+                <!-- Name (Centered) -->
+                <TextView
+                    android:id="@+id/detail_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Helper Name"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Rating and Reviews (Aligned to Left) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_star"/>
+
+                <TextView
+                    android:id="@+id/detail_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="4.5"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/detail_reviews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="(100 reviews)"
+                    android:textColor="#7f7f7f"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <!-- Categories with Icon -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_category" />
+
+                <TextView
+                    android:id="@+id/detail_categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Categories: Plumber, Electrician"
+                    android:textSize="14sp"
+                    android:textColor="#7f7f7f"/>
+            </LinearLayout>
+
+            <!-- Cities with Icon -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_city" />
+
+                <TextView
+                    android:id="@+id/detail_cities"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Cities: New York, Los Angeles"
+                    android:textSize="14sp"
+                    android:textColor="#7f7f7f"/>
+            </LinearLayout>
+
+            <!-- Hourly Rate with Icon -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_hourly_rate" />
+
+                <TextView
+                    android:id="@+id/detail_hourly_rate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Hourly Rate: $50"
+                    android:textSize="14sp"
+                    android:textColor="#7f7f7f"/>
+            </LinearLayout>
+
+            <!-- Skills & Experience Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Skills And Experience"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/detail_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Short description about the helper."
+                android:textColor="#7f7f7f"
+                android:textSize="14sp"/>
+
+            <!-- Read More Button -->
+            <TextView
+                android:id="@+id/read_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Read More"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <!-- Photos Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="Photos"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <!-- Gallery RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/galleryRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal"/>
+
+            <!-- Reviews Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="Reviews"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <!-- Reviews RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reviewRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:scrollbars="vertical"/>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

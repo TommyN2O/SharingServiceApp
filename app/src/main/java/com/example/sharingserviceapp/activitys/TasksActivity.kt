@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharingserviceapp.R
 import com.example.sharingserviceapp.adapters.TaskAdapter
-import com.example.sharingserviceapp.models.Task
+import com.example.sharingserviceapp.models.Task1
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.text.SimpleDateFormat
 import java.util.*
@@ -71,21 +71,21 @@ class TasksActivity : AppCompatActivity() {
 
 
     private fun loadTasks() {
-        val groupedTasks = mutableListOf<Pair<String, List<Task>>>()
+        val groupedTasks = mutableListOf<Pair<String, List<Task1>>>()
         val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
         if (isTasker) {
             groupedTasks.addAll(
                 listOf(
-                    Pair(todayDate, listOf(Task("Help with laundry", "Laundry", "3:00 PM", "Tasker 2", todayDate))),
-                    Pair("2025-03-30", listOf(Task("Help with cleaning", "Cleaning", "12:00 PM", "Tasker 1", "2025-03-30")))
+                    Pair(todayDate, listOf(Task1("Help with laundry", "Laundry", "3:00 PM", "Tasker 2", todayDate))),
+                    Pair("2025-03-30", listOf(Task1("Help with cleaning", "Cleaning", "12:00 PM", "Tasker 1", "2025-03-30")))
                 )
             )
         } else {
             groupedTasks.addAll(
                 listOf(
-                    Pair(todayDate, listOf(Task("Looking for help with cleaning", "Cleaning", "12:00 PM", "", todayDate))),
-                    Pair("2025-03-30", listOf(Task("Looking for help with laundry", "Laundry", "1:00 PM", "", "2025-03-30")))
+                    Pair(todayDate, listOf(Task1("Looking for help with cleaning", "Cleaning", "12:00 PM", "", todayDate))),
+                    Pair("2025-03-30", listOf(Task1("Looking for help with laundry", "Laundry", "1:00 PM", "", "2025-03-30")))
                 )
             )
         }
