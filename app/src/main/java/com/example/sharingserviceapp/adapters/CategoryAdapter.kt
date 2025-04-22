@@ -20,7 +20,7 @@ class CategoryAdapter(
 ) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
     companion object {
-        private const val BASE_IMAGE_URL = ApiServiceInstance.BASE_URL //"https://your.api.url" // Update with actual base URL
+        internal const val BASE_IMAGE_URL = ApiServiceInstance.BASE_URL //"https://your.api.url" // Update with actual base URL
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

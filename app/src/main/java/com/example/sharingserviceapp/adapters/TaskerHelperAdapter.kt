@@ -1,81 +1,68 @@
 package com.example.sharingserviceapp.adapters
 
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
-import com.example.sharingserviceapp.activitys.HelperListActivity
-import com.example.sharingserviceapp.activitys.TaskDetailOfferActivity
 import com.example.sharingserviceapp.models.TaskerHelper
+import com.example.sharingserviceapp.network.ApiServiceInstance
+import java.net.URL
 
 class TaskerHelperAdapter(
-    private val context: HelperListActivity,  // HelperListActivity context passed correctly
+    private val context: Context,
     private var taskerList: MutableList<TaskerHelper>,
     private val onItemClick: (TaskerHelper) -> Unit
-) : RecyclerView.Adapter<TaskerHelperAdapter.TaskerViewHolder>() {
+) : RecyclerView.Adapter<TaskerHelperAdapter.CustomerViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskerViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomerViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.list_helper_item_tasker, parent, false)
-        return TaskerViewHolder(view)
+        return CustomerViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: TaskerViewHolder, position: Int) {
-        val tasker = taskerList[position]
-        holder.bind(tasker)
+    override fun onBindViewHolder(holder: CustomerViewHolder, position: Int) {
+        val customer = taskerList[position]
+        holder.bind(customer)
     }
 
     override fun getItemCount(): Int = taskerList.size
 
-    // Method to update the list
     fun updateList(newList: MutableList<TaskerHelper>) {
         taskerList = newList
         notifyDataSetChanged()
     }
 
-    // ViewHolder class
-    inner class TaskerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CustomerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_image)
-        private val galleryRecyclerView: RecyclerView = itemView.findViewById(R.id.gallery)
-        private val sendOfferButton: Button = itemView.findViewById(R.id.btn_send_offer)
-        fun bind(tasker: TaskerHelper) {
-            // Set the profile image
-            profileImage.setImageResource(tasker.profileImage)
+        private val name: TextView = itemView.findViewById(R.id.person_name)
+        private val rating: TextView = itemView.findViewById(R.id.rating_number)
+        private val reviewCount: TextView = itemView.findViewById(R.id.review_count)
+        private val price: TextView = itemView.findViewById(R.id.price_per_hour)
+        private val city: TextView = itemView.findViewById(R.id.detail_cities)
+        private val shortDescription: TextView = itemView.findViewById(R.id.short_description)
 
-            // Set up the gallery recycler view with click listener for zooming images
-            if (tasker.galleryImages.isNotEmpty()) {
-                galleryRecyclerView.visibility = View.VISIBLE
-                galleryRecyclerView.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
-                galleryRecyclerView.adapter = GalleryAdapter(tasker.galleryImages) { position ->
-                    // Now the context is of type HelperListActivity, so call showZoomDialog() properly
-                    context.showZoomDialog(tasker.galleryImages, position)
-                }
-            } else {
-                galleryRecyclerView.visibility = View.GONE
-            }
+        fun bind(customer: TaskerHelper) {
+            // ✅ Load profile photo
+            val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), customer.profile_photo)
+            Glide.with(itemView.context)
+                .load(fullImageUrl.toString())
+                .placeholder(R.drawable.placeholder_image_user)
+                .error(R.drawable.error)
+                .circleCrop()
+                .into(profileImage)
 
-            // Handle tasker item click
-            itemView.setOnClickListener { onItemClick(tasker) }
+            name.text = customer.name
+            rating.text = customer.rating.toString()
+            reviewCount.text = "(${customer.reviewCount} reviews)"
+            price.text = "${customer.hourly_rate}$/h"
+            city.text = customer.cities.joinToString(", ") { it.name }
+            shortDescription.text = customer.description
 
-            // Handle send offer button click
-            sendOfferButton.setOnClickListener {
-                navigateToTaskDetailOfferActivity(tasker)
-            }
-        }
-        private fun navigateToTaskDetailOfferActivity(tasker: TaskerHelper) {
-            // Create intent to navigate to TaskDetailOfferActivity and pass tasker details
-            val intent = Intent(context, TaskDetailOfferActivity::class.java).apply {
-                putExtra("tasker_name", tasker.name)
-                putExtra("tasker_budget", tasker.budget)
-                putExtra("tasker_city", tasker.city)
-            }
-            context.startActivity(intent)
+            itemView.setOnClickListener { onItemClick(customer) }
         }
     }
 }

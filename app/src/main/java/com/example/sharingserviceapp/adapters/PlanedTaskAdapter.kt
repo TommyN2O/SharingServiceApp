@@ -12,7 +12,7 @@ import com.example.sharingserviceapp.models.Task1
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TaskAdapter(private val groupedTasks: List<Pair<String, List<Task1>>>, private val isTasker: Boolean) :
+class PlanedTaskAdapter(private val groupedTasks: List<Pair<String, List<Task1>>>, private val isTasker: Boolean) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val TYPE_DATE_HEADER = 0

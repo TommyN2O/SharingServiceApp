@@ -19,9 +19,8 @@ import java.util.*
 class TaskDetailOfferActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageButton
-    private lateinit var btnSelectDate: Button
+    private lateinit var btn_select_days_time: Button
     private lateinit var spinnerTime: Spinner
-    private lateinit var switchShareTask: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,47 +28,31 @@ class TaskDetailOfferActivity : AppCompatActivity() {
 
         // Initialize Views
         btnBack = findViewById(R.id.btn_back)
-        btnSelectDate = findViewById(R.id.btn_select_date)
-        spinnerTime = findViewById(R.id.spinner_time)
+//        btnSelectDate = findViewById(R.id.btn_select_date)
+//        spinnerTime = findViewById(R.id.spinner_time)
 
         // Set up the back button
         findViewById<ImageView>(R.id.btn_back).setOnClickListener {
             onBackPressed()
         }
 
-        // Set up Date Picker
-        btnSelectDate.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val datePickerDialog = DatePickerDialog(
-                this,
-                { _, year, month, dayOfMonth ->
-                    val selectedDate = "$dayOfMonth/${month + 1}/$year"
-                    // Do something with the selected date (e.g., set it in a TextView)
-                    Toast.makeText(this, "Selected date: $selectedDate", Toast.LENGTH_SHORT).show()
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            )
-            datePickerDialog.show()
-        }
 
-        // Set up Time Picker Spinner
-        val timeOptions = arrayOf("Morning", "Afternoon", "Evening")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, timeOptions)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerTime.adapter = adapter
+//        // Set up Time Picker Spinner
+//        val timeOptions = arrayOf("Morning", "Afternoon", "Evening")
+//        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, timeOptions)
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        spinnerTime.adapter = adapter
 
-        spinnerTime.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parentView: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectedTime = parentView.getItemAtPosition(position).toString()
-                Toast.makeText(this@TaskDetailOfferActivity, "Selected time: $selectedTime", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>) {
-                // Handle no item selected case
-            }
-        }
+//        spinnerTime.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(parentView: AdapterView<*>, view: View?, position: Int, id: Long) {
+//                val selectedTime = parentView.getItemAtPosition(position).toString()
+//                Toast.makeText(this@TaskDetailOfferActivity, "Selected time: $selectedTime", Toast.LENGTH_SHORT).show()
+//            }
+//
+//            override fun onNothingSelected(parentView: AdapterView<*>) {
+//                // Handle no item selected case
+//            }
+//        }
 
     }
 }

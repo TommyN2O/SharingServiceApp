@@ -70,13 +70,13 @@ class DetailedTasksActivity : AppCompatActivity() {
         taskerProfileImage.setImageResource(exampleTask.taskerProfileImage)
 
         // Set up RecyclerView with adapter for task images
-        val galleryAdapter = GalleryAdapter(
-            exampleTask.taskImages
-        ) { position ->
-            showZoomDialog(exampleTask.taskImages, position) // Handle image click to show zoom dialog
-        }
+       // val galleryAdapter = GalleryAdapter(
+            //exampleTask.taskImages
+//        ) { position ->
+//            showZoomDialog(exampleTask.taskImages, position) // Handle image click to show zoom dialog
+//        }
 
-        galleryRecyclerView.adapter = galleryAdapter
+//        galleryRecyclerView.adapter = galleryAdapter
 
         // Back Button Click - Navigate Back
         backButton.setOnClickListener {

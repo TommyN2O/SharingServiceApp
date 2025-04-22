@@ -44,7 +44,7 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_tasks -> {
-                    startActivity(Intent(this, TasksActivity::class.java))
+                    startActivity(Intent(this, PlanedTasksActivity::class.java))
                     finish()
                     true
                 }

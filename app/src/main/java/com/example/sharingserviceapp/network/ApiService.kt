@@ -13,12 +13,14 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import com.example.sharingserviceapp.models.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface ApiService {
 
     // 🔹 Register a new user
-    @POST("/auth/register")
+    @POST("auth/register")
     fun registerUser(@Body request: RegisterRequest): Call<AuthResponse>
 
     // 🔹 Login user
@@ -30,39 +32,66 @@ interface ApiService {
     fun getUserTaskerProfile(@Header("Authorization") token: String,
     ): Call<TaskerProfileResponse>
 
-    @POST("tasker/profile/")
-    fun postUserTaskerProfile(
+    //create
+    @Multipart
+    @POST("tasker/profile")
+    fun createTaskerProfile(
         @Header("Authorization") token: String,
-        @Body body: TaskerProfileRequest
+        @Part profileImage: MultipartBody.Part,
+        @Part("tasker_profile_json") taskerProfileJson: RequestBody,
+        @Part galleryImages: List<MultipartBody.Part>  // Multiple gallery images
     ): Call<TaskerProfileResponse>
+
+    // update
+    @Multipart
+    @PUT("tasker/profile")
+    fun updateTaskerProfile(
+        @Header("Authorization") token: String,
+        @Part profileImage: MultipartBody.Part?,
+        @Part("tasker_profile_json") taskerProfileJson: RequestBody,
+        @Part galleryImages: List<MultipartBody.Part>  // Multiple gallery images
+    ): Call<TaskerProfileResponse>
+
+    @PUT("tasker/profile/availability")
+    fun updateTaskerAvailability(
+        @Header("Authorization") token: String,
+        @Body body: RequestBody
+    ): Call<Void>
+
+    //Get taskers
+    @GET("tasker/profiles/")
+    fun getTaskerList(
+        @Header("Authorization") token: String,
+    ): Call<List<TaskerHelper>>
 
     // GET CITIES
     @GET("cities")
     fun getCities(): Call<List<City>>
 
-    // Get users full view
-    @GET("/users/complete/id/token")
-    fun getUserProfileToken(): Call<UserProfileResponse>
+
+    //Delete tasker profile
+    @DELETE("tasker/profile/")
+    fun deleteUserTaskerProfile(
+        @Header("Authorization") token: String,
+    ): Call<TaskerProfileResponse>
 
     // 🔹 Get list of categories
     @GET("category")
     fun getCategories(): Call<List<Category>>
 
-    // 🔹 Create tasker profile
-    @POST("/tasker/create")
-    fun createProfile(@Body profile: TaskerProfileRequest): Call<TaskerProfileResponse>
+    @GET("tasker/profiles/{id}")
+    fun getTaskerProfileById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<TaskerHelper>
 
-    // 🔹 Update tasker profile
-    @PUT("/tasker/update")
-    fun updateProfile(@Body profile: TaskerProfileRequest): Call<TaskerProfileResponse>
-
-    // 🔹 Get tasker's assigned tasks
-    @GET("/tasker/tasks")
-    fun getTasks(): Call<List<Task>>
-
-    // 🔹 Delete tasker profile
-    @DELETE("/tasker/delete")
-    fun deleteProfile(): Call<Void>
+    @Multipart
+    @POST("tasker/send-request")
+    fun sendTaskRequest(
+        @Header("Authorization") token: String,
+        @Part("taskData") taskerRequestJson: RequestBody,
+        @Part galleryImages: List<MultipartBody.Part>
+    ): Call<Void>
 
 
 }

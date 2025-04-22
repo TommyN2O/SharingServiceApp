@@ -69,15 +69,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category"
+                android:text="Select Category"
                 android:layout_marginTop="8dp"/>
 
-            <Spinner
-                android:id="@+id/spinner_category"
+            <TextView
+                android:id="@+id/tv_selected_categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_edittext"
-                android:padding="8dp"/>
+                android:text="Select Categories"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:textSize="16sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/rounded_edittext"/>
+
 
             <!-- Budget -->
             <TextView
@@ -98,43 +105,54 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Location"
+                android:text=" Select Location"
                 android:layout_marginTop="8dp"/>
 
-            <EditText
-                android:id="@+id/edit_location"
+            <TextView
+                android:id="@+id/tv_selected_cities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter location"
+                android:text="Select Location"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:textSize="16sp"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="@drawable/rounded_edittext"/>
 
             <!-- Date Picker -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Date"
+                android:text="Select Days and Time"
                 android:layout_marginTop="8dp"/>
-
-            <!-- Time Picker -->
-
             <Button
-                android:id="@+id/btn_select_date"
+                android:id="@+id/btn_select_days_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Pick a Date" />
+                android:layout_marginTop="8dp"
+                android:text="Select Days and Time"/>
 
+            <!-- Time set how long to do -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Time"
+                android:text=" Select Duration"
                 android:layout_marginTop="8dp"/>
-
-            <Spinner
-                android:id="@+id/spinner_time"
+            <TextView
+                android:id="@+id/tv_selected_duration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_edittext"
-                android:padding="8dp"/>
+                android:text="Select Categories"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:textSize="16sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/rounded_edittext"/>
+
 
             <!-- Photo Gallery -->
             <TextView

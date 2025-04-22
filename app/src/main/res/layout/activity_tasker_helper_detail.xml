@@ -4,6 +4,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Back Arrow -->
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="15dp"
+            android:contentDescription="Back"
+            android:src="@drawable/chevron_arrow_left" />
+
+        <!-- Title: Your Tasker Profile -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:text="Selected Tasker"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
     <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
@@ -17,54 +47,38 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Top Section with Back Arrow & Profile Image -->
-            <RelativeLayout
+            <!-- Profile Section -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start">
 
-                <!-- Back Arrow -->
-
-                <!-- Profile Image (Centered) -->
-                <ImageView
-                    android:id="@+id/back_arrow"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="9dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:contentDescription="Back"
-                    android:src="@drawable/chevron_arrow_left" />
-
+                <!-- Profile Image (Left) -->
                 <ImageView
                     android:id="@+id/detail_profile_image"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="16dp"
                     android:scaleType="centerCrop"
                     android:background="@drawable/circle_border"/>
-            </RelativeLayout>
 
-            <!-- Name -->
-            <TextView
-                android:id="@+id/detail_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:text="Helper Name"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                <!-- Name (Centered) -->
+                <TextView
+                    android:id="@+id/detail_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Helper Name"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
 
-            <!-- Rating and Reviews -->
+            <!-- Rating and Reviews (Aligned to Left) -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -90,6 +104,63 @@
                     android:textSize="14sp"/>
             </LinearLayout>
 
+            <!-- Categories with Icon -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_category" />
+
+                <TextView
+                    android:id="@+id/detail_categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Categories: Plumber, Electrician"
+                    android:textSize="14sp"
+                    android:textColor="#7f7f7f"/>
+            </LinearLayout>
+
+            <!-- Cities with Icon -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_city" />
+
+                <TextView
+                    android:id="@+id/detail_cities"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Cities: New York, Los Angeles"
+                    android:textSize="14sp"
+                    android:textColor="#7f7f7f"/>
+            </LinearLayout>
+
+            <!-- Hourly Rate with Icon -->
+
+            <!-- Skills & Experience Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Skills And Experience"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
             <!-- Description -->
             <TextView
                 android:id="@+id/detail_description"
@@ -99,6 +170,18 @@
                 android:text="Short description about the helper."
                 android:textColor="#7f7f7f"
                 android:textSize="14sp"/>
+
+            <!-- Read More Button -->
+            <TextView
+                android:id="@+id/read_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Read More"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:focusable="true"/>
 
             <!-- Gallery Title -->
             <TextView

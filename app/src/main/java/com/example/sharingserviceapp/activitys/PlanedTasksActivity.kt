@@ -8,13 +8,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharingserviceapp.R
-import com.example.sharingserviceapp.adapters.TaskAdapter
+import com.example.sharingserviceapp.adapters.PlanedTaskAdapter
 import com.example.sharingserviceapp.models.Task1
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TasksActivity : AppCompatActivity() {
+class PlanedTasksActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var btnCustomer: Button
@@ -91,7 +91,7 @@ class TasksActivity : AppCompatActivity() {
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = TaskAdapter(groupedTasks, isTasker)
+        recyclerView.adapter = PlanedTaskAdapter(groupedTasks, isTasker)
     }
 
     private fun setupBottomNavigation() {
@@ -108,7 +108,7 @@ class TasksActivity : AppCompatActivity() {
 
                 R.id.menu_tasks -> {
                     // Handle the home item click
-                    startActivity(Intent(this, TasksActivity::class.java))
+                    startActivity(Intent(this, PlanedTasksActivity::class.java))
                     finish()
                     return@setOnNavigationItemSelectedListener true
                 }

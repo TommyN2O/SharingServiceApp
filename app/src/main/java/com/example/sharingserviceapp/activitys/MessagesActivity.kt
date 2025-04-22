@@ -2,7 +2,6 @@ package com.example.sharingserviceapp.activitys
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +40,7 @@ class MessagesActivity : AppCompatActivity() {
 
                 R.id.menu_tasks -> {
                     // Handle the home item click
-                    startActivity(Intent(this, TasksActivity::class.java))
+                    startActivity(Intent(this, PlanedTasksActivity::class.java))
                     finish()
                     return@setOnNavigationItemSelectedListener true
                 }

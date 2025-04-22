@@ -1,7 +1,7 @@
 package com.example.sharingserviceapp.activitys
 
 import android.app.Dialog
-import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -11,21 +11,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharingserviceapp.R
-import com.example.sharingserviceapp.adapters.CustomerHelperAdapter
 import com.example.sharingserviceapp.adapters.TaskerHelperAdapter
-import com.example.sharingserviceapp.models.CustomerHelper
+import com.example.sharingserviceapp.adapters.CustomerHelperAdapter
 import com.example.sharingserviceapp.models.TaskerHelper
+import com.example.sharingserviceapp.models.CustumerHelper
+import com.example.sharingserviceapp.network.ApiServiceInstance
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.util.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class HelperListActivity : AppCompatActivity() {
 
-    private lateinit var customerAdapter: CustomerHelperAdapter
-    private lateinit var taskerAdapter: TaskerHelperAdapter
+    private lateinit var taskerhelperAdapter: TaskerHelperAdapter
+    private lateinit var cutomerhelperAdapter: CustomerHelperAdapter
 
-    private var customerList: MutableList<CustomerHelper> = mutableListOf()
     private var taskerList: MutableList<TaskerHelper> = mutableListOf()
+    private var custumerList: MutableList<CustumerHelper> = mutableListOf()
 
     private var isTaskerMode: Boolean = false // Flag to determine mode
 
@@ -55,12 +58,12 @@ class HelperListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Load lists for both modes
-        customerList = getCustomerListForCategory(categoryName).toMutableList()
-        taskerList = getTaskerListForCategory(categoryName).toMutableList()
+        //customerList = getCustomerListForCategory(categoryName).toMutableList()
+        custumerList = getTaskerListForCategory(categoryName).toMutableList()
 
         // Initialize adapters
-        customerAdapter = CustomerHelperAdapter(this, customerList) { helper -> navigateToCustomerDetails(helper) }
-        taskerAdapter = TaskerHelperAdapter(this, taskerList) { tasker -> navigateToTaskerDetails(tasker) }
+        taskerhelperAdapter = TaskerHelperAdapter(this, taskerList) { tasker -> navigateToTaskerDetails(tasker) }
+        cutomerhelperAdapter = CustomerHelperAdapter(this, custumerList) { helper -> navigateToCustomerDetails(helper) }
 
         btnCustomer = findViewById(R.id.btn_customer)
         btnTasker = findViewById(R.id.btn_tasker)
@@ -86,7 +89,7 @@ class HelperListActivity : AppCompatActivity() {
 
                 R.id.menu_tasks -> {
                     // Handle tasks item click
-                    startActivity(Intent(this, TasksActivity::class.java))
+                    startActivity(Intent(this, PlanedTasksActivity::class.java))
                     finish()// Check here
                     return@setOnNavigationItemSelectedListener true
                 }
@@ -107,7 +110,9 @@ class HelperListActivity : AppCompatActivity() {
                 else -> false
             }
         }
+        fetchTaskers()
     }
+
 
     private fun setupBackButton() {
         findViewById<ImageView>(R.id.btn_back).setOnClickListener {
@@ -121,14 +126,14 @@ class HelperListActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun navigateToCustomerDetails(helper: CustomerHelper) {
-        val intent = Intent(this, HelperDetailActivity::class.java).apply {
-            putExtra("customerHelper", helper)
+    private fun navigateToTaskerDetails(selectedTasker: TaskerHelper) {
+        val intent = Intent(this, TaskerHelperDetailActivity::class.java).apply {
+            putExtra("tasker", selectedTasker)
         }
         startActivity(intent)
     }
 
-    private fun navigateToTaskerDetails(tasker: TaskerHelper) {
+    private fun navigateToCustomerDetails(tasker: CustumerHelper) {
         val intent = Intent(this, TaskDetailOfferActivity::class.java).apply {
             putExtra("tasker_name", tasker.name)
             putExtra("tasker_budget", tasker.budget)
@@ -137,43 +142,74 @@ class HelperListActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    // Load mock data for Customer helpers (to be replaced with actual data retrieval logic)
-    private fun getCustomerListForCategory(category: String?): List<CustomerHelper> {
-        return when (category) {
-            "Cleaning" -> listOf(
-                CustomerHelper(
-                    "John Doe", 4.5, 120, "Professional cleaner", R.drawable.user, 50,
-                    listOf("New York", "Brooklyn"), listOf("08:00", "10:30"),
-                    listOf(R.drawable.clean_category), listOf(R.drawable.clean_category)
-                ),
-                CustomerHelper(
-                    "Jane Smith", 4.8, 200, "Eco-friendly cleaner", R.drawable.user, 40,
-                    listOf("Los Angeles"), listOf("09:00", "11:30"),
-                    listOf(R.drawable.clean_category, R.drawable.user), listOf(R.drawable.clean_category)
-                )
-            )
-            "Painting" -> listOf(
-                CustomerHelper(
-                    "Mike Johnson", 4.2, 80, "Home painter", R.drawable.user, 60,
-                    listOf("Chicago"), listOf("07:30", "12:00"),
-                    listOf(R.drawable.clean_category), listOf(R.drawable.clean_category)
-                )
-            )
-            else -> emptyList()
+    private fun fetchTaskers() {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
         }
+
+        val categoryId = intent.getIntExtra("category_id", -1)
+
+        val apiService = ApiServiceInstance.Auth.apiServices
+
+        // Make sure you're passing the correct token
+        apiService.getTaskerList("Bearer $token").enqueue(object : Callback<List<TaskerHelper>> {
+            override fun onResponse(
+                call: Call<List<TaskerHelper>>,
+                response: Response<List<TaskerHelper>>
+            ) {
+                if (response.isSuccessful) {
+                    val taskers = response.body() ?: emptyList()
+
+                    // Create a mutable list of CustomerHelper objects
+                    val filteredTaskers = taskers.filter { tasker ->
+                        // Check if any category in the tasker's categories matches the passed categoryId
+                        tasker.categories.any { category -> category.id == categoryId }
+                    }
+                    taskerList.clear()
+                    taskerList.addAll(filteredTaskers)
+
+                    // Create and set the adapter for the RecyclerView
+                    taskerhelperAdapter = TaskerHelperAdapter(this@HelperListActivity, taskerList) { selectedTasker ->
+                        val intent = Intent(this@HelperListActivity, TaskerHelperDetailActivity::class.java).apply {
+                            // Add necessary data to the intent
+                            putExtra("user_id", selectedTasker.id)
+                            putExtra("category_id", categoryId)
+                        }
+                        startActivity(intent)
+                    }
+
+                    // Set the adapter to the RecyclerView
+                    recyclerView.adapter = taskerhelperAdapter
+                } else {
+                    Toast.makeText(this@HelperListActivity, "Failed to load taskers", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<TaskerHelper>>, t: Throwable) {
+                Toast.makeText(this@HelperListActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
+
     // Load mock data for Tasker helpers (to be replaced with actual data retrieval logic)
-    private fun getTaskerListForCategory(category: String?): List<TaskerHelper> {
+    private fun getTaskerListForCategory(category: String?): List<CustumerHelper> {
         return when (category) {
             "Cleaning" -> listOf(
-                TaskerHelper(
+                CustumerHelper(
                     "Alice Brown", R.drawable.user, "San Francisco", "Need deep cleaning",
                     70, "Tomorrow", R.drawable.clean_category, listOf(R.drawable.clean_category, R.drawable.user)
                 )
             )
             "Painting" -> listOf(
-                TaskerHelper(
+                CustumerHelper(
                     "Robert Wilson", R.drawable.user, "Seattle", "Looking for wall painting",
                     80, "Next Week", R.drawable.clean_category,listOf(R.drawable.clean_category, R.drawable.user)
                 )
@@ -220,7 +256,7 @@ class HelperListActivity : AppCompatActivity() {
         btnApplyFilters.setOnClickListener {
             selectedCity = citySpinner.selectedItem.toString()
             selectedPrice = priceSeekBar.progress
-            applyFilters(selectedCity, selectedPrice, selectedTime)
+            //applyFilters(selectedCity, selectedPrice, selectedTime)
             saveFilterSettings(selectedCity, selectedPrice, selectedTime)
             dialog.dismiss()
         }
@@ -252,25 +288,25 @@ class HelperListActivity : AppCompatActivity() {
         }
     }
 
-    private fun applyFilters(city: String, price: Int, time: String) {
-        if (isTaskerMode) {
-            // For Taskers, apply the filters only if they're not empty.
-            val filteredList = taskerList.filter {
-                (it.city.contains(city, ignoreCase = true) || city.isEmpty()) &&
-                        (it.budget <= price || price == 0)
-
-            }
-            taskerAdapter.updateList(filteredList.toMutableList())
-        } else {
-            // For Customers, apply the filters only if they're not empty.
-            val filteredList = customerList.filter { helper ->
-                (helper.availableCities.contains(city) || city.isEmpty()) &&
-                        (helper.price <= price || price == 0) &&
-                        (helper.availableTimes.contains(time) || time.isEmpty())
-            }
-            customerAdapter.updateList(filteredList.toMutableList())
-        }
-    }
+//    private fun applyFilters(city: String, price: Int, time: String) {
+//        if (isTaskerMode) {
+//            // For Taskers, apply the filters only if they're not empty.
+//            val filteredList = custumerList.filter {
+//                (it.city.contains(city, ignoreCase = true) || city.isEmpty()) &&
+//                        (it.budget <= price || price == 0)
+//
+//            }
+//            cutomerhelperAdapter.updateList(filteredList.toMutableList())
+//        } else {
+//            // For Customers, apply the filters only if they're not empty.
+//            val filteredList = taskerList.filter { helper ->
+//                (helper.availableCities.contains(city) || city.isEmpty()) &&
+//                        (helper.price <= price || price == 0) &&
+//                        (helper.availableTimes.contains(time) || time.isEmpty())
+//            }
+//            taskerhelperAdapter.updateList(filteredList.toMutableList())
+//        }
+//    }
 
     private fun toggleTaskerMode(isTasker: Boolean) {
         isTaskerMode = isTasker
@@ -287,7 +323,7 @@ class HelperListActivity : AppCompatActivity() {
         }
 
         loadFilterSettings()  // Load saved filters based on mode
-        recyclerView.adapter = if (isTaskerMode) taskerAdapter else customerAdapter
+        recyclerView.adapter = if (isTaskerMode) cutomerhelperAdapter else taskerhelperAdapter
     }
     fun showZoomDialog(images: List<Int>, position: Int) {
         val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)

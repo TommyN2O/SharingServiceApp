@@ -64,7 +64,6 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     //calendar
     implementation ("com.applandeo:material-calendar-view:1.9.2")
+    implementation ("com.github.yalantis:ucrop:2.2.8")
 
-    // Optional: Glide integration with RecyclerView
-    implementation ("com.github.bumptech.glide:recyclerview-integration:4.16.0")
 }

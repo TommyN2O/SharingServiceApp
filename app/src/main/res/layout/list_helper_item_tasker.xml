@@ -1,150 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
+    android:layout_margin="2dp"
     android:radius="8dp"
     app:cardCornerRadius="12dp"
     android:elevation="4dp"
     tools:context=".activitys.HelperListActivity">
-
-    <!-- list_help_item_tasker -->
-
-    <!-- Name -->
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/circle_border"
-        android:contentDescription="Profile Image"
-        android:src="@drawable/user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/person_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="John Doe"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/profile_image"
-        app:layout_constraintTop_toTopOf="@id/profile_image"
-        android:layout_marginStart="16dp" />
-
-    <!-- City -->
-    <TextView
-        android:id="@+id/city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New York"
-        android:textColor="@color/grey"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@id/profile_image"
-        app:layout_constraintTop_toBottomOf="@id/person_name"
-        android:layout_marginStart="16dp" />
-
-    <!-- Description (Dynamic Height) -->
-
-    <!-- LinearLayout for Budget, Due Date, and Category -->
-
-    <TextView
-        android:id="@+id/short_description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ellipsize="none"
-        android:lineSpacingExtra="4dp"
-        android:maxLines="10"
-        android:text="Professional cleaner with 5 years of experience."
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/city" />
-
+    <!-- list_help_item_customer-->
     <LinearLayout
-        android:id="@+id/task_info_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_marginTop="15dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/short_description">
+        android:padding="12dp">
 
-        <!-- Budget (Bold Text) -->
-        <TextView
-            android:id="@+id/budget"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Budget: $100"
-            android:textColor="@color/blacktxt"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:background="@drawable/rounded_corner"
-            android:padding="5dp"
-            android:layout_marginEnd="5dp"/>
+        <!-- Profile Photo (round) -->
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="70dp"
+            android:layout_height="71dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/circle_border"
+            android:scaleType="centerCrop" />
 
-        <!-- Due Date (Bold Text) -->
-        <TextView
-            android:id="@+id/due_date"
-            android:layout_width="wrap_content"
+        <!-- Name, Rating, Reviews, and Price -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Due: 2025-05-01"
-            android:textColor="@color/blacktxt"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:background="@drawable/rounded_corner"
-            android:padding="5dp"
-            android:layout_marginEnd="5dp"/>
+            android:layout_weight="1"
+            android:gravity="start"
+            android:orientation="vertical">
 
-        <!-- Category (Bold Text) -->
-        <TextView
-            android:id="@+id/category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Category:Cleaning"
-            android:textColor="@color/blacktxt"
-            android:background="@drawable/rounded_corner"
-            android:padding="5dp"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
+            <!-- Horizontal LinearLayout to contain the Name and Price -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Name of the person -->
+                <TextView
+                    android:id="@+id/person_name"
+                    android:layout_width="201dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_weight="1"
+                    android:text="John Doe"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+
+                <!-- Price per hour on the same line as Name -->
+                <TextView
+                    android:id="@+id/price_per_hour"
+                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50$/h"
+                android:textSize="18sp"
+                android:textColor="@color/my_light_primary"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:gravity="start"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Star Rating and Number of Reviews -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <!-- Star Image -->
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="3dp"
+                    android:src="@drawable/ic_star" />
+
+                <!-- Rating Number (1-5) -->
+                <TextView
+                    android:id="@+id/rating_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="4.0"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/review_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:text="(100 reviews)"
+                    android:textColor="#7f7f7f"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Cities with Icon -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_city" />
+
+                <TextView
+                    android:id="@+id/detail_cities"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Cities: New York, Los Angeles"
+                    android:textSize="14sp"
+                    android:textColor="#7f7f7f"/>
+            </LinearLayout>
+
+            <!-- Short Description (below the rating) -->
+            <TextView
+                android:id="@+id/short_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="This is a short description about the person or item."
+                android:textColor="#7f7f7f"
+                android:textSize="14sp"
+                android:layout_marginTop="7dp"/>
+
+        </LinearLayout>
+
     </LinearLayout>
-
-    <!-- Gallery of Added Photos (Only if there are photos) -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/task_info_layout"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
-
-    <!-- Send Offer Button -->
-    <Button
-        android:id="@+id/btn_send_offer"
-        android:layout_width="218dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_corner"
-        android:text="Send Offer"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/gallery" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

@@ -7,7 +7,7 @@
     <!-- ScrollView for the content -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="682dp"
         android:layout_weight="1"
         android:padding="16dp">
 
@@ -20,8 +20,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="start">
+                android:gravity="start"
+                android:orientation="horizontal">
 
                 <!-- Back Button (Larger and Aligned to the left) -->
                 <ImageButton
@@ -46,16 +46,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Describe Your Task"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:textStyle="bold" />
 
             <!-- Task Description Input -->
             <EditText
                 android:id="@+id/edit_task_description"
                 android:layout_width="match_parent"
-                android:layout_height="83dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/rounded_edittext"
                 android:gravity="top|start"
                 android:hint="Enter task details..."
@@ -65,87 +65,111 @@
                 android:padding="12dp"
                 android:textSize="16sp" />
 
-            <!-- Category Picker -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:text="Select Category" />
 
-            <Spinner
-                android:id="@+id/spinner_category"
+            <TextView
+                android:id="@+id/tv_selected_categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/rounded_edittext"
-                android:padding="8dp"/>
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="10dp"
+                android:text="Select Categories"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
 
             <!-- Budget -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Budget ($)"
-                android:layout_marginTop="8dp"/>
-
-            <EditText
-                android:id="@+id/edit_budget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:hint="Enter your budget"
-                android:background="@drawable/rounded_edittext"/>
 
             <!-- Location -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Location"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:text=" Select Location" />
 
-            <EditText
-                android:id="@+id/edit_location"
+            <TextView
+                android:id="@+id/tv_selected_cities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter location"
-                android:background="@drawable/rounded_edittext"/>
+                android:layout_marginTop="5dp"
+                android:background="@drawable/rounded_edittext"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="10dp"
+                android:text="Select Location"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
 
             <!-- Date Picker -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Date"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:text="Select Days and Time" />
 
-            <!-- Time Picker -->
-
-            <Button
-                android:id="@+id/btn_select_date"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Pick a Date" />
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
+                <Spinner
+                    android:id="@+id/spinner_day"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_edittext"/>
+
+                <Spinner
+                    android:id="@+id/spinner_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/rounded_edittext"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+
+            <!-- Time set how long to do -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Time"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:text=" Select Duration" />
 
-            <Spinner
-                android:id="@+id/spinner_time"
+            <TextView
+                android:id="@+id/tv_selected_duration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/rounded_edittext"
-                android:padding="8dp"/>
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="10dp"
+                android:text="Select Duration"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
+
 
             <!-- Photo Gallery -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Upload Photos"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:text="Upload Photos" />
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="67dp"
+                android:layout_height="104dp"
                 android:padding="4dp">
 
                 <LinearLayout
@@ -159,20 +183,7 @@
                 android:id="@+id/btn_add_photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Photo"/>
-
-            <!-- Share with Taskers Switch -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Share with Taskers" />
-
-            <Switch
-                android:id="@+id/switch_share_task"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
+                android:text="Add Photo" />
 
         </LinearLayout>
     </ScrollView>

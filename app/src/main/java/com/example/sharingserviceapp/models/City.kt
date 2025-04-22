@@ -1,14 +1,12 @@
 package com.example.sharingserviceapp.models
 
-import com.google.gson.annotations.SerializedName
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import com.google.gson.annotations.SerializedName
 
 @Parcelize
-data class Category(
+data class City(
     val id: Int,
     val name: String,
-    @SerializedName("image_url") val image: String,
-    val description: String,
     @SerializedName("created_at") val createdAt: String
-) : Parcelable
+): Parcelable

@@ -97,6 +97,7 @@
                 android:layout_height="100dp"
                 android:background="@drawable/rounded_edittext"
                 android:hint="Describe yourself"
+                android:gravity="top|start"
                 android:inputType="textMultiLine"/>
 
             <!-- Upload Photos -->
@@ -119,7 +120,7 @@
             </HorizontalScrollView>
 
             <Button
-                android:id="@+id/btn_add_photo"
+                android:id="@+id/btn_add_photos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Add Photo"/>
@@ -129,10 +130,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Categories"/>
-            <Spinner
-                android:id="@+id/spinner_categories"
+
+            <TextView
+                android:id="@+id/tv_selected_categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Select Categories"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:textSize="16sp"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="@drawable/rounded_edittext"/>
 
             <!-- Hourly Rate -->
@@ -154,10 +163,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Available Cities"/>
-            <Spinner
-                android:id="@+id/spinner_cities"
+
+            <TextView
+                android:id="@+id/tv_selected_cities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Select Cities"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:textSize="16sp"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="@drawable/rounded_edittext"/>
 
             <!-- Available Days & Time -->

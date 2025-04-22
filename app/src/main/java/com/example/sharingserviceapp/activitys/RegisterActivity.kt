@@ -61,7 +61,7 @@ class RegisterActivity : AppCompatActivity() {
 
         if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty() || dateOfBirth.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
-            return
+               return
         }
 
         // Debug: Check what is being sent
