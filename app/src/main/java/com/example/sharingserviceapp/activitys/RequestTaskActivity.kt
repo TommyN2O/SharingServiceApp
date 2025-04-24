@@ -129,8 +129,9 @@ class RequestTaskActivity : AppCompatActivity() {
 
         // Submit Request
         btnSubmitRequest.setOnClickListener {
-
             sendTaskerRequest()
+//            startActivity(Intent(this, RequestsOffersActivity::class.java))
+//            finish()
         }
     }
 
@@ -506,8 +507,8 @@ class RequestTaskActivity : AppCompatActivity() {
             galleryParts
         )
 
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+        call.enqueue(object : Callback<TaskRequestBody> {
+            override fun onResponse(call: Call<TaskRequestBody>, response: Response<TaskRequestBody>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@RequestTaskActivity, "Request sent!", Toast.LENGTH_SHORT).show()
                     finish()
@@ -516,7 +517,7 @@ class RequestTaskActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
+            override fun onFailure(call: Call<TaskRequestBody>, t: Throwable) {
                 Toast.makeText(this@RequestTaskActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

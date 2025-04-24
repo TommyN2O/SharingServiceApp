@@ -95,6 +95,12 @@ class MoreActivity : AppCompatActivity() {
             startActivity(Intent(this, CreatTaskActivity::class.java))
             finish()
         }
+        val iconRequestsOffers = findViewById<ImageView>(R.id.icon_requests_image)
+        iconRequestsOffers?.setOnClickListener {
+            // Navigate to SupportActivity (example)
+            startActivity(Intent(this, RequestsOffersActivity::class.java))
+            finish()
+        }
     }
     // 🔹 Method to check if the tasker profile exists from the backend
     private fun checkIfTaskerProfileExists() {

@@ -91,7 +91,34 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Part("taskData") taskerRequestJson: RequestBody,
         @Part galleryImages: List<MultipartBody.Part>
+    ): Call<TaskRequestBody>
+
+    @GET("tasker/tasks/sent")
+    fun getMyTasks(
+        @Header("Authorization") token: String,
+    ): Call<List<TaskResponse>>
+
+    @GET("tasker/tasks/sent/{id}")
+    fun getMyTasksById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<TaskResponse>
+
+    @GET("tasker/tasks/received")
+    fun getPeopleRequests(
+        @Header("Authorization") token: String,
+    ): Call<List<TaskResponse>>
+
+    @GET("tasker/tasks/received/{id}")
+    fun getPeopleRequestsById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<TaskResponse>
+
+    @PUT("tasker/tasks/received/{id}/status")
+    fun updateTaskStatus(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int,
+        @Body statusUpdate: StatusUpdate
     ): Call<Void>
-
-
 }

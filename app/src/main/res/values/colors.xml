@@ -9,4 +9,9 @@
     <color name="red">#DC3545</color>
     <color name="my_light_primary">#32CD32</color>
     <color name="blue">#4285F4</color>
+
+    <color name="status_pending">#FFA500</color> <!-- Orange for Pending -->
+    <color name="status_waiting_payment">#FFCC00</color> <!-- Yellowish for Waiting Payment -->
+    <color name="status_default">#32CD60</color> <!-- Default black color for other statuses -->
+    <color name="status_declined">#DC3545</color> <!-- Default black color for other statuses -->
 </resources>

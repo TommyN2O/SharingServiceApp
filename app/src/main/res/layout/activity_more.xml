@@ -128,10 +128,10 @@
         android:orientation="horizontal"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_goneMarginTop="50dp"
-        tools:layout_editor_absoluteY="280dp">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout_requests_offers"
+        app:layout_goneMarginTop="50dp">
 
         <!-- History Icon Bubble -->
         <LinearLayout
@@ -197,14 +197,13 @@
         android:id="@+id/linearLayout_requests_offers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:padding="10dp"
-        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <!-- Requests/Offers Icon Bubble -->
         <LinearLayout
@@ -228,11 +227,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="Requests/Offers"
                 android:textColor="@android:color/black"
-                android:textSize="12sp"
-                android:layout_marginTop="8dp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <!-- Create Task Icon Bubble -->
@@ -256,14 +255,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="Create Task"
                 android:textColor="@android:color/black"
-                android:textSize="12sp"
-                android:layout_marginTop="8dp" />
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
-
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -276,7 +274,7 @@
         app:itemTextColor="@color/dark_gray"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/icon_creat_task"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="1.0"
         app:menu="@menu/menu_home"
         tools:layout_editor_absoluteX="0dp" />

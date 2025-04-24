@@ -19,6 +19,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activitys.PaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activitys.TaskDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activitys.RequestDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".activitys.RequestsOffersActivity"
             android:exported="false" />
         <activity

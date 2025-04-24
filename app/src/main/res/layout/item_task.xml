@@ -17,15 +17,15 @@
         android:padding="1dp">
 
         <!-- Category Image -->
+
+        <!-- Task Info -->
         <ImageView
             android:id="@+id/img_task_category"
             android:layout_width="68dp"
             android:layout_height="79dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/clean_category"
-            />
+            android:src="@drawable/clean_category" />
 
-        <!-- Task Info -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
