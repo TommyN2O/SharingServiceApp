@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white"
+    android:layout_marginBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start|center_vertical"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/img_category"
+            android:layout_width="73dp"
+            android:layout_height="75dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="Category Image"
+            android:src="@drawable/clean_category" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="John D."
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"/>
+
+            <TextView
+                android:id="@+id/txt_day_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monday, 10:00 AM"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"/>
+
+            <TextView
+                android:id="@+id/txt_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="City: New York"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"/>
+
+            <TextView
+                android:id="@+id/txt_tasker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tasker: Alex M."
+                android:textColor="@android:color/holo_green_dark"
+                android:textStyle="italic" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
