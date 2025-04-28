@@ -33,7 +33,6 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        // Initialize UI elements
         nameInput = findViewById(R.id.first_name)
         surnameInput = findViewById(R.id.surname)
         emailInput = findViewById(R.id.email)
@@ -42,11 +41,10 @@ class RegisterActivity : AppCompatActivity() {
         registerButton = findViewById(R.id.register_button)
         progressBar = findViewById(R.id.pb_loading)
 
-        // Set button click listener
         registerButton.setOnClickListener {
             registerUser()
         }
-//showdate
+
         dateOfBirthInput.setOnClickListener {
             showDatePicker()
         }
@@ -57,14 +55,13 @@ class RegisterActivity : AppCompatActivity() {
         val surname = surnameInput.text.toString().trim()
         val email = emailInput.text.toString().trim()
         val password = passwordInput.text.toString().trim()
-        val dateOfBirth = dateOfBirthInput.text.toString().trim()  // Expecting yyyy-MM-dd
+        val dateOfBirth = dateOfBirthInput.text.toString().trim()
 
         if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty() || dateOfBirth.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
                return
         }
 
-        // Debug: Check what is being sent
         android.util.Log.d("RegisterDebug", "Sending: name=$name, surname=$surname, email=$email, dob=$dateOfBirth")
 
         val registerRequest = RegisterRequest(name, surname, email, password, dateOfBirth)
@@ -113,7 +110,6 @@ class RegisterActivity : AppCompatActivity() {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
-                // Convert to "yyyy-MM-dd" format
                 val selectedDate =
                     String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
 

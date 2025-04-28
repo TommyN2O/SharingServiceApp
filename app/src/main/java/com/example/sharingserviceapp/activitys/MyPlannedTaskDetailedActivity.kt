@@ -3,7 +3,6 @@ package com.example.sharingserviceapp.activitys
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -24,31 +23,35 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.net.URL
 
-class TaskDetailActivity : AppCompatActivity() {
-
+class MyPlannedTaskDetailedActivity : AppCompatActivity() {
     private var taskId: Int = -1
     private var receiverId: Int ?= -1
-    private lateinit var btnPayment: Button
     private lateinit var btnCancel: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task_detail)
+        setContentView(R.layout.activity_my_planned_tasks_detailed)
 
-        btnPayment = findViewById(R.id.btnPayment)
         btnCancel = findViewById(R.id.btnCancel)
 
+        val intent = intent
+        val action = intent.action
+        val data = intent.data
+
         taskId = intent.getIntExtra("TASK_ID", -1)
+
+        if (Intent.ACTION_VIEW == action && data != null) {
+            if (data.scheme == "sharingapp" && data.host == "payment-success") {
+                taskId = data.getQueryParameter("task_id")?.toIntOrNull()!!
+
+                Toast.makeText(this, "Payment Successful!", Toast.LENGTH_LONG).show()
+            }
+        }
         if (taskId == -1) {
             Toast.makeText(this, "Invalid Task ID", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
-
-        Log.d("TaskDetailActivity", "Receiver ID: $receiverId")
-
-        setupPaymentButton()
-
         btnCancel.setOnClickListener {
             showCancelConfirmationDialog()
         }
@@ -58,62 +61,54 @@ class TaskDetailActivity : AppCompatActivity() {
     }
 
     private fun setupChatActivity() {
+
         findViewById<ImageView>(R.id.messageButton).setOnClickListener{
 
             val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
             val token = sharedPreferences.getString("auth_token", null)
+
             val api = ApiServiceInstance.Auth.apiServices
             val body = CreateChatBody(receiverId)
             val call = api.createChat("Bearer $token", body)
+
             call.enqueue(object : Callback<CreateChat> {
                 override fun onResponse(call: Call<CreateChat>, response: Response<CreateChat>) {
                     if (response.isSuccessful) {
                         val chatId = response.body()!!.chatId
-                        val intent = Intent(this@TaskDetailActivity, ChatActivity::class.java).apply {
+                        val intent = Intent(this@MyPlannedTaskDetailedActivity, ChatActivity::class.java).apply {
                             putExtra("chat_id", chatId)
                             putExtra("receiver_id", receiverId)
                         }
                         startActivity(intent)
                         finish()
                     } else {
-                        Toast.makeText(this@TaskDetailActivity, "Failed to create chat", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MyPlannedTaskDetailedActivity, "Failed to create chat", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<CreateChat>, t: Throwable) {
-                    Toast.makeText(this@TaskDetailActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MyPlannedTaskDetailedActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             })
         }
     }
     private fun setupBackButton() {
         findViewById<ImageView>(R.id.backArrowButton).setOnClickListener {
-            val intent = Intent(this, RequestsOffersActivity::class.java)
+            val intent = Intent(this, PlannedTasksActivity::class.java)
             startActivity(intent)
             finish()
         }
     }
-    private fun setupPaymentButton(){
-        btnPayment.setOnClickListener {
-            val intent = Intent(this, PaymentActivity::class.java).apply{
-                putExtra("TASK_ID",taskId)
-            }
-            startActivity(intent)
-            finish()
-        }
-
-    }
-
     private fun showCancelConfirmationDialog() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_confirmation)
 
         val confirmationMessage = dialog.findViewById<TextView>(R.id.confirmationMessage)
-        confirmationMessage.text = "Are you sure you want to cancel this request?"
+        confirmationMessage.text = "Are you sure you want to cancel this Planned Task?"
 
         val btnYes = dialog.findViewById<Button>(R.id.btnYes)
         btnYes.setOnClickListener {
-         //   #TODO()
+            //   #TODO()
 //            updateTaskStatus("Declined")  // Update the task status to Declined
             dialog.dismiss()  // Dismiss the dialog
         }
@@ -139,12 +134,12 @@ class TaskDetailActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     showRequestDetailed(response.body()!!)
                 } else {
-                    Toast.makeText(this@TaskDetailActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyPlannedTaskDetailedActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<TaskResponse>, t: Throwable) {
-                Toast.makeText(this@TaskDetailActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MyPlannedTaskDetailedActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -181,19 +176,8 @@ class TaskDetailActivity : AppCompatActivity() {
             "Pending" -> taskStatus.setTextColor(resources.getColor(R.color.status_pending))
             "Waiting for Payment" -> taskStatus.setTextColor(resources.getColor(R.color.status_waiting_payment))
             "Declined"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
+            "Canceled"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
             else -> taskStatus.setTextColor(resources.getColor(R.color.status_default))
-        }
-
-        // Hide the Accept button if status is "Waiting for Payment"
-        if (status.equals("Waiting for Payment", ignoreCase = true)) {
-            btnPayment.visibility = View.VISIBLE
-
-            val paramsDecline = btnCancel.layoutParams
-            paramsDecline.width = dpToPx(140f) // Set width to 320dp
-            btnCancel.layoutParams = paramsDecline
-
-        } else {
-            btnPayment.visibility = View.GONE
         }
 
         val imageUrl = task.sender.profile_photo?.let {
@@ -280,9 +264,4 @@ class TaskDetailActivity : AppCompatActivity() {
         arrowLeft.visibility = if (currentIndex > 0) View.VISIBLE else View.GONE
         arrowRight.visibility = if (currentIndex < totalSize - 1) View.VISIBLE else View.GONE
     }
-    fun dpToPx(dp: Float): Int {
-        val density = resources.displayMetrics.density
-        return (dp * density).toInt()
-    }
-
 }

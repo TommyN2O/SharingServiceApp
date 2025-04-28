@@ -6,63 +6,55 @@
     android:layout_height="match_parent"
     tools:context=".activitys.MoreActivity">
 
-    <!-- Menu Title in the Top Left -->
-
-    <!-- Settings Icon on the Top Right -->
-
-    <!-- First Row LinearLayout for Icons (Saved, My Created Tasker) -->
-
-    <!-- Second Row LinearLayout for Icons (History, Support) -->
-
-    <!-- Bottom Navigation -->
-
-    <TextView
-        android:id="@+id/menu_title"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/menu_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="28dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:fontFamily="sans-serif-medium"
-        android:text="Menu"
-        android:textColor="@android:color/black"
-        android:textSize="25sp"
-        app:layout_constraintEnd_toStartOf="@+id/icon_setting"
-        app:layout_constraintHorizontal_bias="0.059"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginEnd="16dp">
 
-    <ImageView
-        android:id="@+id/icon_setting"
-        android:layout_width="46dp"
-        android:layout_height="42dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_setting"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/menu_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Menu"
+            android:textColor="@android:color/black"
+            android:textSize="25sp"
+            android:layout_weight="1"
+            android:layout_marginTop="6dp"
+            android:gravity="start" />
+
+        <ImageView
+            android:id="@+id/icon_setting"
+            android:layout_width="35dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_setting" />
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/menu_title">
-
-        <!-- Saved Icon Bubble -->
-
-        <!-- My Created Tasker Icon Bubble -->
+        app:layout_constraintTop_toBottomOf="@+id/menu_bar">
 
         <LinearLayout
             android:id="@+id/icon_saved"
-            android:layout_width="183dp"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
@@ -71,7 +63,7 @@
 
             <ImageView
                 android:id="@+id/icon_saved_image"
-                android:layout_width="45dp"
+                android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:layout_marginRight="50dp"
                 android:src="@drawable/ic_saved" />
@@ -79,7 +71,7 @@
             <TextView
                 android:layout_width="46dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="50dp"
+                android:layout_marginRight="49dp"
                 android:gravity="center"
                 android:text="Saved"
                 android:textColor="@android:color/black"
@@ -88,9 +80,9 @@
 
         <LinearLayout
             android:id="@+id/icon_my_created_tasker"
-            android:layout_width="200dp"
-            android:layout_height="83dp"
-            android:background="@drawable/rounded_corner"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
@@ -99,8 +91,8 @@
 
             <ImageView
                 android:id="@+id/icon_my_created_tasker_image"
-                android:layout_width="47dp"
-                android:layout_height="48dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:layout_marginRight="50dp"
                 android:src="@drawable/ic_my_created_tasker" />
 
@@ -115,12 +107,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Saved Icon Bubble -->
-
-    <!-- My Created Tasker Icon Bubble -->
-
-    <!-- New Row for Requests and Offers -->
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -133,13 +119,12 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout_requests_offers"
         app:layout_goneMarginTop="50dp">
 
-        <!-- History Icon Bubble -->
         <LinearLayout
             android:id="@+id/icon_history"
-            android:layout_width="181dp"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
@@ -148,8 +133,8 @@
 
             <ImageView
                 android:id="@+id/icon_history_image"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:layout_marginRight="45dp"
                 android:src="@drawable/ic_history" />
 
@@ -163,12 +148,53 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Support Icon Bubble -->
+        <LinearLayout
+            android:id="@+id/icon_balance"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_item_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/icon_balance_image"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginRight="45dp"
+                android:src="@drawable/ic_balance" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="45dp"
+                android:gravity="center"
+                android:text="Balance"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayoutsSupport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_goneMarginTop="50dp">
+
+
         <LinearLayout
             android:id="@+id/icon_support"
-            android:layout_width="201dp"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
@@ -178,7 +204,7 @@
             <ImageView
                 android:id="@+id/icon_support_image"
                 android:layout_width="44dp"
-                android:layout_height="42dp"
+                android:layout_height="44dp"
                 android:layout_marginRight="50dp"
                 android:src="@drawable/ic_support" />
 
@@ -197,7 +223,7 @@
         android:id="@+id/linearLayout_requests_offers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+
         android:orientation="horizontal"
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -205,64 +231,63 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
-        <!-- Requests/Offers Icon Bubble -->
         <LinearLayout
             android:id="@+id/icon_requests"
-            android:layout_width="183dp"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="left"
+            android:gravity="center"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:padding="10dp">
 
             <ImageView
                 android:id="@+id/icon_requests_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
+                android:layout_marginRight="50dp"
                 android:src="@drawable/ic_requests_offers" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
+
+                android:layout_marginRight="30dp"
                 android:text="Requests/Offers"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Create Task Icon Bubble -->
         <LinearLayout
             android:id="@+id/icon_creat_task"
-            android:layout_width="183dp"
+            android:layout_width="185dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_corner"
+            android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="left"
+            android:gravity="center"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:padding="10dp">
 
             <ImageView
                 android:id="@+id/icon_creat_task_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
+                android:layout_marginRight="50dp"
                 android:src="@drawable/ic_creat_task" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
+
+                android:layout_marginRight="45dp"
                 android:text="Create Task"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
-
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -270,8 +295,8 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:itemIconSize="32dp"
-        app:itemIconTint="@color/dark_gray"
-        app:itemTextColor="@color/dark_gray"
+        app:itemIconTint="@drawable/bottom_nav_item_color"
+        app:itemTextColor="@drawable/bottom_nav_item_color"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"

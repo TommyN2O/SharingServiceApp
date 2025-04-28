@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activitys.PaymentActivity">
@@ -24,7 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Header with Back Button in ConstraintLayout for true centering -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,63 +63,63 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <!-- Task and Profile Info -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="2"
+                android:weightSum="3"
                 android:layout_marginBottom="16dp">
 
                 <LinearLayout
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:layout_width="9dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/taskTitle"
-                        android:text="Furniture Assembly"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="Furniture Assembly"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/taskDateTime"
-                        android:text="Saturday - January 6, 2024\n9:30 a.m. EST"
-                        android:textSize="16sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp"
+                        android:text="Saturday - January 6, 2024 9:30 a.m. EST"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_width="52dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:orientation="vertical"
                     android:gravity="end"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:orientation="vertical">
 
                     <ImageView
                         android:id="@+id/taskerProfileImage"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/user"
+                        android:layout_width="50dp"
+                        android:layout_height="43dp"
                         android:layout_gravity="end"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginBottom="4dp"/>
+                        android:layout_marginBottom="4dp"
+                        android:src="@drawable/user" />
 
                     <TextView
-                        android:id="@+id/benefactorName"
-                        android:text="Amber D."
-                        android:textSize="16sp"
+                        android:id="@+id/taskerName"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="4dp"
+                        android:text="Amber D."
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Payment Method -->
             <TextView
                 android:id="@+id/paymentTitle"
                 android:text="Payment Method"
@@ -154,29 +151,6 @@
                     android:layout_marginStart="16dp" />
             </RadioGroup>
 
-            <EditText
-                android:id="@+id/cardDetailsInput"
-                android:hint="Enter card number"
-                android:visibility="gone"
-                android:background="@drawable/rounded_edittext"
-                android:inputType="number"
-                android:textSize="16sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <EditText
-                android:id="@+id/cardCvvInput"
-                android:hint="Enter CVV"
-                android:visibility="gone"
-                android:background="@drawable/rounded_edittext"
-                android:inputType="number"
-                android:textSize="16sp"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Price Details -->
             <TextView
                 android:id="@+id/priceDetailsTitle"
                 android:text="Price Details"
@@ -233,6 +207,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <TextView
+                        android:text="Duration"
+                        android:textSize="16sp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/taskDuration"
+                        android:text="3 h"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
             </LinearLayout>
 
             <TextView
@@ -244,7 +240,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <!-- Notice -->
             <TextView
                 android:id="@+id/paymentNotice"
                 android:text="You may see a temporary hold on your payment method in the amount of $52.25/hr..."
@@ -264,7 +259,6 @@
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Confirm Button -->
         <Button
             android:id="@+id/confirmButton"
             android:text="Confirm"

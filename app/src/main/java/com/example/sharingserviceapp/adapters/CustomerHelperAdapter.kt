@@ -14,7 +14,7 @@ import com.example.sharingserviceapp.activitys.TaskDetailOfferActivity
 import com.example.sharingserviceapp.models.CustumerHelper
 
 class CustomerHelperAdapter(
-    private val context: HelperListActivity,  // HelperListActivity context passed correctly
+    private val context: HelperListActivity,
     private var custumerList: MutableList<CustumerHelper>,
     private val onItemClick: (CustumerHelper) -> Unit
 ) : RecyclerView.Adapter<CustomerHelperAdapter.TaskerViewHolder>() {
@@ -31,22 +31,17 @@ class CustomerHelperAdapter(
 
     override fun getItemCount(): Int = custumerList.size
 
-    // Method to update the list
     fun updateList(newList: MutableList<CustumerHelper>) {
         custumerList = newList
         notifyDataSetChanged()
     }
 
-    // ViewHolder class
     inner class TaskerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_image)
         private val galleryRecyclerView: RecyclerView = itemView.findViewById(R.id.gallery)
         private val sendOfferButton: Button = itemView.findViewById(R.id.btn_send_offer)
         fun bind(tasker: CustumerHelper) {
-            // Set the profile image
             profileImage.setImageResource(tasker.profileImage)
-
-            // Set up the gallery recycler view with click listener for zooming images
             if (tasker.galleryImages.isNotEmpty()) {
                 galleryRecyclerView.visibility = View.VISIBLE
                 galleryRecyclerView.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
@@ -55,16 +50,12 @@ class CustomerHelperAdapter(
                 galleryRecyclerView.visibility = View.GONE
             }
 
-            // Handle tasker item click
             itemView.setOnClickListener { onItemClick(tasker) }
-
-            // Handle send offer button click
             sendOfferButton.setOnClickListener {
                 navigateToTaskDetailOfferActivity(tasker)
             }
         }
         private fun navigateToTaskDetailOfferActivity(tasker: CustumerHelper) {
-            // Create intent to navigate to TaskDetailOfferActivity and pass tasker details
             val intent = Intent(context, TaskDetailOfferActivity::class.java).apply {
                 putExtra("tasker_name", tasker.name)
                 putExtra("tasker_budget", tasker.budget)

@@ -1,10 +1,10 @@
 package com.example.sharingserviceapp.models
 
 data class Message(
-    val id: Int,
-    val senderId: Int,
-    val receiverId: Int,
-    val message: String,
-    val createdAt: String
+    val chatId: Int,
+    val lastMessageId: Int,
+    val lastMessage: String,
+    val lastMessageTime: String,
+    val otherUser: User
 )
 

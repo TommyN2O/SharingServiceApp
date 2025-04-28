@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Toolbar / Chat Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,7 +11,6 @@
         android:padding="12dp"
         android:background="@color/white">
 
-        <!-- Back Button -->
         <ImageView
             android:id="@+id/btn_back"
             android:layout_width="39dp"
@@ -20,14 +18,12 @@
             android:padding="1dp"
             android:src="@drawable/chevron_arrow_left" />
 
-        <!-- Chat User Info -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingStart="12dp">
 
-            <!-- User Profile Image -->
             <ImageView
                 android:id="@+id/chat_profile_image"
                 android:layout_width="40dp"
@@ -37,7 +33,6 @@
                 android:scaleType="centerCrop"
                 android:layout_gravity="center_vertical" />
 
-            <!-- User Name -->
             <TextView
                 android:id="@+id/chat_user_name"
                 android:layout_width="wrap_content"
@@ -50,7 +45,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Chat Messages RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_chat"
         android:layout_width="match_parent"
@@ -58,7 +52,6 @@
         android:layout_weight="1"
         android:padding="8dp" />
 
-    <!-- Message Input Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

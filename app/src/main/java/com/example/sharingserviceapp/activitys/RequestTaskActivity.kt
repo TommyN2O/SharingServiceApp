@@ -54,17 +54,14 @@ class RequestTaskActivity : AppCompatActivity() {
     private lateinit var allowedCategoryIds: List<String>
     private var categories: List<Category> = listOf()
     private var cities: List<City> = listOf()
-
-    private var selectedItems = mutableListOf<String>() // To keep track of the selected items globally
-
+    private var selectedItems = mutableListOf<String>()
     private var selectedCity: String? = null
     private var selectedDuration: String? = null
 
     private lateinit var spinnerDay: Spinner
     private lateinit var spinnerTime: Spinner
-    private val galleryUris = mutableListOf<Uri>()  // Stores selected images
-    private lateinit var galleryContainer: LinearLayout  // Displays selected thumbnails
-
+    private val galleryUris = mutableListOf<Uri>()
+    private lateinit var galleryContainer: LinearLayout
 
     private var availableSlots: List<AvailabilitySlot> = emptyList()
     private var availableDates: List<String> = emptyList()
@@ -197,10 +194,7 @@ class RequestTaskActivity : AppCompatActivity() {
     }
 
     private fun setSelectedCategory() {
-        // Find the category matching the selectedCategoryId (direct comparison of Int)
         val selectedCategory = categories.find { it.id == selectedCategoryId }
-
-        // If the selected category is found, set the name in the TextView
         selectedCategory?.let {
             categoriesTextView.text = it.name
         }
@@ -227,7 +221,7 @@ class RequestTaskActivity : AppCompatActivity() {
 
     private fun showCitySelectionDialog() {
         val items = cities.map { it.name }.toMutableList()
-        var tempSelectedCity: String? = selectedCity  // Temp selection holder
+        var tempSelectedCity: String? = selectedCity
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_multiselect, null)
         val listView = dialogView.findViewById<ListView>(R.id.list_view)
@@ -237,7 +231,6 @@ class RequestTaskActivity : AppCompatActivity() {
         listView.adapter = adapter
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
 
-        // Pre-select the current city
         selectedCity?.let {
             val index = items.indexOf(it)
             if (index != -1) {
@@ -245,12 +238,10 @@ class RequestTaskActivity : AppCompatActivity() {
             }
         }
 
-        // Handle selection
         listView.setOnItemClickListener { _, _, position, _ ->
             tempSelectedCity = listView.getItemAtPosition(position).toString()
         }
 
-        // Handle search
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = false
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -294,7 +285,6 @@ class RequestTaskActivity : AppCompatActivity() {
     private fun showCategorySelectionDialog() {
         val items = categories.map { it.name }
         categoriesTextView.setTextColor(resources.getColor(android.R.color.black, theme))
-        // If selectedItems is empty (on first load), pre-select the category based on selectedCategoryId
         if (selectedItems.isEmpty()) {
             val selectedCategory = categories.find { it.id == selectedCategoryId }
             selectedCategory?.let {
@@ -310,14 +300,12 @@ class RequestTaskActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, items)
         listView.adapter = adapter
 
-        // Mark items as selected based on the current selectedItems
         for (i in 0 until listView.count) {
             if (selectedItems.contains(items[i])) {
                 listView.setItemChecked(i, true)
             }
         }
 
-        // Handle Search functionality
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -333,42 +321,35 @@ class RequestTaskActivity : AppCompatActivity() {
             .setTitle("Select Categories")
             .setView(dialogView)
             .setPositiveButton("OK") { _, _ ->
-                // When "OK" is clicked, update the selected categories
+
                 val selectedPositions = listView.checkedItemPositions
                 val newSelectedItems = mutableListOf<String>()
 
-                // Loop through and add selected items to the newSelectedItems list
                 for (i in 0 until listView.count) {
                     if (selectedPositions[i]) {
                         newSelectedItems.add(items[i])
                     }
                 }
                 categoriesTextView.setTextColor(resources.getColor(android.R.color.black, theme))
-                // Check if no items were selected or if the selection has not changed
                 if (newSelectedItems.isEmpty() || newSelectedItems == selectedItems) {
-                    // Show error message and don't dismiss the dialog
                     Toast.makeText(this, "Please select at least one category.", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton // Prevent closing the dialog
                 }
 
-                // Update the selectedItems list with the new selection
                 selectedItems.clear()
                 selectedItems.addAll(newSelectedItems)
 
-                // Update the TextView with the selected categories
-                val selectedCategorysText = selectedItems.joinToString(", ") // Join categories with a comma and space
-                val citiesTextView = findViewById<TextView>(R.id.tv_selected_categories) // Your TextView ID
+                val selectedCategorysText = selectedItems.joinToString(", ")
+                val citiesTextView = findViewById<TextView>(R.id.tv_selected_categories)
                 citiesTextView.text = selectedCategorysText
             }
             .setNegativeButton("Cancel", null)
 
-        // Get reference to the OK button and disable it initially
+
         val dialog = builder.create()
         dialog.setOnShowListener {
             val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            positiveButton.isEnabled = selectedItems.isNotEmpty() // Enable if there are preselected items
-
-            // Enable OK button only if new items are selected or unselected
+            positiveButton.isEnabled = selectedItems.isNotEmpty()
             listView.setOnItemClickListener { _, _, _, _ ->
                 positiveButton.isEnabled = listView.checkedItemCount > 0 && hasSelectionChanged(listView)
             }
@@ -377,7 +358,6 @@ class RequestTaskActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // Function to check if the selection has changed
     private fun hasSelectionChanged(listView: ListView): Boolean {
         val currentSelectedItems = mutableListOf<String>()
         for (i in 0 until listView.count) {
@@ -387,7 +367,6 @@ class RequestTaskActivity : AppCompatActivity() {
         }
         return currentSelectedItems != selectedItems
     }
-
 
     private fun fetchTaskerAvailability() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
@@ -420,7 +399,6 @@ class RequestTaskActivity : AppCompatActivity() {
             }
         })
     }
-
 
     private fun setupDaySpinner() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, availableDates)
@@ -534,7 +512,7 @@ class RequestTaskActivity : AppCompatActivity() {
         val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
         val filePath = cursor?.getString(columnIndex ?: -1)
         cursor?.close()
-        return filePath ?: ""  // Return a default empty string if file path is not found
+        return filePath ?: ""
     }
     private fun displayImagesInGallery() {
         galleryContainer.removeAllViews()
@@ -552,7 +530,7 @@ class RequestTaskActivity : AppCompatActivity() {
                     FrameLayout.LayoutParams.MATCH_PARENT
                 )
                 scaleType = ImageView.ScaleType.CENTER_CROP
-                setImageBitmap(decodeSampledBitmapFromUri(uri, 300, 300)) // 🔽 Efficient decoding
+                setImageBitmap(decodeSampledBitmapFromUri(uri, 300, 300))
             }
 
             val removeButton = ImageView(this).apply {
@@ -567,9 +545,7 @@ class RequestTaskActivity : AppCompatActivity() {
                         displayImagesInGallery()
                     }
                 }
-
             }
-
             container.addView(imageView)
             container.addView(removeButton)
             galleryContainer.addView(container)
@@ -611,7 +587,7 @@ class RequestTaskActivity : AppCompatActivity() {
 
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)  // Allow multiple selection for gallery images
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         startActivityForResult(intent, IMAGE_PICK_REQUEST)
     }
 

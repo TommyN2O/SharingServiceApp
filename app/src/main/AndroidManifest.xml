@@ -19,11 +19,57 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".activitys.PaymentActivity"
+            android:name=".activitys.EditProfileDetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".activitys.TaskDetailActivity"
+            android:name=".activitys.ProfileDetailsActivity"
             android:exported="false" />
+        <activity
+            android:name=".activitys.LanguageSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activitys.BalanceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activitys.PeopleRequestDetailedHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activitys.MyTasksDetailedHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activitys.PeoplePlannedTasksDetailedActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activitys.MyPlannedTaskDetailedActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="payment-success"
+                    android:scheme="sharingapp" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activitys.PaymentActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="payment-cancel"
+                    android:scheme="sharingapp" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activitys.TaskDetailActivity"
+            android:exported="false"/>
         <activity
             android:name=".activitys.RequestDetailActivity"
             android:exported="false" />
@@ -71,7 +117,7 @@
             android:name=".activitys.DetailedTasksActivity"
             android:exported="false" />
         <activity
-            android:name=".activitys.PlanedTasksActivity"
+            android:name=".activitys.PlannedTasksActivity"
             android:exported="false" />
         <activity
             android:name=".activitys.ChatActivity"

@@ -28,31 +28,26 @@ import okhttp3.RequestBody
 
 class MyTaskerProfileActivity : AppCompatActivity() {
 
-    private var isExpanded = false  // Track if the description is expanded or not
+    private var isExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_tasker_profile)
-
-        // Check if the tasker profile exists from the backend
 
         // Setup view references
         val menuButton: ImageView = findViewById(R.id.menu_button)
         val readMoreButton: TextView = findViewById(R.id.read_more)
         val descriptionTextView: TextView = findViewById(R.id.detail_description)
 
-
         loadTaskerProfile()
 
-        // Set up Back Button
         val backButton: ImageView = findViewById(R.id.back_arrow)
         backButton.setOnClickListener {
             val intent = Intent(this, MoreActivity::class.java)
             startActivity(intent)
-            finish() // Go back to the previous screen
+            finish()
         }
 
-        // Set the menu button's click listener to show PopupMenu
         menuButton.setOnClickListener { view ->
             val popupMenu = PopupMenu(this, view)
             val inflater: MenuInflater = menuInflater
@@ -97,8 +92,6 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun updateAvailabilityToServer(availabilityList: List<AvailabilitySlot>) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
@@ -132,7 +125,6 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         const val REQUEST_CODE_SELECT_DAYS_AND_TIME = 1
     }
 
-    // Methods to handle menu item clicks
     private fun editAccount() {
         startActivity(Intent(this, EditMyTaskerProfileActivity::class.java))
     }
@@ -169,8 +161,6 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         })
     }
 
-
-
     private fun deleteAccount() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null) ?: ""
@@ -194,16 +184,15 @@ class MyTaskerProfileActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    // Navigate back to MoreActivity
                     val intent = Intent(this@MyTaskerProfileActivity, MoreActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     intent.putExtra(
                         "toast_message",
                         "Profile deleted successfully!"
-                    ) // Pass the toast message
+                    )
                     startActivity(intent)
 
-                    finish() // Finish current activity to prevent the user from returning to this screen
+                    finish()
                 } else {
                     Toast.makeText(
                         this@MyTaskerProfileActivity,
@@ -273,7 +262,6 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         val detailDescription: TextView = findViewById(R.id.detail_description)
         val readMore: TextView = findViewById(R.id.read_more)
 
-        // Set profile details like name, rating, etc.
         detailName.text = "${profileResponse.name ?: "Unknown"} ${
             profileResponse.surname?.firstOrNull()?.uppercase() ?: ""
         }.".trim()
@@ -283,7 +271,6 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         detailCities.text = profileResponse.cities.joinToString(", ") { it.name }
         detailHourlyRate.text = "Hourly Rate: $${profileResponse.hourly_rate}"
 
-        // Handle description (Read More functionality)
         val shortDescription = profileResponse.description.take(100) + "..."
         detailDescription.text = shortDescription
         readMore.setOnClickListener {
@@ -297,13 +284,20 @@ class MyTaskerProfileActivity : AppCompatActivity() {
             isExpanded = !isExpanded
         }
 
-        val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), profileResponse.profile_photo)
-        Glide.with(this)
-            .load(fullImageUrl)
-            .placeholder(R.drawable.placeholder_image_user)
-            .error(R.drawable.error)
-            .circleCrop()
-            .into(detailProfileImage)
+        if (profileResponse.profile_photo.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(R.drawable.placeholder_image_user)
+                .circleCrop()
+                .into(detailProfileImage)
+        } else {
+            val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), profileResponse.profile_photo)
+            Glide.with(this)
+                .load(fullImageUrl.toString())
+                .placeholder(R.drawable.placeholder_image_user)
+                .error(R.drawable.error)
+                .circleCrop()
+                .into(detailProfileImage)
+        }
 
         val galleryRecyclerView: RecyclerView = findViewById(R.id.galleryRecyclerView)
         val galleryImages = profileResponse.gallery

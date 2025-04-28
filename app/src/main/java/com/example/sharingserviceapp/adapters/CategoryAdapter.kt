@@ -20,7 +20,7 @@ class CategoryAdapter(
 ) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
     companion object {
-        internal const val BASE_IMAGE_URL = ApiServiceInstance.BASE_URL //"https://your.api.url" // Update with actual base URL
+        internal const val BASE_IMAGE_URL = ApiServiceInstance.BASE_URL
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -39,7 +39,6 @@ class CategoryAdapter(
 
         // Ensure full image URL
         val fullImageUrl = URL(URL(BASE_IMAGE_URL), category.image)
-        //val fullImageUrl = if (category.image.startsWith("/")) BASE_IMAGE_URL + category.image else category.image
         Glide.with(holder.itemView.context).load(fullImageUrl).into(holder.image)
 
         holder.itemView.setOnClickListener {

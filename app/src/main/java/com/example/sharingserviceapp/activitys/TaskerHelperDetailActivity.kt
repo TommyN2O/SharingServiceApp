@@ -23,7 +23,6 @@ import retrofit2.Response
 import java.net.URL
 
 class TaskerHelperDetailActivity : AppCompatActivity() {
-    private lateinit var galleryAdapter: GalleryAdapter
     private var isExpanded = false
     private var userId: Int = -1
     private var categoryId: Int = -1
@@ -35,7 +34,6 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tasker_helper_detail)
 
-        // Retrieve TaskerHelper object from Intent
         userId = intent.getIntExtra("user_id", -1)
         if (userId == -1) {
             Toast.makeText(this, "Invalid Tasker ID", Toast.LENGTH_SHORT).show()
@@ -49,10 +47,8 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
             finish()
             return
         }
-        // Select Button
        setupSelectButton()
 
-        //setupReviews()
         setupBackButton()
 
         loadTaskerProfile(userId)
@@ -80,14 +76,13 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
     private fun navigateToRequestTaskActivity() {
         val intent = Intent(this, RequestTaskActivity::class.java).apply{
             putExtra("user_id", userId)
-            putStringArrayListExtra("allowed_city_ids", ArrayList(selectedCityIds))        // List<String>
-            putStringArrayListExtra("allowed_category_ids", ArrayList(selectedCategoryIds)) // List<String>
+            putStringArrayListExtra("allowed_city_ids", ArrayList(selectedCityIds))
+            putStringArrayListExtra("allowed_category_ids", ArrayList(selectedCategoryIds))
             putExtra("category_id", categoryId)
         }
         startActivity(intent)
         finish()
     }
-//
 
     private fun loadTaskerProfile(userId: Int) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
@@ -101,7 +96,7 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
         }
 
         val api = ApiServiceInstance.Auth.apiServices
-        val call = api.getTaskerProfileById("Bearer $token", userId) // Make sure this function exists in your API interface
+        val call = api.getTaskerProfileById("Bearer $token", userId)
 
         call.enqueue(object : Callback<TaskerHelper> {
             override fun onResponse(call: Call<TaskerHelper>, response: Response<TaskerHelper>) {
@@ -111,7 +106,6 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
                     Toast.makeText(this@TaskerHelperDetailActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<TaskerHelper>, t: Throwable) {
                 Toast.makeText(this@TaskerHelperDetailActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
@@ -128,33 +122,22 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
         val detailHourlyRate: TextView = findViewById(R.id.helper_price)
         val detailDescription: TextView = findViewById(R.id.detail_description)
         val readMore: TextView = findViewById(R.id.read_more)
-//        val galleryRecyclerView: RecyclerView = findViewById(R.id.galleryRecyclerView)
-//        val reviewRecyclerView: RecyclerView = findViewById(R.id.reviewRecyclerView)
 
-        // Set name
         detailName.text = "${profileResponse.name ?: "Unknown"} ${profileResponse.surname?.firstOrNull()?.uppercase() ?: ""}.".trim()
 
-
-        // Set rating
         detailRating.text = "Rating: ${profileResponse.rating}"
 
-        // Set reviews count
         detailReviews.text = "(${profileResponse.reviewCount} reviews)"
 
-        // Set categories
         detailCategories.text = profileResponse.categories.joinToString(", "){ it.name }
 
-        // Set cities
         detailCities.text = profileResponse.cities.joinToString(", "){ it.name }
 
-        // Set hourly rate
         detailHourlyRate.text = "$${profileResponse.hourly_rate}/h"
 
-        // Set cities and categories for passing later
         selectedCityIds = profileResponse.cities.map { it.id.toString() }
         selectedCategoryIds = profileResponse.categories.map { it.id.toString() }
 
-        // Handle description (Read More functionality)
         val description = profileResponse.description
 
         if (description.length > 200) {
@@ -243,81 +226,3 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
         arrowRight.visibility = if (currentIndex < totalSize - 1) View.VISIBLE else View.GONE
     }
 }
-//         Load profile image using Glide
-//        Glide.with(this)
-//            .load(profileResponse.profile_photo_url)
-//            .placeholder(R.drawable.default_profile) // Placeholder image
-//            .error(R.drawable.error_image) // Error image
-//            .into(detailProfileImage)
-//
-//        // Set up Gallery RecyclerView
-//        galleryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-//        galleryRecyclerView.adapter = GalleryAdapter(profileResponse.galleryImages)
-////
-//        // Set up Reviews RecyclerView
-//        reviewRecyclerView.layoutManager = LinearLayoutManager(this)
-//        reviewRecyclerView.adapter = ReviewAdapter(profileResponse.reviews)
-
-// Handle gallery
-//        val galleryRecyclerView = findViewById<RecyclerView>(R.id.galleryRecyclerView)
-//        galleryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-//        galleryAdapter = GalleryAdapter(tasker.galleryImages) { position ->
-//            showZoomDialog(tasker.galleryImages, position)
-//        }
-
-
-//        galleryRecyclerView.adapter = galleryAdapter
-//    private fun setupReviews() {
-//        val reviewRecyclerView: RecyclerView = findViewById(R.id.reviewRecyclerView)
-//        reviewRecyclerView.layoutManager = LinearLayoutManager(this)
-//
-//        val reviews = listOf(
-//            Review("Alice Smith", R.drawable.user, 4.5, "March 2024", "Great service! Highly recommended."),
-//            Review("John Doe", R.drawable.user, 5.0, "February 2024", "Very professional and fast."),
-//            Review("Emma Wilson", R.drawable.user, 3.8, "January 2024", "Good, but could improve on timing."),
-//            Review("Michael Brown", R.drawable.user, 4.0, "December 2023", "Satisfied with the work.")
-//        )
-//
-//        val reviewAdapter = ReviewAdapter(reviews)
-//        reviewRecyclerView.adapter = reviewAdapter
-//    }
-//
-//    fun showZoomDialog(images: List<Int>, startPosition: Int) {
-//        val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-//        dialog.setContentView(R.layout.dialog_zoom_image)
-//
-//        val imageView = dialog.findViewById<ImageView>(R.id.zoomedImageView)
-//        val closeButton = dialog.findViewById<ImageView>(R.id.close_button)
-//        val arrowLeft = dialog.findViewById<ImageView>(R.id.arrow_left)
-//        val arrowRight = dialog.findViewById<ImageView>(R.id.arrow_right)
-//
-//        var currentIndex = startPosition
-//        imageView.setImageResource(images[currentIndex])
-//
-//        updateArrowsVisibility(currentIndex, images.size, arrowLeft, arrowRight)
-//
-//        arrowLeft.setOnClickListener {
-//            if (currentIndex > 0) {
-//                currentIndex--
-//                imageView.setImageResource(images[currentIndex])
-//                updateArrowsVisibility(currentIndex, images.size, arrowLeft, arrowRight)
-//            }
-//        }
-//
-//        arrowRight.setOnClickListener {
-//            if (currentIndex < images.size - 1) {
-//                currentIndex++
-//                imageView.setImageResource(images[currentIndex])
-//                updateArrowsVisibility(currentIndex, images.size, arrowLeft, arrowRight)
-//            }
-//        }
-//
-//        closeButton.setOnClickListener { dialog.dismiss() }
-//
-//        dialog.show()
-//    }
-//
-//    private fun updateArrowsVisibility(currentIndex: Int, totalSize: Int, arrowLeft: ImageView, arrowRight: ImageView) {
-//        arrowLeft.visibility = if (currentIndex > 0) View.VISIBLE else View.GONE
-//        arrowRight.visibility = if (currentIndex < totalSize - 1) View.VISIBLE else View.GONE
-//    }

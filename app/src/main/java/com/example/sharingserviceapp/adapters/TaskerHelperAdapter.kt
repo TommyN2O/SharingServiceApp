@@ -46,7 +46,6 @@ class TaskerHelperAdapter(
         private val shortDescription: TextView = itemView.findViewById(R.id.short_description)
 
         fun bind(customer: TaskerHelper) {
-            // ✅ Load profile photo
             val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), customer.profile_photo)
             Glide.with(itemView.context)
                 .load(fullImageUrl.toString())

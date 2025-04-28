@@ -29,7 +29,6 @@ class MyTasksAdapter(
         val txtTasker: TextView = itemView.findViewById(R.id.txt_tasker)
 
         fun bind(task: TaskResponse) {
-            // ✅ Load profile photo (if available)
             task.sender.profile_photo?.let {
                 try {
                     val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), it)
@@ -44,38 +43,30 @@ class MyTasksAdapter(
                 }
             } ?: imgProfile.setImageResource(R.drawable.placeholder_image_user)
 
-            // Name of sender
             txtName.text = "${task.sender.name.replaceFirstChar { it.uppercase() }} ${task.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
 
-            // Categories (e.g. "Cleaning, Gardening")
             txtCategory.text = task.categories.joinToString { it.name }
 
-            // Availability (just show the first slot for now)
             val slot = task.availability.firstOrNull()
             txtDateTime.text = slot?.let { "${it.date}, ${it.time.dropLast(3)}" } ?: "Not set"
 
-            // City
             txtCity.text = task.city.name
 
-            // Status
             val status = task.status.replaceFirstChar { it.uppercase() }
             txtStatus.text = "Status: $status"
 
-            // Change color of the status based on the status text
             when (status) {
                 "Pending" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_pending))
                 "Waiting for Payment" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_waiting_payment))
                 "Declined"->txtStatus.setTextColor(context.resources.getColor(R.color.status_declined))
+                "Canceled"->txtStatus.setTextColor(context.getColor(R.color.status_declined))
                 else -> txtStatus.setTextColor(context.resources.getColor(R.color.status_default)) // Default color
             }
 
-
-            // Tasker
             txtTasker.text = task.tasker?.let {
-                "Tasker: ${it.name} ${it.surname.firstOrNull()?.uppercaseChar() ?: ""}."
+                "Tasker: ${it.name} ${it.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
             } ?: "Tasker: Not chosen"
 
-            // Click listener
             itemView.setOnClickListener { onItemClick(task) }
         }
     }

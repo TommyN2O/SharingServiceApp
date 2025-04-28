@@ -29,7 +29,6 @@ class PeopleRequestsAdapter(
         val txtStatus: TextView = itemView.findViewById(R.id.txt_status)
 
         fun bind(request: TaskResponse) {
-            // Profile image
             request.sender.profile_photo?.let {
                 try {
                     val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), it)
@@ -44,31 +43,26 @@ class PeopleRequestsAdapter(
                 }
             } ?: imgProfile.setImageResource(R.drawable.placeholder_image_user)
 
-            // Sender name
             txtName.text = "${request.sender.name.replaceFirstChar { it.uppercase() }} ${request.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
 
-            // Categories
             txtCategory.text = "Category: ${request.categories.joinToString { it.name }}"
 
-            // Date and time
             val slot = request.availability.firstOrNull()
             txtDateTime.text = slot?.let { "${it.date}, ${it.time.dropLast(3)}" } ?: "Not set"
 
-            // City
             txtCity.text = request.city.name
 
             val status = request.status.replaceFirstChar { it.uppercase() }
             txtStatus.text = "Status: $status"
 
-            // Change color of the status based on the status text
             when (status) {
                 "Pending" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_pending))
                 "Waiting for Payment" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_waiting_payment))
                 "Declined"->txtStatus.setTextColor(context.resources.getColor(R.color.status_declined))
-                else -> txtStatus.setTextColor(context.resources.getColor(R.color.status_default)) // Default color
+                "Canceled"->txtStatus.setTextColor(context.getColor(R.color.status_declined))
+                else -> txtStatus.setTextColor(context.resources.getColor(R.color.status_default))
             }
 
-            // Click handler
             itemView.setOnClickListener { onItemClick(request) }
         }
     }

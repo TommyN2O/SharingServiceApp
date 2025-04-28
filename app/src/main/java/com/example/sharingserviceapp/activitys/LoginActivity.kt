@@ -26,14 +26,11 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        // Initialize UI elements
         emailInput = findViewById(R.id.email)
         passwordInput = findViewById(R.id.password)
         loginButton = findViewById(R.id.btn_login)
         progressBar = findViewById(R.id.pb_loading)
 
-        // Set button click listener
         loginButton.setOnClickListener {
             loginUser()
         }
@@ -48,26 +45,21 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // Show progress bar
         progressBar.visibility = View.VISIBLE
 
         val loginRequest = LoginRequest(email, password)
-
         val call = ApiServiceInstance.Auth.apiServices.loginUser(loginRequest)
 
-        // Call login endpoint
         call.enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
-                // Hide progress bar
                 progressBar.visibility = View.GONE
 
                 if (response.isSuccessful) {
                     val authResponse = response.body()
                     if (authResponse != null) {
-                        // Save token (for future API requests)
+
                         saveTokenAndUserId(authResponse.token, authResponse.user.id)
 
-                        // Navigate to the main dashboard
                         val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                         startActivity(intent)
                         finish()

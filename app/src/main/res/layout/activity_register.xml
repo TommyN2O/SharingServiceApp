@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activitys.RegisterActivity">
 
-    <!-- Back Button -->
-
     <ImageView
         android:id="@+id/backButton"
         android:layout_width="51dp"
@@ -144,9 +142,6 @@
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Already have an account? Login Link -->
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/age_layout"

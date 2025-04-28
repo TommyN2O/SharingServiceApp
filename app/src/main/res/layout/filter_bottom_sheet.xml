@@ -6,7 +6,6 @@
     android:padding="16dp"
     android:background="@android:color/white">
 
-    <!-- Title Text -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +15,6 @@
         android:textColor="#333333"
         android:layout_marginBottom="16dp" />
 
-    <!-- Select Day Label -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +23,6 @@
         android:textColor="#666666"
         android:layout_marginTop="16dp" />
 
-    <!-- Day Picker Spinner -->
     <Spinner
         android:id="@+id/spinner_day"
         android:layout_width="match_parent"
@@ -34,7 +31,6 @@
         android:background="@drawable/rounded_edittext"
         android:padding="10dp" />
 
-    <!-- Time of Day Label -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +39,6 @@
         android:textColor="#666666"
         android:layout_marginTop="16dp" />
 
-    <!-- Radio Buttons for Time of Day -->
     <RadioGroup
         android:id="@+id/radio_time_of_day"
         android:layout_width="wrap_content"
@@ -76,7 +71,6 @@
             android:textColor="#333333" />
     </RadioGroup>
 
-    <!-- Specific Time Label -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,7 +79,6 @@
         android:textColor="#666666"
         android:layout_marginTop="16dp" />
 
-    <!-- Specific Time Picker Spinner -->
     <Spinner
         android:id="@+id/spinner_specific_time"
         android:layout_width="match_parent"
@@ -94,7 +87,6 @@
         android:background="@drawable/rounded_edittext"
         android:padding="10dp" />
 
-    <!-- City Label -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -103,7 +95,6 @@
         android:textColor="#666666"
         android:layout_marginTop="16dp" />
 
-    <!-- City Picker Spinner -->
     <Spinner
         android:id="@+id/spinner_city"
         android:layout_width="match_parent"
@@ -113,7 +104,6 @@
         android:padding="10dp"
         android:layout_marginBottom="16dp" />
 
-    <!-- Price Range Label -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -121,7 +111,6 @@
         android:textSize="16sp"
         android:textColor="#666666" />
 
-    <!-- SeekBar for Price Range -->
     <SeekBar
         android:id="@+id/seekbar_price"
         android:layout_width="match_parent"
@@ -129,7 +118,6 @@
         android:max="100"
         android:layout_marginTop="8dp" />
 
-    <!-- Apply Filters Button -->
     <Button
         android:id="@+id/btn_apply_filters"
         android:layout_width="370dp"

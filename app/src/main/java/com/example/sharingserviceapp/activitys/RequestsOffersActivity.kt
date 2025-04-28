@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharingserviceapp.R
@@ -28,7 +29,6 @@ class RequestsOffersActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_requests_offers)
 
         recyclerView = findViewById(R.id.recyclerView)
@@ -47,6 +47,7 @@ class RequestsOffersActivity : AppCompatActivity() {
         myTasksAdapter = MyTasksAdapter(this, emptyList()) { task ->
             navigateToTaskDetails(task)
         }
+
         setupBackButton()
         toggleList(false)
     }
@@ -107,8 +108,6 @@ class RequestsOffersActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
 
-        if (token.isNullOrEmpty()) return
-
         ApiServiceInstance.Auth.apiServices.getPeopleRequests("Bearer $token")
             .enqueue(object : Callback<List<TaskResponse>> {
                 override fun onResponse(call: Call<List<TaskResponse>>, response: Response<List<TaskResponse>>) {
@@ -157,7 +156,7 @@ class RequestsOffersActivity : AppCompatActivity() {
     }
 
     private fun loadFilterSettings() {
-        // Optional: Add filter logic
+        //  Add filter logic
     }
 
     private fun navigateToTaskDetails(task: TaskResponse) {
@@ -168,7 +167,7 @@ class RequestsOffersActivity : AppCompatActivity() {
 
     private fun navigateToRequestDetails(request: TaskResponse) {
         val intent = Intent(this, RequestDetailActivity::class.java)
-        intent.putExtra("TASK_ID", request.id)  // assuming task_id is the key
+        intent.putExtra("task_id", request.id)
         startActivity(intent)
     }
 }

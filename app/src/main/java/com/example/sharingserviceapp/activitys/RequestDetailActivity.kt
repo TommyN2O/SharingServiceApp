@@ -12,6 +12,9 @@ import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
 import com.example.sharingserviceapp.activitys.TaskerHelperDetailActivity
 import com.example.sharingserviceapp.adapters.GalleryAdapter
+import com.example.sharingserviceapp.models.CreateChat
+import com.example.sharingserviceapp.models.CreateChatBody
+import com.example.sharingserviceapp.models.Message
 import com.example.sharingserviceapp.models.StatusUpdate
 import com.example.sharingserviceapp.models.TaskResponse
 import com.example.sharingserviceapp.models.TaskerHelper
@@ -36,6 +39,7 @@ class RequestDetailActivity : AppCompatActivity() {
     private lateinit var profileImage: ImageView
     private lateinit var galleryRecyclerView: RecyclerView
     private var taskId: Int = -1
+    private var receiverId: Int ?= -1
     private lateinit var btnAccept: Button
     private lateinit var btnDecline: Button
 
@@ -43,7 +47,6 @@ class RequestDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_detail)
 
-        // Bind views
         customerName = findViewById(R.id.customerName)
         taskCategory = findViewById(R.id.taskCategory)
         taskDateTime = findViewById(R.id.taskDateTime)
@@ -57,62 +60,87 @@ class RequestDetailActivity : AppCompatActivity() {
         btnAccept = findViewById(R.id.btnAccept)
         btnDecline = findViewById(R.id.btnDecline)
 
-        taskId = intent.getIntExtra("TASK_ID", -1)
+        taskId = intent.getIntExtra("task_id", -1)
         if (taskId == -1) {
             Toast.makeText(this, "Invalid Task ID", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
+
         loadRequestDetailed(taskId)
 
-        // Set up Accept button listener
         btnAccept.setOnClickListener {
             updateTaskStatus("Accepted")
         }
 
-        // Set up Decline button listener
         btnDecline.setOnClickListener {
             showDeclineConfirmationDialog()
         }
 
         setupBackButton()
+        setupChatActivity()
     }
 
     private fun showDeclineConfirmationDialog() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_confirmation)
 
-        // Set the confirmation message
         val confirmationMessage = dialog.findViewById<TextView>(R.id.confirmationMessage)
         confirmationMessage.text = "Are you sure you want to decline this request?"
 
-        // Set up Yes button listener
+
         val btnYes = dialog.findViewById<Button>(R.id.btnYes)
         btnYes.setOnClickListener {
-            updateTaskStatus("Declined")  // Update the task status to Declined
-            dialog.dismiss()  // Dismiss the dialog
+            updateTaskStatus("Declined")
+            dialog.dismiss()
         }
 
-        // Set up No button listener
         val btnNo = dialog.findViewById<Button>(R.id.btnNo)
         btnNo.setOnClickListener {
-            dialog.dismiss()  // Close the dialog without any action
+            dialog.dismiss()
         }
 
         dialog.show()
     }
 
-
     private fun setupBackButton() {
         findViewById<ImageView>(R.id.backArrowButton).setOnClickListener {
-            navigateBackActivity()
+            val intent = Intent(this, RequestsOffersActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
-    private fun navigateBackActivity() {
-        val intent = Intent(this, RequestsOffersActivity::class.java)
-        startActivity(intent)
-        finish()
+    private fun setupChatActivity() {
+        findViewById<ImageView>(R.id.messageButton).setOnClickListener{
+
+            val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+            val token = sharedPreferences.getString("auth_token", null)
+
+                val api = ApiServiceInstance.Auth.apiServices
+                val body = CreateChatBody(receiverId)
+                val call = api.createChat("Bearer $token", body)
+
+                call.enqueue(object : Callback<CreateChat> {
+                    override fun onResponse(call: Call<CreateChat>, response: Response<CreateChat>) {
+                        if (response.isSuccessful) {
+                            val chatId = response.body()!!.chatId
+                            val intent = Intent(this@RequestDetailActivity, ChatActivity::class.java).apply {
+                                putExtra("chat_id", chatId)
+                                putExtra("receiver_id", receiverId)
+                            }
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            Toast.makeText(this@RequestDetailActivity, "Failed to create chat", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CreateChat>, t: Throwable) {
+                        Toast.makeText(this@RequestDetailActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                    }
+                })
+        }
     }
 
     private fun updateTaskStatus(status: String) {
@@ -122,10 +150,8 @@ class RequestDetailActivity : AppCompatActivity() {
         if (token != null) {
             val api = ApiServiceInstance.Auth.apiServices
 
-            // Create the status update body
             val statusUpdate = StatusUpdate(status)
 
-            // Send the PUT request with the status in the body
             val call = api.updateTaskStatus("Bearer $token", taskId, statusUpdate)
 
             call.enqueue(object : Callback<Void> {
@@ -133,7 +159,7 @@ class RequestDetailActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         Toast.makeText(this@RequestDetailActivity, "$status successfully", Toast.LENGTH_SHORT).show()
                         loadRequestDetailed(taskId)
-                        // Optionally, update the UI to reflect the new status
+
                     } else {
                         Toast.makeText(this@RequestDetailActivity, "Failed to update status", Toast.LENGTH_SHORT).show()
                     }
@@ -150,7 +176,6 @@ class RequestDetailActivity : AppCompatActivity() {
     private fun loadRequestDetailed(taskId: Int) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
 
         val api = ApiServiceInstance.Auth.apiServices
         val call = api.getPeopleRequestsById("Bearer $token", taskId) // Make sure this function exists in your API interface
@@ -179,26 +204,26 @@ class RequestDetailActivity : AppCompatActivity() {
         taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
         taskDuration.text = "Duration: ${request.duration}"
         taskLocation.text = "Location: ${request.city.name}"
-       // taskPrice.text = "Price: $${task.price}"
+        taskPrice.text = "Price: $${request.tasker?.hourly_rate}/h"
         taskDescription.text = request.description
 
+        receiverId=request.tasker?.id
 
         val status = request.status.replaceFirstChar { it.uppercase() }
         taskStatus.text = "Status: $status"
 
-        // Change color of the status based on the status text
         when (status) {
             "Pending" -> taskStatus.setTextColor(resources.getColor(R.color.status_pending))
             "Waiting for Payment" -> taskStatus.setTextColor(resources.getColor(R.color.status_waiting_payment))
             "Declined"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
+            "Canceled"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
             else -> taskStatus.setTextColor(resources.getColor(R.color.status_default))
         }
 
-        // Hide the Accept button if status is "Waiting for Payment"
         if (status.equals("Waiting for Payment", ignoreCase = true)) {
             btnAccept.visibility = View.GONE
             val paramsDecline = btnDecline.layoutParams
-            paramsDecline.width = dpToPx(320f) // Set width to 320dp
+            paramsDecline.width = dpToPx(320f)
             btnDecline.layoutParams = paramsDecline
         } else {
             btnAccept.visibility = View.VISIBLE
@@ -213,7 +238,6 @@ class RequestDetailActivity : AppCompatActivity() {
             URL(URL(ApiServiceInstance.BASE_URL), it)
         } ?: R.drawable.placeholder_image_user
 
-// Load the image with Glide
         Glide.with(this)
             .load(imageUrl)
             .placeholder(R.drawable.placeholder_image_user)

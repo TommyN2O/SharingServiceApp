@@ -43,8 +43,6 @@ import java.net.URL
 class EditMyTaskerProfileActivity : AppCompatActivity() {
 
     private lateinit var profileImageView: ImageView
-    private lateinit var nameEditText: EditText
-    private lateinit var surnameEditText: EditText
     private lateinit var descriptionEditText: EditText
     private lateinit var hourlyRateEditText: EditText
     private lateinit var saveButton: Button
@@ -66,10 +64,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_my_tasker_profile)
-
-        // Initialize UI elements
-        nameEditText = findViewById(R.id.edit_name)
-        surnameEditText = findViewById(R.id.edit_surname)
         profileImageView = findViewById(R.id.img_profile_photo)
         descriptionEditText = findViewById(R.id.edit_description)
         hourlyRateEditText = findViewById(R.id.edit_hourly_rate)
@@ -79,30 +73,24 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         selectDaysTimeButton = findViewById(R.id.btn_select_days_time)
         galleryContainer = findViewById(R.id.gallery_container)
 
-        // Fetch categories and cities from API
         fetchCategories()
         fetchCities()
 
-        // Fetch profile data when the activity is created
         fetchTaskerProfile()
 
-        // Handle back button click
         val backButton: ImageView = findViewById(R.id.btn_back)
         backButton.setOnClickListener {
-            finish() // Close the current activity and go back to the previous one
+            finish()
         }
 
-        // Handle save button click
         saveButton.setOnClickListener {
             updateTaskerProfile()
         }
 
-        // Handle cities TextView click to show city selection dialog
         citiesTextView.setOnClickListener {
             showCitySelectionDialog()
         }
 
-        // Handle categories TextView click to show category selection dialog
         categoriesTextView.setOnClickListener {
             showCategorySelectionDialog()
         }
@@ -110,24 +98,19 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_upload_photo).setOnClickListener {
             checkStoragePermissionAndOpenGallery(isForProfile = true)
         }
-        // Gallery
+
         findViewById<Button>(R.id.btn_add_photos).setOnClickListener {
             checkStoragePermissionAndOpenGallery(isForProfile = false)
         }
 
-
-        // Handle availability days and times button click
         selectDaysTimeButton.setOnClickListener {
-            // Open the DaysAndTimeActivity to select availability
             val intent = Intent(this, DaysAndTimeActivity::class.java)
             val availabilitySlotList = availabilitySlots.map { "${it.date} ${it.time}" }
             intent.putStringArrayListExtra("PREVIOUS_AVAILABILITY", ArrayList(availabilitySlotList))
             startActivityForResult(intent, REQUEST_CODE_SELECT_DAYS_AND_TIME)
         }
-
     }
 
-    // Fetch categories from the API
     private fun fetchCategories() {
         val apiService = ApiServiceInstance.Auth.apiServices
         apiService.getCategories().enqueue(object : Callback<List<Category>> {
@@ -145,7 +128,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         })
     }
 
-    // Fetch cities from the API
     private fun fetchCities() {
         val apiService = ApiServiceInstance.Auth.apiServices
         apiService.getCities().enqueue(object : Callback<List<City>> {
@@ -163,7 +145,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         })
     }
 
-    // Fetch the user profile
     private fun fetchTaskerProfile() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null) ?: ""
@@ -180,8 +161,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
                     val profile = response.body()
 
                     profile?.let {
-                        nameEditText.setText(it.name)
-                        surnameEditText.setText(it.surname)
                         descriptionEditText.setText(it.description)
                         hourlyRateEditText.setText(it.hourly_rate.toString())
 
@@ -189,20 +168,13 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
                         categoriesTextView.text =
                             it.categories.joinToString(", ") { category -> category.name }
 
-//                        availabilitySlots =
-//                            it.availability.map { slot -> AvailabilitySlot(slot.date, slot.time) }
-//                        availabilityList =
-//                            availabilitySlots.map { slot -> "${slot.date} ${slot.time}" }
-
-
-                        // ✅ Load profile image using Glide
                         val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), it.profile_photo)
                         Glide.with(this@EditMyTaskerProfileActivity)
                             .load(fullImageUrl)
                             .placeholder(R.drawable.placeholder_image_user)
                             .error(R.drawable.error)
                             .circleCrop()
-                            .into(profileImageView) // Make sure this is the correct ImageView reference
+                            .into(profileImageView)
 
                         profilePhotoUri = Uri.parse(fullImageUrl.toString())
                         val galleryUrls = it.gallery.map { path ->
@@ -212,7 +184,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
                         existingGalleryUrls.clear()
                         existingGalleryUrls.addAll(galleryUrls)
 
-// Refresh gallery UI with both server and local images
                         updateGalleryView()
 
                     }
@@ -227,8 +198,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         })
     }
 
-
-    // Show city selection dialog
     private fun showCitySelectionDialog() {
         val items = cities.map { it.name }
         val selectedItems = mutableListOf<String>()
@@ -242,7 +211,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, items)
         listView.adapter = adapter
 
-        // Pre-select the cities that were selected in the profile
         for (i in 0 until listView.count) {
             if (selectedItems.contains(items[i])) {
                 listView.setItemChecked(i, true)
@@ -278,7 +246,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         builder.show()
     }
 
-    // Show category selection dialog
     private fun showCategorySelectionDialog() {
         val items = categories.map { it.name }
         val selectedItems = mutableListOf<String>()
@@ -292,7 +259,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, items)
         listView.adapter = adapter
 
-        // Pre-select the categories that were selected in the profile
         for (i in 0 until listView.count) {
             if (selectedItems.contains(items[i])) {
                 listView.setItemChecked(i, true)
@@ -330,8 +296,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
 
 
     private fun updateTaskerProfile() {
-        val name = nameEditText.text.toString().trim()
-        val surname = surnameEditText.text.toString().trim()
         val description = descriptionEditText.text.toString().trim()
         val hourlyRate = hourlyRateEditText.text.toString().toDouble()
 
@@ -344,8 +308,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
 
 
         val taskerProfileRequest = TaskerProfileRequest(
-            name = name,
-            surname = surname,
             description = description,
             hourly_rate = hourlyRate,
             categories = selectedCategories,
@@ -367,7 +329,7 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         val taskerProfileJson = gson.toJson(taskerProfileRequest)
         val taskerProfileRequestBody = RequestBody.create("application/json".toMediaTypeOrNull(), taskerProfileJson)
 
-        // Profile Photo (Optional, might be null)
+
         val profilePhotoPart = profilePhotoUri?.let { uri ->
             try {
                 val inputStream = contentResolver.openInputStream(uri)
@@ -383,7 +345,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
             }
         }
 
-        // Gallery Images
         val galleryParts = galleryUris.mapNotNull { uri ->
             try {
                 val inputStream = contentResolver.openInputStream(uri)
@@ -398,7 +359,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
             }
         }
 
-        // Authentication token
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null) ?: ""
 
@@ -407,12 +367,11 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
             return
         }
 
-        // API call
         val call = ApiServiceInstance.Auth.apiServices.updateTaskerProfile(
             "Bearer $token",
-            profileImage = profilePhotoPart,  // Profile photo part
+            profileImage = profilePhotoPart,
             taskerProfileJson = taskerProfileRequestBody,
-            galleryImages = galleryParts  // Gallery images parts
+            galleryImages = galleryParts
         )
 
         call.enqueue(object : Callback<TaskerProfileResponse> {
@@ -434,18 +393,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         })
     }
 
-    private fun getFileFromUri(uri: Uri): File {
-        val inputStream = contentResolver.openInputStream(uri)
-            ?: throw FileNotFoundException("Unable to open input stream from URI: $uri")
-        val file = File.createTempFile("upload_", ".jpg", cacheDir)
-        inputStream.use { input ->
-            file.outputStream().use { output ->
-                input.copyTo(output)
-            }
-        }
-        return file
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -454,12 +401,11 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
                 if (resultCode == Activity.RESULT_OK && data?.data != null) {
                     val sourceUri = data.data!!
 
-                    // Create a destination file in the cache directory
                     val destinationFile = File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg")
                     val destinationUri = Uri.fromFile(destinationFile)
 
                     val options = UCrop.Options().apply {
-                        setCircleDimmedLayer(true) // Circle crop UI
+                        setCircleDimmedLayer(true)
                         setShowCropFrame(false)
                         setShowCropGrid(false)
                         setCompressionFormat(Bitmap.CompressFormat.JPEG)
@@ -480,7 +426,7 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
                     if (resultUri != null) {
                         Glide.with(this)
                             .load(resultUri)
-                            .circleCrop() // This makes it appear round in the ImageView
+                            .circleCrop()
                             .into(profileImageView)
 
                         profilePhotoUri = resultUri
@@ -496,25 +442,21 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
 
             IMAGE_PICK_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    // Don't clear galleryUris; add new images to the existing list
                     if (data.clipData != null) {
                         val count = data.clipData!!.itemCount
                         for (i in 0 until count) {
                             val imageUri = data.clipData!!.getItemAt(i).uri
                             if (!galleryUris.contains(imageUri)) {
-                                galleryUris.add(imageUri) // Add new image to gallery
+                                galleryUris.add(imageUri)
                             }
                         }
                     } else if (data.data != null) {
                         val imageUri = data.data!!
                         if (!galleryUris.contains(imageUri)) {
-                            galleryUris.add(imageUri) // Add new image to gallery
+                            galleryUris.add(imageUri)
                         }
                     }
-
-                    // Update the gallery view
                     updateGalleryView()
-
                 }
             }
 
@@ -530,10 +472,9 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         }
     }
 
-    // Function to open image picker
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)  // Allow multiple selection for gallery images
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         startActivityForResult(intent, IMAGE_PICK_REQUEST)
     }
 
@@ -555,7 +496,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         }
     }
 
-    // Function to open profile photo image picker (Only one photo)
     private fun openProfilePhotoGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent,
@@ -605,14 +545,11 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
                     showDeleteConfirmationDialog(onDelete)
                 }
             }
-
             frameLayout.addView(imageView)
             frameLayout.addView(deleteButton)
-
             return frameLayout
         }
 
-        // Existing images
         for (url in existingGalleryUrls) {
             val imageView = ImageView(this@EditMyTaskerProfileActivity).apply {
                 layoutParams = FrameLayout.LayoutParams(
@@ -637,7 +574,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
             galleryContainer.addView(frame)
         }
 
-        // New images
         for (uri in galleryUris) {
             if (uri.toString() !in existingSet) {
                 val imageView = ImageView(this@EditMyTaskerProfileActivity).apply {
@@ -663,8 +599,6 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
         }
     }
 
-
-    // Show confirmation dialog before removing an image
     private fun showDeleteConfirmationDialog(onConfirm: () -> Unit) {
         AlertDialog.Builder(this)
             .setTitle("Delete Image")
@@ -673,6 +607,4 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
             .setNegativeButton("No", null)
             .show()
     }
-
-
 }

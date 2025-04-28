@@ -4,13 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Top Section: Back Arrow, Title, and Menu Button -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Back Arrow -->
         <ImageView
             android:id="@+id/back_arrow"
             android:layout_width="40dp"
@@ -22,7 +20,6 @@
             android:contentDescription="Back"
             android:src="@drawable/chevron_arrow_left" />
 
-        <!-- Title: Your Tasker Profile -->
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -33,7 +30,6 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <!-- Menu Button (Right side) -->
         <ImageView
             android:id="@+id/menu_button"
             android:layout_width="40dp"
@@ -48,7 +44,6 @@
             android:focusable="true" />
     </RelativeLayout>
 
-    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -61,14 +56,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Profile Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
                 android:gravity="start">
 
-                <!-- Profile Image (Left) -->
                 <ImageView
                     android:id="@+id/detail_profile_image"
                     android:layout_width="100dp"
@@ -77,7 +71,6 @@
                     android:scaleType="centerCrop"
                     android:background="@drawable/circle_border"/>
 
-                <!-- Name (Centered) -->
                 <TextView
                     android:id="@+id/detail_name"
                     android:layout_width="wrap_content"
@@ -88,7 +81,6 @@
                     android:textStyle="bold"/>
             </LinearLayout>
 
-            <!-- Rating and Reviews (Aligned to Left) -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,7 +110,6 @@
                     android:textSize="14sp"/>
             </LinearLayout>
 
-            <!-- Categories with Icon -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -141,7 +132,6 @@
                     android:textColor="#7f7f7f"/>
             </LinearLayout>
 
-            <!-- Cities with Icon -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -164,7 +154,6 @@
                     android:textColor="#7f7f7f"/>
             </LinearLayout>
 
-            <!-- Hourly Rate with Icon -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -187,7 +176,6 @@
                     android:textColor="#7f7f7f"/>
             </LinearLayout>
 
-            <!-- Skills & Experience Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -196,7 +184,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
-            <!-- Description -->
             <TextView
                 android:id="@+id/detail_description"
                 android:layout_width="match_parent"
@@ -206,7 +193,6 @@
                 android:textColor="#7f7f7f"
                 android:textSize="14sp"/>
 
-            <!-- Read More Button -->
             <TextView
                 android:id="@+id/read_more"
                 android:layout_width="wrap_content"
@@ -218,7 +204,6 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <!-- Photos Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -228,7 +213,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
-            <!-- Gallery RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/galleryRecyclerView"
                 android:layout_width="match_parent"
@@ -236,7 +220,6 @@
                 android:orientation="horizontal"
                 android:scrollbars="horizontal"/>
 
-            <!-- Reviews Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -246,7 +229,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
-            <!-- Reviews RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reviewRecyclerView"
                 android:layout_width="match_parent"

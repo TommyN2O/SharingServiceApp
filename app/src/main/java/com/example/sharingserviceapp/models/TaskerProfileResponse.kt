@@ -13,6 +13,6 @@ data class TaskerProfileResponse(
     val availability: List<AvailabilitySlot>,
     val rating: Double,
     val reviewCount: Int,
-    val profile_photo: String?, // ✅ URL to the image
+    val profile_photo: String?,
     val gallery: List<String>
 )

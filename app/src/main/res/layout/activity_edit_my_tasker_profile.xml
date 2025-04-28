@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Header with back button, title, and delete account icon -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +29,6 @@
             android:textStyle="bold"
             android:layout_centerInParent="true"/>
 
-        <!-- Delete Account Button (Image, clickable) -->
         <ImageView
             android:id="@+id/btn_delete_account"
             android:layout_width="24dp"
@@ -56,7 +54,6 @@
             android:orientation="vertical"
             android:gravity="start">
 
-            <!-- Profile Photo -->
             <ImageView
                 android:id="@+id/img_profile_photo"
                 android:layout_width="100dp"
@@ -66,7 +63,6 @@
                 android:scaleType="centerCrop"
                 android:background="@drawable/rounded_image"/>
 
-            <!-- Upload Photo Button (Smaller and Centered) -->
             <Button
                 android:id="@+id/btn_upload_photo"
                 android:layout_width="wrap_content"
@@ -75,31 +71,6 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"/>
 
-            <!-- Name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name"/>
-            <EditText
-                android:id="@+id/edit_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter your name"
-                android:background="@drawable/rounded_edittext"/>
-
-            <!-- Surname -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Surname"/>
-            <EditText
-                android:id="@+id/edit_surname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter your surname"
-                android:background="@drawable/rounded_edittext"/>
-
-            <!-- Description -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,7 +84,6 @@
                 android:gravity="top|start"
                 android:inputType="textMultiLine"/>
 
-            <!-- Upload Photos -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -138,7 +108,6 @@
                 android:layout_height="wrap_content"
                 android:text="Add Photo"/>
 
-            <!-- Categories -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -157,7 +126,6 @@
                 android:focusable="true"
                 android:background="@drawable/rounded_edittext"/>
 
-            <!-- Hourly Rate -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -171,7 +139,6 @@
                 android:inputType="numberDecimal"
                 android:background="@drawable/rounded_edittext"/>
 
-            <!-- Available Cities -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -190,7 +157,6 @@
                 android:focusable="true"
                 android:background="@drawable/rounded_edittext"/>
 
-            <!-- Available Days & Time -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -203,7 +169,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Save Profile Button (Fixed Outside ScrollView) -->
     <Button
         android:id="@+id/btn_submit_tasker_profile"
         android:layout_width="match_parent"

@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- ScrollView for the content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="682dp"
@@ -16,14 +15,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Title (Centered "Request") and Back Button on the same level -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:orientation="horizontal">
 
-                <!-- Back Button (Larger and Aligned to the left) -->
                 <ImageButton
                     android:id="@+id/btn_back"
                     android:layout_width="53dp"
@@ -31,7 +28,6 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/chevron_arrow_left" />
 
-                <!-- Title (Centered "Request") -->
                 <TextView
                     android:layout_width="253dp"
                     android:layout_height="match_parent"
@@ -42,7 +38,6 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- "Describe Your Task" label -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +46,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- Task Description Input -->
             <EditText
                 android:id="@+id/edit_task_description"
                 android:layout_width="match_parent"
@@ -84,10 +78,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
-
-            <!-- Budget -->
-
-            <!-- Location -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +97,6 @@
                 android:textColor="@android:color/darker_gray"
                 android:textSize="16sp" />
 
-            <!-- Date Picker -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -138,8 +127,6 @@
                     android:layout_weight="1" />
             </LinearLayout>
 
-
-            <!-- Time set how long to do -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -159,8 +146,6 @@
                 android:textColor="@android:color/darker_gray"
                 android:textSize="16sp" />
 
-
-            <!-- Photo Gallery -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -188,7 +173,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Submit Button (Fixed Position) -->
     <Button
         android:id="@+id/btn_submit_request"
         android:layout_width="match_parent"

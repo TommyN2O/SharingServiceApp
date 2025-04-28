@@ -7,9 +7,6 @@
     android:textDirection="anyRtl"
     tools:context=".activitys.HomeActivity">
 
-
-    <!-- Adds spacing between letters for a sleek look -->
-
     <TextView
         android:id="@+id/welcome_title"
         android:layout_width="188dp"
@@ -25,23 +22,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- You can use a search icon here -->
-
     <ImageView
         android:id="@+id/search_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginTop="12dp"
         android:layout_marginRight="20dp"
-        android:src="@android:drawable/ic_search_category_default"
+        android:src="@drawable/ic_search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/welcome_title"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- RecyclerView with GridLayoutManager (2 items per row) -->
-
-    <!-- Toolbar -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -60,9 +51,8 @@
         android:layout_marginTop="4dp"
         android:background="@color/white"
         app:itemIconSize="32dp"
-        app:itemIconTint="@color/dark_gray"
-        app:itemTextColor="@color/dark_gray"
-
+        app:itemIconTint="@drawable/bottom_nav_item_color"
+        app:itemTextColor="@drawable/bottom_nav_item_color"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

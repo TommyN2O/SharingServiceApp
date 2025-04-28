@@ -8,8 +8,8 @@ data class TaskResponse(
     val duration: String,
     val availability: List<AvailabilitySlot>,
     val sender: User,
-    val tasker: User?,
-    val gallery: List<String>,// nullable in case not chosen
+    val tasker: TaskerTaskResponseBody?,
+    val gallery: List<String>,
     val status: String,
     val created_at: String
 )

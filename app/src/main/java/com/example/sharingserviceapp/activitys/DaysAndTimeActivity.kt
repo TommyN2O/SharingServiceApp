@@ -27,9 +27,8 @@ import java.util.*
 class DaysAndTimeActivity : AppCompatActivity() {
 
     private lateinit var calendarView: CalendarView
-    private val selectedTimeSlots = mutableMapOf<String, MutableSet<Button>>() // Store time slots per date
+    private val selectedTimeSlots = mutableMapOf<String, MutableSet<Button>>()
     private val allButtons = mutableListOf<Button>()
-    private val timeSlotFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     private val markedDays = mutableListOf<EventDay>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +39,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
         val backButton = findViewById<ImageView>(R.id.backButton)
         val saveButton = findViewById<Button>(R.id.saveButton)
 
-        // Back button click
         backButton.setOnClickListener {
             finish() }
 
@@ -50,31 +48,24 @@ class DaysAndTimeActivity : AppCompatActivity() {
         if (preSelectedAvailability != null) {
             for (slot in preSelectedAvailability) {
                 Log.d("Received", "Date: ${slot.date}, Time: ${slot.time}")
-                // ✅ Update your UI here (checkboxes, RecyclerView, etc.)
             }
         } else {
             Log.d("Received", "No availability passed")
         }
         fetchAvailabilityFromDatabase()
-        // Initialize time slot buttons
         setupTimeSlots()
 
-        // Auto-select today and show available times
         val today = Calendar.getInstance()
         showAvailableTimeSlots(today)
 
-        // Auto-select today's date on launch
         calendarView.setDate(today)
 
-        // Set minimum date to prevent selecting past months/days
         calendarView.setMinimumDate(today)
 
-        // Handle calendar day selection
         calendarView.setOnDayClickListener(object : OnDayClickListener {
             override fun onDayClick(eventDay: EventDay) {
                 val selectedDate = eventDay.calendar
 
-                // Disable past day selection
                 if (isPastDate(selectedDate)) {
                     Toast.makeText(this@DaysAndTimeActivity, "You can't select past dates!", Toast.LENGTH_SHORT).show()
                     return
@@ -84,14 +75,12 @@ class DaysAndTimeActivity : AppCompatActivity() {
             }
         })
 
-        // Save button click
         saveButton.setOnClickListener {
             if (selectedTimeSlots.isEmpty()) {
                 Toast.makeText(this, "Please select a date and time!", Toast.LENGTH_SHORT).show()
             } else {
                 val selectedSlots = ArrayList<AvailabilitySlot>()
 
-                // Loop through the selected time slots map
                 selectedTimeSlots.forEach { (date, buttons) ->
                     buttons.forEach { button ->
                         val time = button.text.toString() + ":00" // Add seconds to time
@@ -100,8 +89,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
                     }
                 }
 
-                // Return the selected slots to the calling activity
-                // Already correct
                 val resultIntent = Intent()
                 resultIntent.putParcelableArrayListExtra("SELECTED_AVAILABILITY", selectedSlots)
                 setResult(Activity.RESULT_OK, resultIntent)
@@ -115,19 +102,15 @@ class DaysAndTimeActivity : AppCompatActivity() {
     private fun updateCalendarMarkers() {
         val markedDays = mutableListOf<EventDay>()
 
-        // Loop through selectedTimeSlots to accumulate events for all days
         for ((date, buttons) in selectedTimeSlots) {
             if (buttons.isNotEmpty()) {
                 val calendar = Calendar.getInstance()
                 val dateParts = date.split("-").map { it.toInt() }
                 calendar.set(dateParts[0], dateParts[1] - 1, dateParts[2]) // Set year, month, day
 
-                // Add an event marker for this day
                 markedDays.add(EventDay(calendar, R.drawable.marked_date_background))
             }
         }
-
-        // Set all accumulated events to the calendar view
         calendarView.setEvents(markedDays)
     }
 
@@ -145,7 +128,7 @@ class DaysAndTimeActivity : AppCompatActivity() {
             button.isEnabled = false
 
             button.setOnClickListener {
-                val selectedDate = calendarView.selectedDate ?: Calendar.getInstance() // Default to today if null
+                val selectedDate = calendarView.selectedDate ?: Calendar.getInstance()
                 toggleTimeSlot(button, selectedDate)
             }
             allButtons.add(button)
@@ -154,7 +137,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
     }
 
     private fun toggleTimeSlot(button: Button, selectedDate: Calendar) {
-        // Ensure selectedDate is valid
         if (selectedDate == null) {
             Toast.makeText(this, "Please select a date first!", Toast.LENGTH_SHORT).show()
             return
@@ -171,7 +153,7 @@ class DaysAndTimeActivity : AppCompatActivity() {
             timeSlotsForDay.add(button)
         }
 
-        updateCalendarMarkers() // Refresh markers
+        updateCalendarMarkers()
     }
 
     private fun showAvailableTimeSlots(selectedDate: Calendar) {
@@ -189,7 +171,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
             enableAllTimeSlots()
         }
 
-        // Restore previously selected time slots for this date
         selectedTimeSlots[formattedDate]?.forEach { button ->
             button.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN))
         }
@@ -203,9 +184,9 @@ class DaysAndTimeActivity : AppCompatActivity() {
             if (hour >= currentHour) {
                 button.isEnabled = true
                 button.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY))
-                button.visibility = View.VISIBLE // Show only available time slots
+                button.visibility = View.VISIBLE
             } else {
-                button.visibility = View.GONE // Hide past slots for today
+                button.visibility = View.GONE
             }
         }
     }
@@ -214,7 +195,7 @@ class DaysAndTimeActivity : AppCompatActivity() {
         for (button in allButtons) {
             button.isEnabled = true
             button.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY))
-            button.visibility = View.VISIBLE // Ensure all buttons are visible for future dates
+            button.visibility = View.VISIBLE
         }
     }
 
@@ -242,32 +223,23 @@ class DaysAndTimeActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         val dateParts = slot.date.split("-").map { it.toInt() }
         calendar.set(dateParts[0], dateParts[1] - 1, dateParts[2]) // Set year, month, day
-
-        // Check if the event already exists for this date
         val eventDay = EventDay(calendar, R.drawable.marked_date_background)
 
-        // Add the event to the list of events for this date
         if (!markedDays.contains(eventDay)) {
-            markedDays.add(eventDay)  // Only add if it doesn't exist
+            markedDays.add(eventDay)
         }
 
-        // Get the button for the given time slot
         val timeButton = getTimeSlotButtonForTime(slot.time)
 
-        // Check if the button exists
         if (timeButton != null) {
-            // Mark the time slot button as selected
             timeButton.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN))
 
-            // Add the time slot to the selectedTimeSlots map for the given date
             val dateFormatted = slot.date
             val timeSlotsForDay = selectedTimeSlots.getOrPut(dateFormatted) { mutableSetOf() }
             timeSlotsForDay.add(timeButton)
         } else {
             Log.e("DaysAndTimeActivity", "Button for time ${slot.time} not found.")
         }
-
-        // Apply the events after adding the new event
         calendarView.setEvents(markedDays)
 
     }
@@ -292,9 +264,7 @@ class DaysAndTimeActivity : AppCompatActivity() {
             "21:00:00" -> findViewById<Button>(R.id.timeSlot_21_00)
             "22:00:00" -> findViewById<Button>(R.id.timeSlot_22_00)
 
-            // Add other time slots as needed
-            else -> null // Return null if the time slot doesn't match
-
+            else -> null
         }
     }
     private fun fetchAvailabilityFromDatabase() {

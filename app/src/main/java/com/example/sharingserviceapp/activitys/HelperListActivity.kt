@@ -1,7 +1,6 @@
 package com.example.sharingserviceapp.activitys
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -30,13 +29,12 @@ class HelperListActivity : AppCompatActivity() {
     private var taskerList: MutableList<TaskerHelper> = mutableListOf()
     private var custumerList: MutableList<CustumerHelper> = mutableListOf()
 
-    private var isTaskerMode: Boolean = false // Flag to determine mode
+    private var isTaskerMode: Boolean = false
 
     private lateinit var btnCustomer: Button
     private lateinit var btnTasker: Button
     private lateinit var recyclerView: RecyclerView
 
-    // New fields for filter
     private var selectedCity: String = ""
     private var selectedPrice: Int = 0
     private var selectedTime: String = ""
@@ -57,8 +55,6 @@ class HelperListActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Load lists for both modes
-        //customerList = getCustomerListForCategory(categoryName).toMutableList()
         custumerList = getTaskerListForCategory(categoryName).toMutableList()
 
         // Initialize adapters
@@ -68,7 +64,6 @@ class HelperListActivity : AppCompatActivity() {
         btnCustomer = findViewById(R.id.btn_customer)
         btnTasker = findViewById(R.id.btn_tasker)
 
-        // Set default mode (Customer)
         toggleTaskerMode(false)
 
         btnCustomer.setOnClickListener { toggleTaskerMode(false) }
@@ -81,21 +76,18 @@ class HelperListActivity : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_home -> {
-                    // Handle home item click
                     startActivity(Intent(this, HomeActivity::class.java))
                     finish()
                     return@setOnNavigationItemSelectedListener true
                 }
 
                 R.id.menu_tasks -> {
-                    // Handle tasks item click
-                    startActivity(Intent(this, PlanedTasksActivity::class.java))
-                    finish()// Check here
+                    startActivity(Intent(this, PlannedTasksActivity::class.java))
+                    finish()
                     return@setOnNavigationItemSelectedListener true
                 }
 
                 R.id.menu_messages -> {
-                    // Handle messages item click
                     startActivity(Intent(this, MessagesActivity::class.java))
                     finish()
                     return@setOnNavigationItemSelectedListener true
@@ -158,7 +150,6 @@ class HelperListActivity : AppCompatActivity() {
 
         val apiService = ApiServiceInstance.Auth.apiServices
 
-        // Make sure you're passing the correct token
         apiService.getTaskerList("Bearer $token").enqueue(object : Callback<List<TaskerHelper>> {
             override fun onResponse(
                 call: Call<List<TaskerHelper>>,
@@ -167,25 +158,22 @@ class HelperListActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val taskers = response.body() ?: emptyList()
 
-                    // Create a mutable list of CustomerHelper objects
                     val filteredTaskers = taskers.filter { tasker ->
-                        // Check if any category in the tasker's categories matches the passed categoryId
+
                         tasker.categories.any { category -> category.id == categoryId }
                     }
                     taskerList.clear()
                     taskerList.addAll(filteredTaskers)
 
-                    // Create and set the adapter for the RecyclerView
                     taskerhelperAdapter = TaskerHelperAdapter(this@HelperListActivity, taskerList) { selectedTasker ->
                         val intent = Intent(this@HelperListActivity, TaskerHelperDetailActivity::class.java).apply {
-                            // Add necessary data to the intent
+
                             putExtra("user_id", selectedTasker.id)
                             putExtra("category_id", categoryId)
                         }
                         startActivity(intent)
                     }
 
-                    // Set the adapter to the RecyclerView
                     recyclerView.adapter = taskerhelperAdapter
                 } else {
                     Toast.makeText(this@HelperListActivity, "Failed to load taskers", Toast.LENGTH_SHORT).show()
@@ -199,7 +187,7 @@ class HelperListActivity : AppCompatActivity() {
     }
 
 
-    // Load mock data for Tasker helpers (to be replaced with actual data retrieval logic)
+    // Load mock data for
     private fun getTaskerListForCategory(category: String?): List<CustumerHelper> {
         return when (category) {
             "Cleaning" -> listOf(
@@ -218,7 +206,6 @@ class HelperListActivity : AppCompatActivity() {
         }
     }
 
-    // Filter Logic
     private fun showFilterDialog() {
         val dialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.filter_bottom_sheet, null)
@@ -229,27 +216,23 @@ class HelperListActivity : AppCompatActivity() {
         val timeSpinner = view.findViewById<Spinner>(R.id.spinner_specific_time)
         val btnApplyFilters = view.findViewById<Button>(R.id.btn_apply_filters)
 
-        // Initialize city picker (Spinner) with city options
         val cities = arrayOf("New York", "Los Angeles", "Chicago", "San Francisco")
         val cityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, cities)
         cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         citySpinner.adapter = cityAdapter
         citySpinner.setSelection(cities.indexOf(selectedCity))
 
-        // Set price seekbar progress
         priceSeekBar.progress = selectedPrice
 
-        // Show previously selected time or empty
         timeSpinner.setSelection(if (selectedTime.isNotEmpty()) cities.indexOf(selectedTime) else 0)
 
-        // Time spinner item selected
         timeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedTime = parent?.getItemAtPosition(position) as String
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Handle case if nothing is selected (optional)
+
             }
         }
 
@@ -338,13 +321,10 @@ class HelperListActivity : AppCompatActivity() {
         var currentPosition = position
         val totalImages = images.size
 
-        // Set the initial image
         imageView.setImageResource(images[currentPosition])
 
-        // Update arrow visibility
         updateArrowsVisibility(currentPosition, totalImages, arrowLeft, arrowRight)
 
-        // Left Arrow Click
         arrowLeft.setOnClickListener {
             if (currentPosition > 0) {
                 currentPosition--
@@ -352,8 +332,6 @@ class HelperListActivity : AppCompatActivity() {
                 updateArrowsVisibility(currentPosition, totalImages, arrowLeft, arrowRight)
             }
         }
-
-        // Right Arrow Click
         arrowRight.setOnClickListener {
             if (currentPosition < totalImages - 1) {
                 currentPosition++
@@ -361,12 +339,9 @@ class HelperListActivity : AppCompatActivity() {
                 updateArrowsVisibility(currentPosition, totalImages, arrowLeft, arrowRight)
             }
         }
-
-        // Close Button Click
         closeButton.setOnClickListener {
-            dialog.dismiss() // Dismiss the dialog to close it
+            dialog.dismiss()
         }
-
         dialog.show()
     }
 
@@ -376,7 +351,6 @@ class HelperListActivity : AppCompatActivity() {
         arrowLeft: ImageView,
         arrowRight: ImageView
     ) {
-        // Show/hide arrows based on the current position
         arrowLeft.visibility = if (currentIndex > 0) View.VISIBLE else View.GONE
         arrowRight.visibility = if (currentIndex < totalSize - 1) View.VISIBLE else View.GONE
     }

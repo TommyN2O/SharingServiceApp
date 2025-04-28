@@ -5,7 +5,6 @@
     android:orientation="horizontal"
     android:padding="12dp">
 
-    <!-- Profile Picture -->
     <ImageView
         android:id="@+id/img_profile"
         android:layout_width="50dp"
@@ -14,7 +13,6 @@
         android:scaleType="centerCrop"
         android:background="@drawable/rounded_image" />
 
-    <!-- Message Details -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -39,7 +37,6 @@
             android:textColor="@android:color/darker_gray" />
     </LinearLayout>
 
-    <!-- Time -->
     <TextView
         android:id="@+id/txt_time"
         android:layout_width="wrap_content"

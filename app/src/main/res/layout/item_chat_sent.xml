@@ -5,23 +5,23 @@
     android:gravity="end"
     android:padding="8dp">
 
-    <!-- Message Bubble -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_chat_sent"
         android:padding="12dp"
+        android:gravity="right"
         android:orientation="vertical">
 
-    <!-- Message Text -->
     <TextView
         android:id="@+id/txt_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="right"
         android:text="Hello!"
+        android:textSize="16sp"
         android:textColor="@android:color/white" />
 
-    <!-- Timestamp -->
     <TextView
         android:id="@+id/txt_time"
         android:layout_width="wrap_content"

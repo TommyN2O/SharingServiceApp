@@ -6,5 +6,6 @@ data class UserProfileResponse(
     val surname: String,
     val email: String,
     val date_of_birth: String,
-    val is_tasker: Boolean
+    val is_tasker: Boolean,
+    val profile_photo: String
 )
