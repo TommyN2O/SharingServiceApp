@@ -2,25 +2,15 @@ package com.example.sharingserviceapp.activitys
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
-import com.example.sharingserviceapp.activitys.TaskDetailActivity
-import com.example.sharingserviceapp.adapters.GalleryAdapter
 import com.example.sharingserviceapp.models.Payment
 import com.example.sharingserviceapp.models.PaymentResponse
 import com.example.sharingserviceapp.models.TaskResponse
@@ -36,7 +26,7 @@ class PaymentActivity : AppCompatActivity() {
 
     private lateinit var confirmButton: Button
     private lateinit var paymentMethodGroup: RadioGroup
-    private lateinit var cashRadio: RadioButton
+    private lateinit var walletRadio: RadioButton
     private lateinit var cardRadio: RadioButton
     private var taskId: Int = -1
     private var total: Double = -1.0
@@ -47,7 +37,7 @@ class PaymentActivity : AppCompatActivity() {
         setContentView(R.layout.activity_payment)
         confirmButton = findViewById(R.id.confirmButton)
         paymentMethodGroup = findViewById(R.id.paymentMethodGroup)
-        cashRadio = findViewById(R.id.cashRadio)
+        walletRadio = findViewById(R.id.walletRadio)
         cardRadio = findViewById(R.id.cardRadio)
 
         val intent = intent
@@ -87,7 +77,7 @@ class PaymentActivity : AppCompatActivity() {
     private fun setUpConfirmButton() {
         confirmButton.setOnClickListener {
             val selectedPaymentMethod = when (paymentMethodGroup.checkedRadioButtonId) {
-                R.id.cashRadio -> "Cash"
+                R.id.walletRadio -> "Wallet"
                 R.id.cardRadio -> "Card"
                 else -> null
             }
@@ -98,32 +88,48 @@ class PaymentActivity : AppCompatActivity() {
             }
 
             if (selectedPaymentMethod == "Card") {
-                goToPayment(taskId,total)
                 Toast.makeText(this, "Payment Confirmed via Card", Toast.LENGTH_SHORT).show()
             } else {
-
-
-                Toast.makeText(this, "Payment Confirmed via Cash", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Payment Confirmed via Wallet", Toast.LENGTH_SHORT).show()
             }
+            goToPayment(taskId,total, selectedPaymentMethod)
         }
     }
-    private fun goToPayment(task_id: Int,amount: Double){
+    private fun goToPayment(task_id: Int,amount: Double, type: String){
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
 
         val api = ApiServiceInstance.Auth.apiServices
-        val body= Payment(amount,task_id)
+        val body= Payment(amount,task_id,type)
         val call = api.payment("Bearer $token", body)
 
         call.enqueue(object : Callback<PaymentResponse> {
             override fun onResponse(call: Call<PaymentResponse>, response: Response<PaymentResponse>) {
                 if (response.isSuccessful ) {
-                    val paymentUrl = response.body()!!.url
-                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(paymentUrl))
-                    startActivity(intent)
+                    if (type == "Card") {
+                        val paymentUrl = response.body()!!.url
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(paymentUrl))
+                        startActivity(intent)
+                    }
+                    else {
+                        Toast.makeText(this@PaymentActivity, "Payment completed from wallet", Toast.LENGTH_SHORT).show()
+                    }
                     finish()
                 } else {
-                    Toast.makeText(this@PaymentActivity, "Failed to load Payment", Toast.LENGTH_SHORT).show()
+                    if (type == "Card") {
+                        Toast.makeText(
+                            this@PaymentActivity,
+                            "Failed to load Payment",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    else {
+                        Toast.makeText(
+                            this@PaymentActivity,
+                            "Failed to pay by wallet",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
 

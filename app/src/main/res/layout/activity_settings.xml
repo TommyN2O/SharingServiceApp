@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activitys.SettingsActivity">
 
+
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -177,18 +178,27 @@
         </LinearLayout>
     </ScrollView>
 
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="196dp"
+        android:backgroundTint="@color/black"
+        android:text="Log out"
+        app:layout_constraintTop_toBottomOf="@+id/settings_scroll_view"
+        tools:layout_editor_absoluteX="0dp" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="260dp"
         android:background="@color/white"
         app:itemIconSize="32dp"
         app:itemIconTint="@drawable/bottom_nav_item_color"
         app:itemTextColor="@drawable/bottom_nav_item_color"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settings_scroll_view"
+        app:layout_constraintTop_toBottomOf="@+id/btn_logout"
         app:layout_constraintVertical_bias="1.0"
         app:menu="@menu/menu_home"
         tools:layout_editor_absoluteX="0dp" />

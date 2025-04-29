@@ -26,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
         emailInput = findViewById(R.id.email)
         passwordInput = findViewById(R.id.password)
         loginButton = findViewById(R.id.btn_login)
@@ -37,15 +38,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser() {
+        progressBar.visibility = View.VISIBLE
+
         val email = emailInput.text.toString().trim()
         val password = passwordInput.text.toString().trim()
 
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
+            progressBar.visibility = View.GONE
             return
         }
-
-        progressBar.visibility = View.VISIBLE
 
         val loginRequest = LoginRequest(email, password)
         val call = ApiServiceInstance.Auth.apiServices.loginUser(loginRequest)
@@ -53,12 +55,10 @@ class LoginActivity : AppCompatActivity() {
         call.enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 progressBar.visibility = View.GONE
-
                 if (response.isSuccessful) {
                     val authResponse = response.body()
                     if (authResponse != null) {
-
-                        saveTokenAndUserId(authResponse.token, authResponse.user.id)
+                        saveTokenAndUserId(authResponse.token, authResponse.user.id, email, password)
 
                         val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                         startActivity(intent)
@@ -76,11 +76,16 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveTokenAndUserId(token: String, user: Int) {
+    private fun saveTokenAndUserId(token: String, user: Int, email: String, password: String) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("auth_token", token)
-        editor.putInt("user_id", user)
-        editor.apply()
+        with(sharedPreferences.edit()) {
+            putString("auth_token", token)
+            putInt("user_id", user)
+            putString("email", email)
+            putString("password", password)
+            apply()
+        }
     }
 }
+
+

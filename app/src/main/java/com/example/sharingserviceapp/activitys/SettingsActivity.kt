@@ -3,6 +3,7 @@ package com.example.sharingserviceapp.activitys
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import com.example.sharingserviceapp.R
@@ -54,6 +55,22 @@ class SettingsActivity : AppCompatActivity() {
         notificationsOption?.setOnClickListener {
 //            startActivity(Intent(this, NotificationsSettingsActivity::class.java))
 //            finish()
+        }
+
+        val logout = findViewById<Button>(R.id.btn_logout)
+        logout?.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+
+            val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+            with(sharedPreferences.edit()) {
+                remove("auth_token")
+                remove("user_id")
+                remove("email")
+                remove("password")
+                apply()
+            }
+
+            finish()
         }
     }
 

@@ -348,7 +348,7 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
 
             val task = simpleDateFormat.parse(taskDate)
 
-            formattedServerDate == simpleDateFormat.format(task!!)
+            formattedServerDate >= simpleDateFormat.format(task!!)
         } catch (e: Exception) {
             e.printStackTrace()
             false

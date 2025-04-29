@@ -27,12 +27,8 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var btnSend: ImageView
     private lateinit var chatAdapter: ChatAdapter
     private val messages = mutableListOf<ChatMessages>()
-
-
-
     private var chatId: Int = -1
     private var receiverId: Int = -1
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

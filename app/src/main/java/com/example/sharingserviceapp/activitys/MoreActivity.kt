@@ -65,6 +65,10 @@ class MoreActivity : AppCompatActivity() {
             startActivity(Intent(this, RequestsOffersActivity::class.java))
             finish()
         }
+        val iconBalance = findViewById<LinearLayout>(R.id.icon_balance)
+        iconBalance?.setOnClickListener {
+            startActivity(Intent(this, BalanceActivity::class.java))
+        }
     }
 
     private fun setupBottomNavigation() {

@@ -136,10 +136,10 @@
                 android:layout_marginBottom="8dp">
 
                 <RadioButton
-                    android:id="@+id/cashRadio"
+                    android:id="@+id/walletRadio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cash"
+                    android:text="Wallet"
                     android:textSize="16sp" />
 
                 <RadioButton

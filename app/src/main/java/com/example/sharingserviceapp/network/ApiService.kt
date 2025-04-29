@@ -131,6 +131,12 @@ interface ApiService {
         @Path("id") id: Int,
     ): Call<List<ChatMessages>>
 
+
+    @GET("tasker/walletpayments")
+    fun getWalletPayments(
+        @Header("Authorization") token: String,
+    ): Call<WalletResponse>
+
     @POST("messages/send")
     fun sendMessage(
         @Header("Authorization") token: String,
