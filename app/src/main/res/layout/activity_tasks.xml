@@ -22,18 +22,12 @@
             android:id="@+id/txt_tasks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tasks"
-            android:textSize="22sp"
+            android:text="@string/planned_tasks_title"
+            android:textSize="25sp"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:layout_weight="1" />
 
-        <ImageView
-            android:id="@+id/img_search"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_search"
-             />
     </LinearLayout>
 
     <LinearLayout
@@ -50,7 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Customer"
+            android:text="@string/btn_my_tasks"
             android:textSize="16sp"
             android:textStyle="bold"
             android:backgroundTint="@color/my_light_primary"
@@ -61,7 +55,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Tasker"
+            android:text="@string/btn_people_tasks"
             android:textSize="16sp"
             android:textStyle="bold"
             android:backgroundTint="@color/white"

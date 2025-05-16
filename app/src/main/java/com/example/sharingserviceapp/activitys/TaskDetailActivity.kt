@@ -1,11 +1,16 @@
 package com.example.sharingserviceapp.activitys
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -14,11 +19,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
+import com.example.sharingserviceapp.activitys.CreateMyTaskerProfileActivity.Companion.REQUEST_CODE_SELECT_DAYS_AND_TIME
+import com.example.sharingserviceapp.activitys.LoginActivity
+import com.example.sharingserviceapp.activitys.RequestDetailActivity
 import com.example.sharingserviceapp.adapters.GalleryAdapter
+import com.example.sharingserviceapp.adapters.OfferListAdapter
+import com.example.sharingserviceapp.models.AvailabilitySlot
 import com.example.sharingserviceapp.models.CreateChat
 import com.example.sharingserviceapp.models.CreateChatBody
+import com.example.sharingserviceapp.models.Offer
+import com.example.sharingserviceapp.models.OpenTaskResponse
+import com.example.sharingserviceapp.models.OpenedTasksHelper
+import com.example.sharingserviceapp.models.SetAsOpenTask
+import com.example.sharingserviceapp.models.StatusUpdate
 import com.example.sharingserviceapp.models.TaskResponse
 import com.example.sharingserviceapp.network.ApiServiceInstance
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,6 +47,11 @@ class TaskDetailActivity : AppCompatActivity() {
     private var receiverId: Int ?= -1
     private lateinit var btnPayment: Button
     private lateinit var btnCancel: Button
+    private lateinit var btnOffers: ImageView
+    private lateinit var btnMessage: ImageView
+    private lateinit var btnSetAsOpenTask:Button
+
+    private var availabilityList: List<String> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +59,9 @@ class TaskDetailActivity : AppCompatActivity() {
 
         btnPayment = findViewById(R.id.btnPayment)
         btnCancel = findViewById(R.id.btnCancel)
+        btnOffers = findViewById(R.id.btn_offers)
+        btnMessage = findViewById(R.id.messageButton)
+        btnSetAsOpenTask = findViewById(R.id.btn_SetAsOpenTask)
 
         taskId = intent.getIntExtra("TASK_ID", -1)
         if (taskId == -1) {
@@ -45,20 +70,205 @@ class TaskDetailActivity : AppCompatActivity() {
             return
         }
 
-        Log.d("TaskDetailActivity", "Receiver ID: $receiverId")
-
         setupPaymentButton()
+
+        btnOffers.setOnClickListener {
+            showOfferListDialog(taskId)
+        }
 
         btnCancel.setOnClickListener {
             showCancelConfirmationDialog()
         }
+
+        btnSetAsOpenTask.setOnClickListener {
+                showSetAsOpTaskDialog(taskId)
+        }
+
+
         loadTaskDetailed(taskId)
         setupBackButton()
         setupChatActivity()
     }
+    private fun showSetAsOpTaskDialog(taskId: Int) {
+        val dialog = BottomSheetDialog(this)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_set_as_open_task, null)
+
+
+        dialogView.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+
+        dialog.setContentView(dialogView)
+        dialog.setCancelable(false)
+
+        dialog.setOnShowListener {
+            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.let {
+                it.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                it.requestLayout()
+
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.skipCollapsed = true
+            }
+        }
+
+
+
+        val editTextBudget = dialogView.findViewById<EditText>(R.id.edit_budget)
+        val btnSelectDaysTime = dialogView.findViewById<Button>(R.id.btn_select_days_time)
+        btnSelectDaysTime.setOnClickListener {
+            val availabilitySlotList = availabilityList.map {
+                val parts = it.split(" ")
+                AvailabilitySlot(parts[0], parts[1])
+            }
+
+            val intent = Intent(this, DaysAndTimeActivity::class.java)
+            intent.putParcelableArrayListExtra("PREVIOUS_AVAILABILITY", ArrayList(availabilitySlotList))
+            startActivityForResult(intent, REQUEST_CODE_SELECT_DAYS_AND_TIME)
+        }
+
+        dialogView.findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<Button>(R.id.btn_create_open_task).setOnClickListener {
+            val budgetText = editTextBudget.text.toString()
+            val budget = budgetText.toDoubleOrNull()
+
+            if (budget == null) {
+                Toast.makeText(this, "Please enter a valid budget", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val availability = availabilityList.map {
+                val parts = it.split(" ")
+                AvailabilitySlot(parts[0], parts[1])
+            }
+
+            val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+            val token = sharedPreferences.getString("auth_token", null)
+
+            if (token.isNullOrEmpty()) {
+                Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+                return@setOnClickListener
+            }
+
+            val body = SetAsOpenTask(
+                budget = budget,
+                availability = availability,
+            )
+
+            val apiService = ApiServiceInstance.Auth.apiServices
+            val call = apiService.convertToOpenTask("Bearer $token", body, taskId)
+
+            call.enqueue(object : Callback<OpenTaskResponse> {
+                override fun onResponse(call: Call<OpenTaskResponse>, response: Response<OpenTaskResponse>) {
+                    if (response.isSuccessful) {
+                        val intent = Intent(this@TaskDetailActivity, RequestsOffersActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                        Toast.makeText(this@TaskDetailActivity, "Chat created successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@TaskDetailActivity, "Failed to create Open Task", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<OpenTaskResponse>, t: Throwable) {
+                    Toast.makeText(this@TaskDetailActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
+
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_SELECT_DAYS_AND_TIME && resultCode == RESULT_OK) {
+            val selectedAvailability = data?.getParcelableArrayListExtra<AvailabilitySlot>("SELECTED_AVAILABILITY")
+            if (selectedAvailability != null) {
+                availabilityList = selectedAvailability.map { "${it.date} ${it.time}" }
+                Toast.makeText(this, "Availability: ${availabilityList.joinToString("\n")}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun showOfferListDialog(taskId: Int) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_offer_list, null)
+        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.offerRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        val apiService = ApiServiceInstance.Auth.apiServices
+
+        apiService.getOffersForTask("Bearer $token", taskId)
+            .enqueue(object : Callback<List<Offer>> {
+                override fun onResponse(call: Call<List<Offer>>, response: Response<List<Offer>>) {
+                    if (response.isSuccessful) {
+                        val offers = response.body() ?: emptyList()
+                        val adapter = OfferListAdapter(offers,
+                            onAccept = { offer ->
+                                acceptOffer(token, offer.id)
+                            },
+                        )
+                        recyclerView.adapter = adapter
+
+                        AlertDialog.Builder(this@TaskDetailActivity)
+                            .setTitle("Offers")
+                            .setView(dialogView)
+                            .setNegativeButton("Close", null)
+                            .show()
+                    } else {
+                        Toast.makeText(this@TaskDetailActivity, "Failed to load offers", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Offer>>, t: Throwable) {
+                    Toast.makeText(this@TaskDetailActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+    private fun acceptOffer(token: String, offerId: Int) {
+
+        val apiService = ApiServiceInstance.Auth.apiServices
+
+        apiService.acceptOffer("Bearer $token", offerId)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@TaskDetailActivity, "Offer accepted", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@TaskDetailActivity, RequestsOffersActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this@TaskDetailActivity, "Failed to accept offer", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@TaskDetailActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
 
     private fun setupChatActivity() {
-        findViewById<ImageView>(R.id.messageButton).setOnClickListener{
+        btnMessage.setOnClickListener{
 
             val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
             val token = sharedPreferences.getString("auth_token", null)
@@ -113,9 +323,8 @@ class TaskDetailActivity : AppCompatActivity() {
 
         val btnYes = dialog.findViewById<Button>(R.id.btnYes)
         btnYes.setOnClickListener {
-         //   #TODO()
-//            updateTaskStatus("Declined")  // Update the task status to Declined
-            dialog.dismiss()  // Dismiss the dialog
+             updateTaskStatus("Canceled")
+            dialog.dismiss()
         }
 
         val btnNo = dialog.findViewById<Button>(R.id.btnNo)
@@ -125,6 +334,36 @@ class TaskDetailActivity : AppCompatActivity() {
 
         dialog.show()
     }
+
+    private fun updateTaskStatus(status: String) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+        if (token != null) {
+            val api = ApiServiceInstance.Auth.apiServices
+
+            val statusUpdate = StatusUpdate(status)
+
+            val call = api.updateTaskStatus("Bearer $token", taskId, statusUpdate)
+
+            call.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@TaskDetailActivity, "$status successfully", Toast.LENGTH_SHORT).show()
+                        loadTaskDetailed(taskId)
+
+                    } else {
+                        Toast.makeText(this@TaskDetailActivity, "Failed to update status", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@TaskDetailActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
+    }
+
 
     private fun loadTaskDetailed(taskId: Int) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
@@ -148,8 +387,9 @@ class TaskDetailActivity : AppCompatActivity() {
             }
         })
     }
+    //#TODO FIX UP INFO SHOWN
     private fun showRequestDetailed(task: TaskResponse) {
-
+        val tasknr: TextView = findViewById(R.id.titleText)
         val customerName: TextView = findViewById(R.id.customerName)
         val taskCategory: TextView = findViewById(R.id.taskCategory)
         val taskDateTime: TextView = findViewById(R.id.taskDateTime)
@@ -158,20 +398,17 @@ class TaskDetailActivity : AppCompatActivity() {
         val taskStatus: TextView = findViewById(R.id.taskStatus)
         val taskPrice: TextView = findViewById(R.id.taskPrice)
         val taskDescription: TextView = findViewById(R.id.taskDescription)
-        val profileImage: ImageView = findViewById(R.id.customerProfileImage)
+//        val profileImage: ImageView = findViewById(R.id.customerProfileImage)
         val galleryRecyclerView: RecyclerView = findViewById(R.id.galleryRecyclerView)
         val taskerProfileImage: ImageView = findViewById(R.id.taskerProfileImage)
         val taskerName: TextView = findViewById(R.id.taskerName)
+        val titleTasker: TextView = findViewById(R.id.titleTasker)
 
         customerName.text = "${task.sender.name.replaceFirstChar { it.uppercase() }} ${task.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
         taskCategory.text = "Category: ${task.categories.joinToString { it.name }}"
-        val slot = task.availability.firstOrNull()
-        taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
-        taskDuration.text = "Duration: ${task.duration}"
+        taskDuration.text = "Duration: ${task.duration}h"
         taskLocation.text = "Location: ${task.city.name}"
-        taskPrice.text = "Price: $${task.tasker?.hourly_rate}/h"
         taskDescription.text = task.description
-
         receiverId=task.tasker?.id
 
         val status = task.status.replaceFirstChar { it.uppercase() }
@@ -196,16 +433,16 @@ class TaskDetailActivity : AppCompatActivity() {
             btnPayment.visibility = View.GONE
         }
 
-        val imageUrl = task.sender.profile_photo?.let {
-            URL(URL(ApiServiceInstance.BASE_URL), it)
-        } ?: R.drawable.placeholder_image_user
-
-        Glide.with(this)
-            .load(imageUrl)
-            .placeholder(R.drawable.placeholder_image_user)
-            .error(R.drawable.error)
-            .circleCrop()
-            .into(profileImage)
+        if(status=="Declined" || status=="Canceled")
+        {
+            btnSetAsOpenTask.visibility = View.VISIBLE
+            val paramsDecline = btnCancel.layoutParams
+            paramsDecline.width = dpToPx(140f) // Set width to 320dp
+            btnCancel.layoutParams = paramsDecline
+        }
+        else{
+            btnSetAsOpenTask.visibility = View.GONE
+        }
 
         val galleryImages = task.gallery
         val baseUrl = ApiServiceInstance.BASE_URL
@@ -215,19 +452,43 @@ class TaskDetailActivity : AppCompatActivity() {
             showZoomDialog(galleryImages, position, baseUrl)
         }, baseUrl)
 
+        val slot = task.availability.firstOrNull()
+        taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
 
-        val taskerImageUrl = task.tasker?.profile_photo?.let {
+        if (task.tasker == null || status == "Open") {
+            titleTasker.visibility = View.GONE
+            taskerProfileImage.visibility = View.GONE
+            taskerName.visibility = View.GONE
+            btnMessage.visibility = View.GONE
+            btnOffers.visibility = View.VISIBLE
+            taskPrice.text = "Budget: $${task.budget}"
+            taskDateTime.text = slot?.let {"Due Date: ${it.date}"}
+            tasknr.text ="Open Task #${task.id}"
+        }else {
+
+            val taskerImageUrl = task.tasker?.profile_photo?.let {
             URL(URL(ApiServiceInstance.BASE_URL), it)
-        } ?: R.drawable.placeholder_image_user
+            } ?: R.drawable.placeholder_image_user
 
-        Glide.with(this)
-            .load(taskerImageUrl)
-            .placeholder(R.drawable.placeholder_image_user)
-            .error(R.drawable.error)
-            .circleCrop()
-            .into(taskerProfileImage)
+            Glide.with(this)
+                .load(taskerImageUrl)
+                .placeholder(R.drawable.placeholder_image_user)
+                .error(R.drawable.error)
+                .circleCrop()
+                .into(taskerProfileImage)
 
-        taskerName.text = "${task.tasker?.name?.replaceFirstChar { it.uppercase() }} ${task.tasker?.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
+            taskerName.text = "${task.tasker?.name?.replaceFirstChar { it.uppercase() }} ${
+                task.tasker?.surname?.firstOrNull()?.uppercaseChar() ?: ""
+            }."
+            taskerProfileImage.visibility = View.VISIBLE
+            taskerName.visibility = View.VISIBLE
+            titleTasker.visibility = View.VISIBLE
+            btnMessage.visibility = View.VISIBLE
+            btnOffers.visibility = View.GONE
+            taskPrice.text = "Price: $${task.tasker?.hourly_rate}/h"
+            taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
+            tasknr.text ="Task #${task.id}"
+        }
 
     }
 

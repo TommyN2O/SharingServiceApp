@@ -5,25 +5,25 @@
 
         <item
             android:id="@+id/menu_home"
-            android:title="Home"
+            android:title="@string/home"
             android:icon="@drawable/home"
             />
 
         <item
             android:id="@+id/menu_tasks"
-            android:title="Tasks"
-            android:icon="@drawable/tasks"
+            android:title="@string/planned_tasks"
+            android:icon="@drawable/ic_calendar"
             />
 
         <item
             android:id="@+id/menu_messages"
-            android:title="Messages"
+            android:title="@string/messages"
             android:icon="@drawable/messeges"
             />
 
         <item
             android:id="@+id/menu_more"
-            android:title="More"
+            android:title="@string/more"
             android:icon="@drawable/menu"
             />
     </menu>

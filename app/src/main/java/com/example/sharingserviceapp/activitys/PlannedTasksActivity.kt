@@ -77,7 +77,7 @@ class PlannedTasksActivity : AppCompatActivity() {
         val token = sharedPreferences.getString("auth_token", null)
 
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
@@ -118,7 +118,7 @@ class PlannedTasksActivity : AppCompatActivity() {
                     }
 
                 } else {
-                    Toast.makeText(this@PlannedTasksActivity, "Failed to load tasks", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PlannedTasksActivity, getString(R.string.failed_load_my_tasks), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -128,14 +128,12 @@ class PlannedTasksActivity : AppCompatActivity() {
         })
     }
 
-
-
     private fun fetchPeoplePlanedTasks() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
 
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
@@ -173,7 +171,7 @@ class PlannedTasksActivity : AppCompatActivity() {
                             recyclerView.adapter = peoplePlanedTasksAdapter
                         }
                     } else {
-                        Toast.makeText(this@PlannedTasksActivity, "Failed to load requests", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@PlannedTasksActivity, getString(R.string.failed_load_people_tasks), Toast.LENGTH_SHORT).show()
                     }
                 }
 

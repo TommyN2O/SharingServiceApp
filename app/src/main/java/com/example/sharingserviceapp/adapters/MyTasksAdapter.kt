@@ -29,11 +29,12 @@ class MyTasksAdapter(
         val txtTasker: TextView = itemView.findViewById(R.id.txt_tasker)
 
         fun bind(task: TaskResponse) {
-            task.sender.profile_photo?.let {
+            val imageUrl = task.categories.firstOrNull()?.image
+            if (!imageUrl.isNullOrEmpty()) {
                 try {
-                    val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), it)
+                    val fullUrl = URL(URL(ApiServiceInstance.BASE_URL), imageUrl)
                     Glide.with(itemView.context)
-                        .load(fullImageUrl.toString())
+                        .load(fullUrl.toString())
                         .placeholder(R.drawable.placeholder_image_user)
                         .error(R.drawable.error)
                         .circleCrop()
@@ -41,9 +42,11 @@ class MyTasksAdapter(
                 } catch (e: Exception) {
                     imgProfile.setImageResource(R.drawable.placeholder_image_user)
                 }
-            } ?: imgProfile.setImageResource(R.drawable.placeholder_image_user)
+            } else {
+                imgProfile.setImageResource(R.drawable.placeholder_image_user)
+            }
 
-            txtName.text = "${task.sender.name.replaceFirstChar { it.uppercase() }} ${task.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
+            txtName.text = task.categories.joinToString { it.name }
 
             txtCategory.text = task.categories.joinToString { it.name }
 

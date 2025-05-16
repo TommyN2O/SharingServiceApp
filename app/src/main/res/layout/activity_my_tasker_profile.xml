@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -129,7 +130,7 @@
                     android:layout_marginStart="8dp"
                     android:text="Categories: Plumber, Electrician"
                     android:textSize="14sp"
-                    android:textColor="#7f7f7f"/>
+                    android:textColor="@color/blacktxt"/>
             </LinearLayout>
 
             <LinearLayout
@@ -151,7 +152,7 @@
                     android:layout_marginStart="8dp"
                     android:text="Cities: New York, Los Angeles"
                     android:textSize="14sp"
-                    android:textColor="#7f7f7f"/>
+                    android:textColor="@color/blacktxt"/>
             </LinearLayout>
 
             <LinearLayout
@@ -173,7 +174,7 @@
                     android:layout_marginStart="8dp"
                     android:text="Hourly Rate: $50"
                     android:textSize="14sp"
-                    android:textColor="#7f7f7f"/>
+                    android:textColor="@color/blacktxt"/>
             </LinearLayout>
 
             <TextView

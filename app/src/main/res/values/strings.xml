@@ -39,6 +39,27 @@
     <string name="confirm_btn">Confirm</string>
     <string name="reset_psw_new_info">Choose a new password for this account. This password will replace the old one: everything else about the user account will remain unchanged.</string>
     <!---->
+    <!--                  Menu                          -->
+    <string name="home">Home</string>
+    <string name="planned_tasks">Planned Tasks</string>
+    <string name="messages">Messages</string>
+    <string name="more">More</string>
+    <!---->
     <!--                   Home                           -->
     <string name="app_title">NestHelper</string>
+    <string name="failed_load_categories">Failed to load categories</string>
+    <!---->
+    <!--                  Messages                           -->
+    <string name="messages_title">Messages</string>
+    <string name="failed_load_messages">Failed to load messages</string>
+    <!---->
+    <!--                  Planned Tasks                           -->
+    <string name="planned_tasks_title">Planned Tasks</string>
+    <string name="btn_my_tasks">My Tasks</string>
+    <string name="btn_people_tasks">People Tasks</string>
+    <string name="failed_load_people_tasks">Failed to load people tasks</string>
+    <string name="failed_load_my_tasks">Failed to load my tasks</string>
+    <!---->
+    <!--                  Common errors                           -->
+    <string name="error_user_auth">User not authenticated</string>
 </resources>

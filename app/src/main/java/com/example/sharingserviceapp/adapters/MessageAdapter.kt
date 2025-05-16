@@ -14,7 +14,9 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MessageAdapter(private val messages: List<Message>, private val onClick: (Message) -> Unit) :
+class MessageAdapter(
+    private var messages: MutableList<Message>,
+    private val onClick: (Message) -> Unit) :
     RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
     class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -31,8 +33,6 @@ class MessageAdapter(private val messages: List<Message>, private val onClick: (
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messages[position]
-
-
         val context = holder.itemView.context
 
         val profileImageUrl = message.otherUser?.profile_photo
@@ -52,13 +52,10 @@ class MessageAdapter(private val messages: List<Message>, private val onClick: (
             holder.imgProfile.setImageResource(R.drawable.placeholder_image_user)
         }
 
-
         holder.txtSenderName.text = "${message.otherUser?.name?.replaceFirstChar { it.uppercase() }} ${message.otherUser?.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
         holder.txtLastMessage.text = message.lastMessage
-
         val formattedTime = formatMessageTime(message.lastMessageTime)
         holder.txtTime.text = formattedTime
-
 
         holder.itemView.setOnClickListener { onClick(message) }
     }

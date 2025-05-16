@@ -1,6 +1,7 @@
 package com.example.sharingserviceapp.adapters
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +25,11 @@ class BalanceAdapter(private val transactions: List<WalletPaymentsResponse>) : R
             textCategory.text = transaction.task.category
             textDate.text = transaction.paymentDate
             textStatus.text = transaction.paymentStatus
-            textAmount.text = if (transaction.type == "earning") "+$${transaction.amount}" else "-$${transaction.amount}"
+            textAmount.text = if (transaction.type == "earning") "+€${transaction.amount}" else "-€${transaction.amount}"
+            textAmount.setTextColor(
+                if (transaction.type == "earning") Color.parseColor("#4CAF50") // Green
+                else Color.parseColor("#F44336") // Red
+            )
         }
     }
 

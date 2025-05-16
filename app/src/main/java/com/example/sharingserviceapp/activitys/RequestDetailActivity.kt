@@ -28,6 +28,7 @@ import kotlin.text.firstOrNull
 
 class RequestDetailActivity : AppCompatActivity() {
 
+    private lateinit var  tasksname: TextView
     private lateinit var customerName: TextView
     private lateinit var taskCategory: TextView
     private lateinit var taskDateTime: TextView
@@ -47,6 +48,7 @@ class RequestDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_detail)
 
+        tasksname=findViewById(R.id.titleText)
         customerName = findViewById(R.id.customerName)
         taskCategory = findViewById(R.id.taskCategory)
         taskDateTime = findViewById(R.id.taskDateTime)
@@ -92,6 +94,9 @@ class RequestDetailActivity : AppCompatActivity() {
         val btnYes = dialog.findViewById<Button>(R.id.btnYes)
         btnYes.setOnClickListener {
             updateTaskStatus("Declined")
+            val intent = Intent(this, RequestsOffersActivity::class.java)
+            startActivity(intent)
+            finish()
             dialog.dismiss()
         }
 
@@ -197,17 +202,17 @@ class RequestDetailActivity : AppCompatActivity() {
 
 
     private fun showRequestDetailed(request: TaskResponse) {
-
+        tasksname.text ="Task #${request.id}"
         customerName.text = "${request.sender.name.replaceFirstChar { it.uppercase() }} ${request.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
         taskCategory.text = "Category: ${request.categories.joinToString { it.name }}"
         val slot = request.availability.firstOrNull()
         taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
-        taskDuration.text = "Duration: ${request.duration}"
+        taskDuration.text = "Duration: ${request.duration}h"
         taskLocation.text = "Location: ${request.city.name}"
         taskPrice.text = "Price: $${request.tasker?.hourly_rate}/h"
         taskDescription.text = request.description
 
-        receiverId=request.tasker?.id
+        receiverId=request.sender?.id
 
         val status = request.status.replaceFirstChar { it.uppercase() }
         taskStatus.text = "Status: $status"

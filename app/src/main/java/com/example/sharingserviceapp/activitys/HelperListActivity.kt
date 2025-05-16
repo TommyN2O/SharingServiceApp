@@ -2,32 +2,43 @@ package com.example.sharingserviceapp.activitys
 
 import android.app.Dialog
 import android.content.Intent
+import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
+import com.example.sharingserviceapp.activitys.HelperListActivity
 import com.example.sharingserviceapp.adapters.TaskerHelperAdapter
-import com.example.sharingserviceapp.adapters.CustomerHelperAdapter
+import com.example.sharingserviceapp.adapters.OpenTasksHelperAdapter
 import com.example.sharingserviceapp.models.TaskerHelper
-import com.example.sharingserviceapp.models.CustumerHelper
+import com.example.sharingserviceapp.models.OpenedTasksHelper
 import com.example.sharingserviceapp.network.ApiServiceInstance
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.sharingserviceapp.models.City
+import com.example.sharingserviceapp.models.TaskerCheck
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.URL
+import java.util.Calendar
 
 class HelperListActivity : AppCompatActivity() {
 
     private lateinit var taskerhelperAdapter: TaskerHelperAdapter
-    private lateinit var cutomerhelperAdapter: CustomerHelperAdapter
+    private lateinit var opentaskshelperAdapter: OpenTasksHelperAdapter
 
     private var taskerList: MutableList<TaskerHelper> = mutableListOf()
-    private var custumerList: MutableList<CustumerHelper> = mutableListOf()
+    private var opentasksList: MutableList<OpenedTasksHelper> = mutableListOf()
 
     private var isTaskerMode: Boolean = false
 
@@ -35,9 +46,21 @@ class HelperListActivity : AppCompatActivity() {
     private lateinit var btnTasker: Button
     private lateinit var recyclerView: RecyclerView
 
-    private var selectedCity: String = ""
-    private var selectedPrice: Int = 0
-    private var selectedTime: String = ""
+    private lateinit var citiesTextView: TextView
+    private var cities: List<City> = emptyList()
+    private var selectedCityIds: MutableList<Int> = mutableListOf()
+    private var selectedCityNames: MutableList<String> = mutableListOf()
+    private var selectedMinPrice: Int? = null
+    private var selectedMaxPrice: Int? = null
+    private var selectedMinBudget: Int? = null
+    private var selectedMaxBudget: Int? = null
+    private var selectedDuration: Int? = null
+    private var selectedCity: String? = null
+    private var selectedDate: String? = null
+    private var selectedTimeFrom: String? = null
+    private var selectedTimeTo: String? = null
+    private var selectedRating: Int? = null
+
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -48,18 +71,18 @@ class HelperListActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("FilterPreferences", MODE_PRIVATE)
 
         setupBackButton()
-
-        val categoryName = intent.getStringExtra("category_name")
+        fetchCities()
         isTaskerMode = intent.getBooleanExtra("is_tasker_mode", false)
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        custumerList = getTaskerListForCategory(categoryName).toMutableList()
-
-        // Initialize adapters
-        taskerhelperAdapter = TaskerHelperAdapter(this, taskerList) { tasker -> navigateToTaskerDetails(tasker) }
-        cutomerhelperAdapter = CustomerHelperAdapter(this, custumerList) { helper -> navigateToCustomerDetails(helper) }
+        taskerhelperAdapter =
+            TaskerHelperAdapter(this, taskerList) { tasker -> navigateToTaskerDetails(tasker) }
+        opentaskshelperAdapter = OpenTasksHelperAdapter(
+            this,
+            opentasksList
+        ) { tasker -> navigateToCustomerDetails(tasker) }
 
         btnCustomer = findViewById(R.id.btn_customer)
         btnTasker = findViewById(R.id.btn_tasker)
@@ -69,8 +92,14 @@ class HelperListActivity : AppCompatActivity() {
         btnCustomer.setOnClickListener { toggleTaskerMode(false) }
         btnTasker.setOnClickListener { toggleTaskerMode(true) }
 
-        findViewById<ImageView>(R.id.btn_filter).setOnClickListener { showFilterDialog() }
-
+        val btnFilter = findViewById<ImageView>(R.id.btn_filter)
+        btnFilter.setOnClickListener {
+            if (isTaskerMode) {
+                showOpenedTasksFilterDialog()
+            } else {
+                showTaskerFilterDialog()
+            }
+        }
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.menu_home
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -102,9 +131,7 @@ class HelperListActivity : AppCompatActivity() {
                 else -> false
             }
         }
-        fetchTaskers()
     }
-
 
     private fun setupBackButton() {
         findViewById<ImageView>(R.id.btn_back).setOnClickListener {
@@ -125,11 +152,9 @@ class HelperListActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun navigateToCustomerDetails(tasker: CustumerHelper) {
+    private fun navigateToCustomerDetails(task: OpenedTasksHelper) {
         val intent = Intent(this, TaskDetailOfferActivity::class.java).apply {
-            putExtra("tasker_name", tasker.name)
-            putExtra("tasker_budget", tasker.budget)
-            putExtra("tasker_city", tasker.city)
+            putExtra("tasker_id", task.id)
         }
         startActivity(intent)
     }
@@ -137,7 +162,6 @@ class HelperListActivity : AppCompatActivity() {
     private fun fetchTaskers() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
 
         if (token.isNullOrEmpty()) {
             Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
@@ -150,146 +174,345 @@ class HelperListActivity : AppCompatActivity() {
 
         val apiService = ApiServiceInstance.Auth.apiServices
 
-        apiService.getTaskerList("Bearer $token").enqueue(object : Callback<List<TaskerHelper>> {
+        apiService.getTaskerList(
+            token = "Bearer $token",
+            city = selectedCity,
+            date = selectedDate,
+            timeFrom = selectedTimeFrom,
+            timeTo = selectedTimeTo,
+            minPrice = selectedMinPrice,
+            maxPrice = selectedMaxPrice,
+            rating = selectedRating,
+            category = categoryId,
+        ).enqueue(object : Callback<List<TaskerHelper>> {
             override fun onResponse(
                 call: Call<List<TaskerHelper>>,
                 response: Response<List<TaskerHelper>>
             ) {
                 if (response.isSuccessful) {
                     val taskers = response.body() ?: emptyList()
-
-                    val filteredTaskers = taskers.filter { tasker ->
-
-                        tasker.categories.any { category -> category.id == categoryId }
-                    }
                     taskerList.clear()
-                    taskerList.addAll(filteredTaskers)
+                    taskerList.addAll(taskers)
 
-                    taskerhelperAdapter = TaskerHelperAdapter(this@HelperListActivity, taskerList) { selectedTasker ->
-                        val intent = Intent(this@HelperListActivity, TaskerHelperDetailActivity::class.java).apply {
-
-                            putExtra("user_id", selectedTasker.id)
-                            putExtra("category_id", categoryId)
+                    taskerhelperAdapter =
+                        TaskerHelperAdapter(this@HelperListActivity, taskerList) { selectedTasker ->
+                            val intent = Intent(
+                                this@HelperListActivity,
+                                TaskerHelperDetailActivity::class.java
+                            ).apply {
+                                putExtra("user_id", selectedTasker.id)
+                                putExtra("category_id", categoryId)
+                            }
+                            startActivity(intent)
                         }
-                        startActivity(intent)
-                    }
-
                     recyclerView.adapter = taskerhelperAdapter
                 } else {
-                    Toast.makeText(this@HelperListActivity, "Failed to load taskers", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@HelperListActivity,
+                        "Failed to load taskers",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<List<TaskerHelper>>, t: Throwable) {
-                Toast.makeText(this@HelperListActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@HelperListActivity, "Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
 
+    private fun fetchOpenedTasks() {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
 
-    // Load mock data for
-    private fun getTaskerListForCategory(category: String?): List<CustumerHelper> {
-        return when (category) {
-            "Cleaning" -> listOf(
-                CustumerHelper(
-                    "Alice Brown", R.drawable.user, "San Francisco", "Need deep cleaning",
-                    70, "Tomorrow", R.drawable.clean_category, listOf(R.drawable.clean_category, R.drawable.user)
-                )
-            )
-            "Painting" -> listOf(
-                CustumerHelper(
-                    "Robert Wilson", R.drawable.user, "Seattle", "Looking for wall painting",
-                    80, "Next Week", R.drawable.clean_category,listOf(R.drawable.clean_category, R.drawable.user)
-                )
-            )
-            else -> emptyList()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
         }
+
+        val categoryId = intent.getIntExtra("category_id", -1)
+
+        val apiService = ApiServiceInstance.Auth.apiServices
+
+        apiService.getOpenedTasksList(
+            token = "Bearer $token",
+            category = categoryId,
+            city = selectedCity,
+            date = selectedDate,
+            minBudget = selectedMinBudget,
+            maxBudget = selectedMaxBudget,
+            duration = selectedDuration,
+
+            ).enqueue(object : Callback<List<OpenedTasksHelper>> {
+            override fun onResponse(
+                call: Call<List<OpenedTasksHelper>>,
+                response: Response<List<OpenedTasksHelper>>
+            ) {
+                if (response.isSuccessful) {
+                    val openedTasks = response.body() ?: emptyList()
+                    opentasksList.clear()
+                    opentasksList.addAll(openedTasks)
+                    recyclerView.adapter = opentaskshelperAdapter
+                } else {
+                    Toast.makeText(
+                        this@HelperListActivity,
+                        "Failed to load opened tasks",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<OpenedTasksHelper>>, t: Throwable) {
+                Toast.makeText(this@HelperListActivity, "Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
     }
 
-    private fun showFilterDialog() {
-        val dialog = BottomSheetDialog(this)
-        val view = layoutInflater.inflate(R.layout.filter_bottom_sheet, null)
-        dialog.setContentView(view)
+    private fun fetchCities() {
+        val apiService = ApiServiceInstance.Auth.apiServices
+        apiService.getCities().enqueue(object : Callback<List<City>> {
+            override fun onResponse(call: Call<List<City>>, response: Response<List<City>>) {
+                if (response.isSuccessful) {
+                    cities = response.body() ?: emptyList()
+                } else {
+                    Toast.makeText(
+                        this@HelperListActivity,
+                        "Failed to load cities",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
 
-        val citySpinner = view.findViewById<Spinner>(R.id.spinner_city)
-        val priceSeekBar = view.findViewById<SeekBar>(R.id.seekbar_price)
-        val timeSpinner = view.findViewById<Spinner>(R.id.spinner_specific_time)
+            override fun onFailure(call: Call<List<City>>, t: Throwable) {
+                Toast.makeText(this@HelperListActivity, "Error: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
+    }
+
+    private fun showTaskerFilterDialog() {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.tasker_filter_bottom_sheet, null)
+        dialog.setContentView(view)
+        val bottomSheet =
+            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+        BottomSheetBehavior.from(bottomSheet!!).apply {
+            state = BottomSheetBehavior.STATE_EXPANDED
+            skipCollapsed = true
+        }
+
+        citiesTextView = view.findViewById(R.id.text_city)
+        val dateTextView = view.findViewById<TextView>(R.id.text_date_picker)
+        val timeFromSpinner = view.findViewById<Spinner>(R.id.spinner_time_from)
+        val timeToSpinner = view.findViewById<Spinner>(R.id.spinner_time_to)
+        val minPriceEdit = view.findViewById<EditText>(R.id.edit_min_price)
+        val maxPriceEdit = view.findViewById<EditText>(R.id.edit_max_price)
+        val ratingBar = view.findViewById<RatingBar>(R.id.rating_bar)
         val btnApplyFilters = view.findViewById<Button>(R.id.btn_apply_filters)
 
-        val cities = arrayOf("New York", "Los Angeles", "Chicago", "San Francisco")
-        val cityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, cities)
-        cityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        citySpinner.adapter = cityAdapter
-        citySpinner.setSelection(cities.indexOf(selectedCity))
+        val timeOptions = (7..21).map { String.format("%02d:00", it) }
+        val initialAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            listOf("") + timeOptions
+        )
+        initialAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        priceSeekBar.progress = selectedPrice
+        timeFromSpinner.adapter = initialAdapter
+        timeToSpinner.adapter = initialAdapter
 
-        timeSpinner.setSelection(if (selectedTime.isNotEmpty()) cities.indexOf(selectedTime) else 0)
+        timeFromSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedTime = timeFromSpinner.selectedItem?.toString()
+                val newTimeToOptions = if (!selectedTime.isNullOrEmpty()) {
+                    val selectedHour = selectedTime.split(":")[0].toInt()
+                    val nextHours = ((selectedHour + 1)..21).filter { it <= 21 }
+                    listOf("") + nextHours.map { String.format("%02d:00", it) }
+                } else {
+                    listOf("") + (8..21).map { String.format("%02d:00", it) }
+                }
 
-        timeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedTime = parent?.getItemAtPosition(position) as String
+                val toAdapter = ArrayAdapter(
+                    this@HelperListActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    newTimeToOptions
+                )
+                timeToSpinner.adapter = toAdapter
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
 
-            }
+        dateTextView.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog =
+                DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+                    val formattedDate = String.format(
+                        "%04d-%02d-%02d",
+                        selectedYear,
+                        selectedMonth + 1,
+                        selectedDay
+                    )
+                    dateTextView.text = formattedDate
+                    selectedDate = formattedDate
+                }, year, month, day)
+
+            datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+
+            datePickerDialog.show()
+        }
+
+        citiesTextView.setOnClickListener {
+            showCitySelectionDialog()
+        }
+        val backButton = view.findViewById<ImageView>(R.id.btn_back_filter)
+        backButton.setOnClickListener {
+            dialog.dismiss()
         }
 
         btnApplyFilters.setOnClickListener {
-            selectedCity = citySpinner.selectedItem.toString()
-            selectedPrice = priceSeekBar.progress
-            //applyFilters(selectedCity, selectedPrice, selectedTime)
-            saveFilterSettings(selectedCity, selectedPrice, selectedTime)
+            selectedCity = selectedCityIds.joinToString(",")
+            selectedTimeFrom = timeFromSpinner.selectedItem?.toString()
+            selectedTimeTo = timeToSpinner.selectedItem?.toString()
+            selectedMinPrice = minPriceEdit.text.toString().toIntOrNull()
+            selectedMaxPrice = maxPriceEdit.text.toString().toIntOrNull()
+            val rating = ratingBar.rating.toInt()
+            selectedRating = if (rating == 0) null else rating
+            fetchTaskers()
             dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    private fun saveFilterSettings(city: String, price: Int, time: String) {
-        val editor = sharedPreferences.edit()
-        if (isTaskerMode) {
-            // Save tasker filters
-            editor.putString("tasker_city", city)
-            editor.putInt("tasker_price", price)
-            editor.putString("tasker_time", time)
-        } else {
-            // Save customer filters
-            editor.putString("customer_city", city)
-            editor.putInt("customer_price", price)
-            editor.putString("customer_time", time)
+    private fun showOpenedTasksFilterDialog() {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.opened_tasks_filter_bottom_sheet, null)
+        dialog.setContentView(view)
+
+        val bottomSheet =
+            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+        BottomSheetBehavior.from(bottomSheet!!).apply {
+            state = BottomSheetBehavior.STATE_EXPANDED
+            skipCollapsed = true
         }
-        editor.apply()
+
+        val cityTextView = view.findViewById<TextView>(R.id.text_city)
+        val dateTextView = view.findViewById<TextView>(R.id.text_date_picker)
+        val minBudgetEdit = view.findViewById<EditText>(R.id.edit_min_budget)
+        val maxBudgetEdit = view.findViewById<EditText>(R.id.edit_max_budget)
+        val durationSpinner = view.findViewById<Spinner>(R.id.spinner_duration)
+        val btnApplyFilters = view.findViewById<Button>(R.id.btn_apply_filters)
+        val durationOptions = listOf("") + (1..7).map { "${it}h" }
+        val durationAdapter =
+            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, durationOptions)
+        durationSpinner.adapter = durationAdapter
+
+        cityTextView.setOnClickListener {
+            showCitySelectionDialog()
+        }
+
+        dateTextView.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = DatePickerDialog(this, { _, y, m, d ->
+                val formatted = String.format("%04d-%02d-%02d", y, m + 1, d)
+                dateTextView.text = formatted
+                selectedDate = formatted
+            }, year, month, day)
+
+            datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+            datePickerDialog.show()
+        }
+
+        val backButton = view.findViewById<ImageView>(R.id.btn_back_filter)
+        backButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnApplyFilters.setOnClickListener {
+            selectedCity = selectedCityIds.joinToString(",")
+            selectedMinBudget = minBudgetEdit.text.toString().toIntOrNull()
+            selectedMaxBudget = maxBudgetEdit.text.toString().toIntOrNull()
+            selectedDuration = durationSpinner.selectedItem?.toString()
+                ?.filter { it.isDigit() }
+                ?.toIntOrNull()
+
+
+            fetchOpenedTasks()
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
-    private fun loadFilterSettings() {
-        if (isTaskerMode) {
+    private fun showCitySelectionDialog() {
+        if (cities.isEmpty()) return
 
-        } else {
+        val cityNames = cities.map { it.name }
+        val dialogView = layoutInflater.inflate(R.layout.dialog_multiselect, null)
+        val listView = dialogView.findViewById<ListView>(R.id.list_view)
+        val searchView = dialogView.findViewById<SearchView>(R.id.search_view)
 
+        val adapter =
+            ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, cityNames)
+        listView.adapter = adapter
+        listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+
+        for (i in cityNames.indices) {
+            if (selectedCityNames.contains(cityNames[i])) {
+                listView.setItemChecked(i, true)
+            }
         }
-    }
 
-//    private fun applyFilters(city: String, price: Int, time: String) {
-//        if (isTaskerMode) {
-//            // For Taskers, apply the filters only if they're not empty.
-//            val filteredList = custumerList.filter {
-//                (it.city.contains(city, ignoreCase = true) || city.isEmpty()) &&
-//                        (it.budget <= price || price == 0)
-//
-//            }
-//            cutomerhelperAdapter.updateList(filteredList.toMutableList())
-//        } else {
-//            // For Customers, apply the filters only if they're not empty.
-//            val filteredList = taskerList.filter { helper ->
-//                (helper.availableCities.contains(city) || city.isEmpty()) &&
-//                        (helper.price <= price || price == 0) &&
-//                        (helper.availableTimes.contains(time) || time.isEmpty())
-//            }
-//            taskerhelperAdapter.updateList(filteredList.toMutableList())
-//        }
-//    }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return true
+            }
+        })
+
+        AlertDialog.Builder(this)
+            .setTitle("Select Cities")
+            .setView(dialogView)
+            .setPositiveButton("OK") { _, _ ->
+                val checkedPositions = listView.checkedItemPositions
+                selectedCityNames.clear()
+                selectedCityIds.clear()
+
+                for (i in 0 until listView.count) {
+                    if (checkedPositions[i]) {
+                        val cityName = adapter.getItem(i)!!
+                        val city = cities.find { it.name == cityName }
+                        if (city != null) {
+                            selectedCityNames.add(city.name)
+                            selectedCityIds.add(city.id)
+                        }
+                    }
+                }
+                citiesTextView.text = selectedCityNames.joinToString(", ")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
 
     private fun toggleTaskerMode(isTasker: Boolean) {
         isTaskerMode = isTasker
@@ -305,10 +528,17 @@ class HelperListActivity : AppCompatActivity() {
             btnTasker.setTextColor(resources.getColor(R.color.blacktxt))
         }
 
-        loadFilterSettings()  // Load saved filters based on mode
-        recyclerView.adapter = if (isTaskerMode) cutomerhelperAdapter else taskerhelperAdapter
+        if (isTaskerMode) {
+            recyclerView.adapter = opentaskshelperAdapter
+            fetchOpenedTasks()
+        } else {
+            recyclerView.adapter = taskerhelperAdapter
+            fetchTaskers()
+        }
+
     }
-    fun showZoomDialog(images: List<Int>, position: Int) {
+
+    fun showZoomDialog(images: List<String>, position: Int, baseUrl: String) {
         val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
         val view = layoutInflater.inflate(R.layout.dialog_zoom_image, null)
         dialog.setContentView(view)
@@ -321,29 +551,44 @@ class HelperListActivity : AppCompatActivity() {
         var currentPosition = position
         val totalImages = images.size
 
-        imageView.setImageResource(images[currentPosition])
+        val imageUrl = URL(URL(baseUrl), images[currentPosition]).toString()
+        loadImage(imageUrl, imageView)
 
         updateArrowsVisibility(currentPosition, totalImages, arrowLeft, arrowRight)
 
         arrowLeft.setOnClickListener {
             if (currentPosition > 0) {
                 currentPosition--
-                imageView.setImageResource(images[currentPosition])
+                val prevImageUrl = URL(URL(baseUrl), images[currentPosition]).toString()
+                loadImage(prevImageUrl, imageView)
                 updateArrowsVisibility(currentPosition, totalImages, arrowLeft, arrowRight)
             }
         }
+
         arrowRight.setOnClickListener {
             if (currentPosition < totalImages - 1) {
                 currentPosition++
-                imageView.setImageResource(images[currentPosition])
+                val nextImageUrl = URL(URL(baseUrl), images[currentPosition]).toString()
+                loadImage(nextImageUrl, imageView)
                 updateArrowsVisibility(currentPosition, totalImages, arrowLeft, arrowRight)
             }
         }
+
         closeButton.setOnClickListener {
             dialog.dismiss()
         }
+
         dialog.show()
     }
+
+    private fun loadImage(imageUrl: String, imageView: ImageView) {
+        Glide.with(this)
+            .load(imageUrl)
+            .placeholder(R.drawable.placeholder_image)
+            .error(R.drawable.error)
+            .into(imageView)
+    }
+
 
     private fun updateArrowsVisibility(
         currentIndex: Int,
@@ -355,5 +600,34 @@ class HelperListActivity : AppCompatActivity() {
         arrowRight.visibility = if (currentIndex < totalSize - 1) View.VISIBLE else View.GONE
     }
 
+    fun hasTaskerProfile(callback: (Boolean) -> Unit) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
+        val call = ApiServiceInstance.Auth.apiServices.CheckIfIsTasker("Bearer $token")
+
+        call.enqueue(object : Callback<TaskerCheck> {
+            override fun onResponse(call: Call<TaskerCheck>, response: Response<TaskerCheck>) {
+                if (response.isSuccessful) {
+                    callback(response.body()?.is_tasker == true)
+                } else {
+                    callback(false)
+                    Toast.makeText(this@HelperListActivity, "Failed to check profile", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<TaskerCheck>, t: Throwable) {
+                callback(false)
+                Toast.makeText(this@HelperListActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 }
 

@@ -9,8 +9,10 @@ data class TaskResponse(
     val availability: List<AvailabilitySlot>,
     val sender: User,
     val tasker: TaskerTaskResponseBody?,
+    val hourly_rate: Double,
     val gallery: List<String>,
     val status: String,
-    val created_at: String
+    val created_at: String,
+    val budget: Double?
 )
 

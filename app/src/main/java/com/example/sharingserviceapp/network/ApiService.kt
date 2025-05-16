@@ -14,6 +14,7 @@ import com.example.sharingserviceapp.models.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
+import kotlin.time.Duration
 
 interface ApiService {
 
@@ -50,7 +51,7 @@ interface ApiService {
         @Part galleryImages: List<MultipartBody.Part>  // Multiple gallery images
     ): Call<TaskerProfileResponse>
 
-    @PUT("tasker/profile/availability")
+    @PUT("availability")
     fun updateTaskerAvailability(
         @Header("Authorization") token: String,
         @Body body: RequestBody
@@ -60,7 +61,26 @@ interface ApiService {
     @GET("tasker/profiles/")
     fun getTaskerList(
         @Header("Authorization") token: String,
+        @Query("category") category: Int? = null,
+        @Query("city") city: String? = null,
+        @Query("date") date: String? = null,       // or LocalDate if you handle it properly
+        @Query("timeFrom") timeFrom: String? = null,  // HH:mm format
+        @Query("timeTo") timeTo: String? = null,
+        @Query("minPrice") minPrice: Int? = null,
+        @Query("maxPrice") maxPrice: Int? = null,
+        @Query("rating") rating: Int? = null
     ): Call<List<TaskerHelper>>
+
+    @GET("open-tasks/")
+    fun getOpenedTasksList(
+        @Header("Authorization") token: String,
+        @Query("category") category: Int? = null,
+        @Query("city") city: String? = null,
+        @Query("date") date: String? = null,
+        @Query("minBudget") minBudget: Int? = null,
+        @Query("maxBudget") maxBudget: Int? = null,
+        @Query("duration") duration: Int? = null,
+    ): Call<List<OpenedTasksHelper>>
 
     // GET CITIES
     @GET("cities")
@@ -83,6 +103,12 @@ interface ApiService {
         @Path("id") id: Int
     ): Call<TaskerHelper>
 
+    @GET("open-tasks/{id}/dates")
+    fun getOpenTaskById(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<OpenedTasksHelper>
+
     @Multipart
     @POST("tasker/send-request")
     fun sendTaskRequest(
@@ -90,6 +116,26 @@ interface ApiService {
         @Part("taskData") taskerRequestJson: RequestBody,
         @Part galleryImages: List<MultipartBody.Part>
     ): Call<TaskRequestBody>
+//#TODO
+    @GET("tasker/check")
+    fun CheckIfIsTasker(
+        @Header("Authorization") token: String,
+    ): Call<TaskerCheck>
+
+    @POST("open-tasks/{id}/offers")
+    fun sendOpenTaskOffer(
+        @Header("Authorization") token: String,
+        @Body request: OpenTaskOffer,
+        @Path("id") id: Int
+    ): Call<OpenTaskOffer>
+
+    @Multipart
+    @POST("open-tasks")
+    fun createOpenTask(
+        @Header("Authorization") token: String,
+        @Part("taskData") taskerRequestJson: RequestBody,
+        @Part galleryImages: List<MultipartBody.Part>
+    ): Call<OpenTaskBody>
 
     @GET("tasker/tasks/sent")
     fun getMyTasks(
@@ -101,6 +147,20 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: Int
     ): Call<TaskResponse>
+
+    @GET("open-tasks/{id}/offers")
+    fun getOffersForTask(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<List<Offer>>
+
+//fa#TODO so that it deletes it self  and shows the requests and offers window or the ne task detailed
+    @POST("open-tasks/offers/{offerId}/accept")
+    fun acceptOffer(
+        @Header("Authorization") token: String,
+        @Path("offerId") offerId: Int
+    ): Call<Void>
+
 
     @GET("tasker/tasks/received")
     fun getPeopleRequests(
@@ -178,11 +238,6 @@ interface ApiService {
         @Header("Authorization") token: String,
     ): Call<List<TaskResponse>>
 
-    @GET("balance")
-    fun getBalanceData(
-        @Header("Authorization") token: String,
-    ): Call<BalanceResponse>
-
     @GET("users/profile")
     fun getUserProfile(
         @Header("Authorization") token: String,
@@ -196,4 +251,23 @@ interface ApiService {
         @Part profilePhoto: MultipartBody.Part?,
         @Part("profile_data") body: RequestBody,
     ): Call<Void>
+
+    @POST("users/change-password")
+    fun changePassword(
+        @Header("Authorization") token: String,
+        @Body request: ChangePasswordRequest
+    ): Call<ChangePasswordResponse>
+
+    @POST("support-tickets")
+    fun createSupportTicket(
+        @Header("Authorization") token: String,
+        @Body request: CreateSupportTicketRequest
+    ): Call<CreateTicketResponse>
+
+    @PUT ("tasker/task-requests/{taskRequestId}/convert-to-open")
+    fun convertToOpenTask(
+        @Header("Authorization") token: String,
+        @Body body: SetAsOpenTask,
+        @Path("taskRequestId") taskRequestId: Int
+    ): Call<OpenTaskResponse>
 }

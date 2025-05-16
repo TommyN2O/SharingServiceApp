@@ -1,0 +1,56 @@
+package com.example.sharingserviceapp.adapters
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.sharingserviceapp.R
+import com.example.sharingserviceapp.models.Offer
+import com.example.sharingserviceapp.network.ApiServiceInstance
+import java.net.URL
+
+class OfferListAdapter(
+    private val offers: List<Offer>,
+    private val onAccept: (Offer) -> Unit,
+
+) : RecyclerView.Adapter<OfferListAdapter.OfferViewHolder>() {
+
+    inner class OfferViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imgPhoto: ImageView = itemView.findViewById(R.id.imgPhoto)
+        val txtName: TextView = itemView.findViewById(R.id.txtName)
+        val txtDateTime: TextView = itemView.findViewById(R.id.txtDateTime)
+        val txtDuration: TextView = itemView.findViewById(R.id.txtDuration)
+        val txtPrice: TextView = itemView.findViewById(R.id.txtPrice)
+        val btnAccept: ImageView = itemView.findViewById(R.id.btnAccept)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_offer, parent, false)
+        return OfferViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: OfferViewHolder, position: Int) {
+        val offer = offers[position]
+        val taskerImageUrl = offer.tasker.profile_photo.let {
+            URL(URL(ApiServiceInstance.BASE_URL), it)
+        }
+
+        Glide.with(holder.itemView.context)
+            .load(taskerImageUrl)
+            .placeholder(R.drawable.placeholder_image_user)
+            .error(R.drawable.error)
+            .circleCrop()
+            .into(holder.imgPhoto)
+        holder.txtName.text = offer.tasker.name
+        holder.txtDateTime.text = "${offer.availability.date} ${offer.availability.time}"
+        holder.txtDuration.text = "Duration: ${offer.duration}"
+        holder.txtPrice.text = "Price: ${offer.price}€"
+        holder.btnAccept.setOnClickListener { onAccept(offer) }
+    }
+
+    override fun getItemCount(): Int = offers.size
+}

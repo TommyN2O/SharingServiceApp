@@ -19,6 +19,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activitys.SupportTicketConfirmationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activitys.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".activitys.EditProfileDetailsActivity"
             android:exported="false" />
         <activity
@@ -69,7 +75,7 @@
         </activity>
         <activity
             android:name=".activitys.TaskDetailActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".activitys.RequestDetailActivity"
             android:exported="false" />

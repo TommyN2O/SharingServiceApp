@@ -269,7 +269,7 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         detailReviews.text = "(${profileResponse.reviewCount} reviews)"
         detailCategories.text = profileResponse.categories.joinToString(", ") { it.name }
         detailCities.text = profileResponse.cities.joinToString(", ") { it.name }
-        detailHourlyRate.text = "Hourly Rate: $${profileResponse.hourly_rate}"
+        detailHourlyRate.text = "Hourly Rate: €${profileResponse.hourly_rate}"
 
         val shortDescription = profileResponse.description.take(100) + "..."
         detailDescription.text = shortDescription

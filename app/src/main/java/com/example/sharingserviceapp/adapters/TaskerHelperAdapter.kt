@@ -31,11 +31,6 @@ class TaskerHelperAdapter(
 
     override fun getItemCount(): Int = taskerList.size
 
-    fun updateList(newList: MutableList<TaskerHelper>) {
-        taskerList = newList
-        notifyDataSetChanged()
-    }
-
     inner class CustomerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val profileImage: ImageView = itemView.findViewById(R.id.profile_image)
         private val name: TextView = itemView.findViewById(R.id.person_name)
@@ -46,18 +41,37 @@ class TaskerHelperAdapter(
         private val shortDescription: TextView = itemView.findViewById(R.id.short_description)
 
         fun bind(customer: TaskerHelper) {
-            val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), customer.profile_photo)
-            Glide.with(itemView.context)
-                .load(fullImageUrl.toString())
-                .placeholder(R.drawable.placeholder_image_user)
-                .error(R.drawable.error)
-                .circleCrop()
-                .into(profileImage)
+            val profilePhotoPath = customer.profile_photo
 
-            name.text = customer.name
+            if (!profilePhotoPath.isNullOrEmpty()) {
+                try {
+                    val imageUrl = URL(URL(ApiServiceInstance.BASE_URL), profilePhotoPath).toString()
+                    Glide.with(itemView.context)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.placeholder_image_user)
+                        .error(R.drawable.error)
+                        .circleCrop()
+                        .into(profileImage)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Glide.with(itemView.context)
+                        .load(R.drawable.placeholder_image_user)
+                        .circleCrop()
+                        .into(profileImage)
+                }
+            } else {
+                Glide.with(itemView.context)
+                    .load(R.drawable.placeholder_image_user)
+                    .circleCrop()
+                    .into(profileImage)
+            }
+
+            name.text = "${customer.name ?: "Unknown"} ${
+            customer.surname?.firstOrNull()?.uppercase() ?: ""
+            }.".trim()
             rating.text = customer.rating.toString()
             reviewCount.text = "(${customer.reviewCount} reviews)"
-            price.text = "${customer.hourly_rate}$/h"
+            price.text = "${customer.hourly_rate}€/h"
             city.text = customer.cities.joinToString(", ") { it.name }
             shortDescription.text = customer.description
 

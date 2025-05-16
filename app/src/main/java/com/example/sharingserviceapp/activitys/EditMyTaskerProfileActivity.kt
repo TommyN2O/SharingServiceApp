@@ -168,15 +168,36 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
                         categoriesTextView.text =
                             it.categories.joinToString(", ") { category -> category.name }
 
-                        val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), it.profile_photo)
-                        Glide.with(this@EditMyTaskerProfileActivity)
-                            .load(fullImageUrl)
-                            .placeholder(R.drawable.placeholder_image_user)
-                            .error(R.drawable.error)
-                            .circleCrop()
-                            .into(profileImageView)
+                        val profilePhotoPath = it.profile_photo
+                        if (!profilePhotoPath.isNullOrEmpty()) {
+                            try {
+                                val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), profilePhotoPath)
 
-                        profilePhotoUri = Uri.parse(fullImageUrl.toString())
+                                Glide.with(this@EditMyTaskerProfileActivity)
+                                    .load(fullImageUrl.toString())
+                                    .placeholder(R.drawable.placeholder_image_user)
+                                    .error(R.drawable.error)
+                                    .circleCrop()
+                                    .into(profileImageView)
+
+                                profilePhotoUri = Uri.parse(fullImageUrl.toString())
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                // Fallback image if something goes wrong
+                                Glide.with(this@EditMyTaskerProfileActivity)
+                                    .load(R.drawable.placeholder_image_user)
+                                    .circleCrop()
+                                    .into(profileImageView)
+                            }
+                        } else {
+                            // No photo available, load placeholder
+                            Glide.with(this@EditMyTaskerProfileActivity)
+                                .load(R.drawable.placeholder_image_user)
+                                .circleCrop()
+                                .into(profileImageView)
+                        }
+
                         val galleryUrls = it.gallery.map { path ->
                             URL(URL(ApiServiceInstance.BASE_URL), path).toString()
                         }
@@ -199,6 +220,8 @@ class EditMyTaskerProfileActivity : AppCompatActivity() {
     }
 
     private fun showCitySelectionDialog() {
+        if (cities.isEmpty()) return
+
         val items = cities.map { it.name }
         val selectedItems = mutableListOf<String>()
         val selectedCityNames = citiesTextView.text.toString().split(",").map { it.trim() }

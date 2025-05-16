@@ -162,7 +162,7 @@ class MyPlannedTaskDetailedActivity : AppCompatActivity() {
         taskCategory.text = "Category: ${task.categories.joinToString { it.name }}"
         val slot = task.availability.firstOrNull()
         taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
-        taskDuration.text = "Duration: ${task.duration}"
+        taskDuration.text = "Duration: ${task.duration}h"
         taskLocation.text = "Location: ${task.city.name}"
         taskPrice.text = "Price: $${task.tasker?.hourly_rate}/h"
         taskDescription.text = task.description

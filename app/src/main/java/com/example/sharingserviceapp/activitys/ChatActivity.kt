@@ -29,6 +29,7 @@ class ChatActivity : AppCompatActivity() {
     private val messages = mutableListOf<ChatMessages>()
     private var chatId: Int = -1
     private var receiverId: Int = -1
+    private var currentUserId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val currentUserId = sharedPreferences.getInt("user_id", -1)
+        currentUserId = sharedPreferences.getInt("user_id", -1)
         if (currentUserId == -1) {
             Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
             finish()
@@ -104,9 +105,14 @@ class ChatActivity : AppCompatActivity() {
                         chatAdapter.notifyDataSetChanged()
                         recyclerChat.scrollToPosition(messages.size - 1)
 
-                        val other = sortedMessages.firstOrNull {
-                            it.sender.id == receiverId
-                        }?.sender
+                        // Find the other user (the one who is not the current user)
+                        val other = sortedMessages.firstOrNull()?.let { message ->
+                            if (message.sender.id == currentUserId) {
+                                message.receiver  // If current user is sender, other user is receiver
+                            } else {
+                                message.sender    // If current user is receiver, other user is sender
+                            }
+                        }
                         val userNameView = findViewById<TextView>(R.id.chat_user_name)
                         val userImageView = findViewById<ImageView>(R.id.chat_profile_image)
 

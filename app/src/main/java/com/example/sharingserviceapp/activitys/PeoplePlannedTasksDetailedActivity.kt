@@ -207,7 +207,7 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
         val slot = request.availability.firstOrNull()
         taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
         taskDate = slot?.date
-        taskDuration.text = "Duration: ${request.duration}"
+        taskDuration.text = "Duration: ${request.duration}h"
         taskLocation.text = "Location: ${request.city.name}"
         taskPrice.text = "Price: $${request.tasker?.hourly_rate}/h"
         taskDescription.text = request.description
@@ -224,11 +224,13 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
             "Canceled"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
             else -> taskStatus.setTextColor(resources.getColor(R.color.status_default))
         }
-        ServerDate()
+        checkLocalDate()
         if (status.equals("Canceled", ignoreCase = true)) {
             btnCompleted.visibility = View.GONE
             btnCanceled.visibility = View.GONE
         }
+
+
 
         val imageUrl = request.sender.profile_photo?.let {
             URL(URL(ApiServiceInstance.BASE_URL), it)
@@ -335,6 +337,34 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
             }
         })
     }
+    private fun checkLocalDate() {
+        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(System.currentTimeMillis())
+
+        if (isSameDayLocal(currentDate, taskDate)) {
+            btnCompleted.visibility = View.VISIBLE
+            val paramsDecline = btnCanceled.layoutParams
+            paramsDecline.width = dpToPx(140f)
+            btnCanceled.layoutParams = paramsDecline
+        } else {
+            btnCompleted.visibility = View.GONE
+        }
+    }
+    private fun isSameDayLocal(currentDate: String, taskDate: String?): Boolean {
+        if (taskDate == null) return false
+        return try {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val today = dateFormat.parse(currentDate)
+            val task = dateFormat.parse(taskDate)
+
+            today != null && task != null && !today.before(task)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+
+
     private fun isSameDay(serverDateTime: String, taskDate: String?): Boolean {
         if (taskDate == null) return false
         return try {

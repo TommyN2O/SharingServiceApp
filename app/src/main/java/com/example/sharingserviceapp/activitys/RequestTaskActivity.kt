@@ -265,7 +265,7 @@ class RequestTaskActivity : AppCompatActivity() {
 
 
     private fun showDurationSelectionDialog() {
-        val durations = arrayOf("1h", "2h", "3h", "4h", "More")
+        val durations = arrayOf("1h", "2h", "3h", "4h", "5h","6h","7h")
         val selectedIndex = selectedDuration?.let { durations.indexOf(it) } ?: -1
 
         val builder = AlertDialog.Builder(this)
@@ -430,12 +430,12 @@ class RequestTaskActivity : AppCompatActivity() {
         val description = TaskDescription.text.toString().trim()
         val selectedDay = spinnerDay.selectedItem?.toString()
         val selectedTime = spinnerTime.selectedItem?.toString()
-        val duration = selectedDuration
+        val duration = selectedDuration?.replace("h", "")?.toIntOrNull() ?: 1
         val cityName = citiesTextView.text.toString()
         val categoryNames = categoriesTextView.text.toString().split(",").map { it.trim() }
 
         if (description.isEmpty() || selectedDay.isNullOrEmpty() || selectedTime.isNullOrEmpty() ||
-            duration.isNullOrEmpty() || cityName.isEmpty() || categoryNames.isEmpty()
+           cityName.isEmpty() || categoryNames.isEmpty()
         ) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             return

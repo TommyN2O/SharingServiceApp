@@ -7,6 +7,6 @@ data class ChatMessages(
     val receiverId: Int,
     val message: String,
     val createdAt: String,
-    val sender: User,
-    val receiver: User
+    val sender: UserChat,
+    val receiver: UserChat
 )

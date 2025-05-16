@@ -16,7 +16,6 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         setupListeners()
-        setupBottomNavigation()
     }
 
     private fun setupListeners() {
@@ -39,23 +38,12 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        val darkModeOption = findViewById<LinearLayout>(R.id.dark_mode_option)
-        darkModeOption?.setOnClickListener {
-//            startActivity(Intent(this, DarkModeSettingsActivity::class.java))
-//            finish()
-        }
-
         val passwordChangeOption = findViewById<LinearLayout>(R.id.password_change_option)
         passwordChangeOption?.setOnClickListener {
-//            startActivity(Intent(this, ChangePasswordActivity::class.java))
-//            finish()
+            startActivity(Intent(this, ChangePasswordActivity::class.java))
+            finish()
         }
 
-        val notificationsOption = findViewById<LinearLayout>(R.id.notifications_option)
-        notificationsOption?.setOnClickListener {
-//            startActivity(Intent(this, NotificationsSettingsActivity::class.java))
-//            finish()
-        }
 
         val logout = findViewById<Button>(R.id.btn_logout)
         logout?.setOnClickListener {
@@ -74,31 +62,4 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-
-
-    private fun setupBottomNavigation() {
-        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        bottomNavigationView.selectedItemId = R.id.menu_more
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.menu_home -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    return@setOnNavigationItemSelectedListener true
-                }
-                R.id.menu_tasks -> {
-                    startActivity(Intent(this, PlannedTasksActivity::class.java))
-                    return@setOnNavigationItemSelectedListener true
-                }
-                R.id.menu_messages -> {
-                    startActivity(Intent(this, MessagesActivity::class.java))
-                    return@setOnNavigationItemSelectedListener true
-                }
-                R.id.menu_more -> {
-                    startActivity(Intent(this, MoreActivity::class.java))
-                    return@setOnNavigationItemSelectedListener true
-                }
-                else -> false
-            }
-        }
-    }
 }

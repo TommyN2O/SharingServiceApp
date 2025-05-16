@@ -110,7 +110,7 @@ class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
         val slot = request.availability.firstOrNull()
         taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
         taskDate = slot?.date
-        taskDuration.text = "Duration: ${request.duration}"
+        taskDuration.text = "Duration: ${request.duration}h"
         taskLocation.text = "Location: ${request.city.name}"
         taskPrice.text = "Price: $${request.tasker?.hourly_rate}/h"
         taskDescription.text = request.description

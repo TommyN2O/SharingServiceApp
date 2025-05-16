@@ -1,14 +1,15 @@
 package com.example.sharingserviceapp.models
 
 import java.io.Serializable
+import java.time.Duration
 
 data class Offer(
     val id: Int,
     val taskId: Int,
-    val taskerId: Int,
+    val tasker: User,
     val description: String,
     val price: Double,
-    val suggestDate: String,
-    val suggestTime: String,
+    val duration: Int,
+    val availability: AvailabilitySlot,
     val status: String
 ) : Serializable

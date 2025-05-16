@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/selectAvailableDates"
@@ -79,7 +79,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="4"
-                android:padding="0dp">
+                android:padding="5dp"
+                android:layout_marginRight="1dp">
 
                 <Button
                     android:id="@+id/timeSlot_07_00"

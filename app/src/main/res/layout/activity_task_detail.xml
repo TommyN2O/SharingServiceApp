@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".activitys.TaskDetailActivity">
 
     <ScrollView
@@ -24,7 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:paddingHorizontal="8dp">
 
                 <ImageButton
                     android:id="@+id/backArrowButton"
@@ -39,17 +41,24 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Task"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
                     android:gravity="center"
-                    android:layout_marginEnd="30dp" />
+                    android:text="Task"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/btn_offers"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_offers" />
             </LinearLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Customer Info"
+                android:visibility="gone"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
@@ -60,12 +69,14 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginTop="4dp"
+                android:visibility="gone"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/user"
                 android:contentDescription="Customer Profile Image" />
 
             <TextView
                 android:id="@+id/customerName"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Customer Name"
@@ -73,6 +84,36 @@
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/titleTasker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tasker"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="15dp"
+                android:paddingBottom="8dp" />
+
+            <ImageView
+                android:id="@+id/taskerProfileImage"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="4dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/user"
+                android:contentDescription="Tasker Profile Image" />
+
+            <TextView
+                android:id="@+id/taskerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tasker Name"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"/>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -173,34 +214,6 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_gallery_image" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tasker Info"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"
-                android:paddingBottom="8dp" />
-
-            <ImageView
-                android:id="@+id/taskerProfileImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="4dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/user"
-                android:contentDescription="Tasker Profile Image" />
-
-            <TextView
-                android:id="@+id/taskerName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tasker Name"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"/>
-
         </LinearLayout>
     </ScrollView>
 
@@ -220,6 +233,17 @@
             android:layout_marginLeft="8dp"
             android:backgroundTint="@color/my_light_primary"
             android:text="Payment"
+            android:visibility="gone"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btn_SetAsOpenTask"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:backgroundTint="@color/my_light_primary"
+            android:text="Set as Open Task"
             android:visibility="gone"
             android:textColor="@android:color/white" />
 

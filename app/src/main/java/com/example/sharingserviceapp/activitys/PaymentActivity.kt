@@ -226,7 +226,7 @@ class PaymentActivity : AppCompatActivity() {
         val hourlyRate = task.tasker?.hourly_rate ?: 0.0
         taskPrice.text = "$${hourlyRate}/h"
 
-        val supportFeeValue = 14.20 // or get it from task if it's dynamic
+        val supportFeeValue = 2.50 // or get it from task if it's dynamic
         supportFee.text = "$$supportFeeValue/h"
 
         total = (hourlyRate * durationHours) + (supportFeeValue * durationHours)

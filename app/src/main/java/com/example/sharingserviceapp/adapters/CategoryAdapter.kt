@@ -15,7 +15,7 @@ import java.net.URL
 
 
 class CategoryAdapter(
-    private val categoryList: List<Category>,
+    private var categoryList: List<Category>,
     private val onItemClick: ((Category) -> Unit)? = null
 ) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
@@ -37,13 +37,16 @@ class CategoryAdapter(
         val category = categoryList[position]
         holder.name.text = category.name
 
-        // Ensure full image URL
         val fullImageUrl = URL(URL(BASE_IMAGE_URL), category.image)
         Glide.with(holder.itemView.context).load(fullImageUrl).into(holder.image)
 
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(category)
         }
+    }
+    fun updateList(newList: List<Category>) {
+        categoryList = newList
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = categoryList.size
