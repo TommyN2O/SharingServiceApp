@@ -23,7 +23,18 @@ class BalanceAdapter(private val transactions: List<WalletPaymentsResponse>) : R
         fun bind(transaction: WalletPaymentsResponse) {
             textFullname.text = "${transaction.otherParty.name} ${transaction.otherParty.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
             textCategory.text = transaction.task.category
-            textDate.text = transaction.paymentDate
+            val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.getDefault())
+            inputFormat.timeZone = java.util.TimeZone.getTimeZone("UTC")
+
+            val outputFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
+
+            val parsedDate = try {
+                inputFormat.parse(transaction.paymentDate)
+            } catch (e: Exception) {
+                null
+            }
+
+            textDate.text = parsedDate?.let { outputFormat.format(it) } ?: transaction.paymentDate
             textStatus.text = transaction.paymentStatus
             textAmount.text = if (transaction.type == "earning") "+€${transaction.amount}" else "-€${transaction.amount}"
             textAmount.setTextColor(

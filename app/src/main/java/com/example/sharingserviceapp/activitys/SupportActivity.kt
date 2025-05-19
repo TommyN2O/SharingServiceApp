@@ -2,12 +2,16 @@ package com.example.sharingserviceapp.activitys
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import com.example.sharingserviceapp.R
 import com.example.sharingserviceapp.models.CreateSupportTicketRequest
 import com.example.sharingserviceapp.models.CreateTicketResponse
 import com.example.sharingserviceapp.network.ApiServiceInstance
+import com.google.android.material.textfield.TextInputLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,30 +26,7 @@ class SupportActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_support)
-
-        spinner = findViewById(R.id.spinner_support_type)
-        contentEditText = findViewById(R.id.et_content)
-        sendButton = findViewById(R.id.btn_send)
-        backButton = findViewById(R.id.btn_back)
-
-        val types = listOf("Select issue type", "Payment", "Froud", "Task", "Account", "Other")
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, types)
-
-        backButton.setOnClickListener {
-            startActivity(Intent(this, MoreActivity::class.java))
-            finish()
-        }
-
-        sendButton.setOnClickListener {
-            val selectedType = spinner.selectedItem.toString()
-            val content = contentEditText.text.toString().trim()
-
-            if (selectedType == "Select issue type" || content.isEmpty()) {
-                Toast.makeText(this, "Please select a type and fill in the content.", Toast.LENGTH_SHORT).show()
-            } else {
-                sendSupportTicket(selectedType, content)
-            }
-        }
+        setupListeners()
     }
 
     private fun sendSupportTicket(type: String, content: String) {
@@ -78,5 +59,72 @@ class SupportActivity : AppCompatActivity() {
                 Toast.makeText(this@SupportActivity, "Network error: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun setupListeners() {
+        val spinnerLayout = findViewById<TextInputLayout>(R.id.layout_spinner)
+        val contentLayout = findViewById<TextInputLayout>(R.id.layout_content)
+        spinner = findViewById(R.id.spinner_support_type)
+        contentEditText = findViewById(R.id.et_content)
+        sendButton = findViewById(R.id.btn_send)
+        backButton = findViewById(R.id.btn_back)
+
+        val types = listOf(
+            getString(R.string.type_select_issue),
+            getString(R.string.type_payment),
+            getString(R.string.type_fraud),
+            getString(R.string.type_task),
+            getString(R.string.type_account),
+            getString(R.string.type_other)
+        )
+        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, types)
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedType = spinner.selectedItem.toString()
+                if (selectedType != getString(R.string.type_select_issue)) {
+                    spinnerLayout.error = null
+                    spinner.background = ContextCompat.getDrawable(this@SupportActivity, R.drawable.rounded_corner)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        backButton.setOnClickListener {
+            startActivity(Intent(this, MoreActivity::class.java))
+            finish()
+        }
+
+        sendButton.setOnClickListener {
+            val selectedType = spinner.selectedItem.toString()
+            val content = contentEditText.text.toString().trim()
+
+            var valid = true
+
+            if (selectedType == getString(R.string.type_select_issue)) {
+                spinnerLayout.error = getString(R.string.error_type_issue)
+                spinner.background = ContextCompat.getDrawable(this, R.drawable.spinner_border_error)
+                valid = false
+            } else {
+                spinnerLayout.error = null
+                spinner.background = ContextCompat.getDrawable(this, R.drawable.rounded_corner)
+            }
+
+            if (content.isEmpty()) {
+                contentLayout.error = getString(R.string.error_support_description)
+                valid = false
+            } else {
+                contentLayout.error = null
+            }
+
+            if (valid) {
+                sendSupportTicket(selectedType, content)
+            }
+        }
+
+        contentEditText.doAfterTextChanged {
+            contentLayout.error = null
+        }
     }
 }

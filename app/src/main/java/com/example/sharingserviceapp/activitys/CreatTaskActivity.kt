@@ -63,7 +63,10 @@ class CreatTaskActivity : AppCompatActivity() {
         galleryContainer = findViewById(R.id.gallery_container)
 
         val backButton: ImageButton = findViewById(R.id.btn_back)
-        backButton.setOnClickListener { finish() }
+        backButton.setOnClickListener {
+            val intent = Intent(this, MoreActivity::class.java)
+            startActivity(intent)
+            finish() }
 
         fetchCategories()
         fetchCities()

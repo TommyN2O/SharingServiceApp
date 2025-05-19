@@ -62,4 +62,37 @@
     <!---->
     <!--                  Common errors                           -->
     <string name="error_user_auth">User not authenticated</string>
+    <!---->
+    <!--                  More                          -->
+    <string name="more_title">Menu</string>
+    <string name="btn_saved">Saved</string>
+    <string name="btn_tasker_prof">My Created Tasker</string>
+    <string name="btn_requests_offers">Requests/Offers</string>
+    <string name="btn_create_task">Create Task</string>
+    <string name="btn_history">History</string>
+    <string name="btn_balance">Balance</string>
+    <string name="btn_support">Support</string>
+    <!---->
+    <!--                  Support                         -->
+    <string name="support_title">Support</string>
+    <string name="header_type">Select the type of issue</string>
+    <string name="type_select_issue">Select issue type</string>
+    <string name="type_payment">Payment</string>
+    <string name="type_fraud">Fraud</string>
+    <string name="type_task">Task</string>
+    <string name="type_account">Account</string>
+    <string name="type_other">Other</string>
+    <string name="error_type_issue">Please select a support type</string>
+    <string name="support_description_details">Describe your issue</string>
+    <string name="error_support_description">Description cannot be empty</string>
+    <string name="btn_send">Send</string>
+    <!---->
+    <!--                  Support Ticket Confirmation                        -->
+    <string name="btn_confirm_support">Confirm</string>
+    <string name="support_ticket_text">Thank you! We will contact you by email.</string>
+    <!---->
+    <!--                  Balance                        -->
+    <string name="balance_title">Balance</string>
+    <string name="payments_header">Payments</string>
+    <string name="payments_error_fetch">Error fetching data</string>
 </resources>

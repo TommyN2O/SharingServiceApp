@@ -1,7 +1,6 @@
 package com.example.sharingserviceapp.activitys
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharingserviceapp.R
 import com.example.sharingserviceapp.adapters.BalanceAdapter
-import com.example.sharingserviceapp.models.BalanceResponse
 import com.example.sharingserviceapp.network.ApiServiceInstance
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sharingserviceapp.models.WalletResponse
@@ -29,7 +27,6 @@ class BalanceActivity : AppCompatActivity() {
 
         recyclerEarnings = findViewById(R.id.recycler_earnings)
         textBalanceAmount = findViewById(R.id.text_balance_amount)
-
         recyclerEarnings.layoutManager = LinearLayoutManager(this)
 
         setupBackButton()
@@ -57,7 +54,7 @@ class BalanceActivity : AppCompatActivity() {
                             recyclerEarnings.adapter = BalanceAdapter(it.payments)
                         }
                     } else {
-                        Toast.makeText(this@BalanceActivity, "Error fetching data", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@BalanceActivity, getString(R.string.payments_error_fetch), Toast.LENGTH_SHORT).show()
                     }
                 }
 

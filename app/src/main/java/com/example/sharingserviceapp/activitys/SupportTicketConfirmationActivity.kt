@@ -9,7 +9,6 @@ import com.example.sharingserviceapp.R
 class SupportTicketConfirmationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_support_ticket_confirmation)
 
         val backButton: Button = findViewById(R.id.btn_back)

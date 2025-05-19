@@ -22,9 +22,9 @@ class MoreActivity : AppCompatActivity() {
         setContentView(R.layout.activity_more)
 
         setupBottomNavigation()
-
         setupListeners()
     }
+
     private fun setupListeners() {
 
         val iconSaved = findViewById<LinearLayout>(R.id.icon_saved)
@@ -102,7 +102,7 @@ class MoreActivity : AppCompatActivity() {
         val userId = sharedPreferences.getInt("user_id", 0)
 
         if (token.isNullOrEmpty() || userId == 0) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return

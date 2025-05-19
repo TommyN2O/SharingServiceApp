@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -15,8 +16,8 @@
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="39dp"
-            android:layout_height="39dp"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
             android:contentDescription="Back"
             android:src="@drawable/ic_back" />
 
@@ -24,60 +25,67 @@
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="35dp"
+            android:layout_marginEnd="40dp"
             android:layout_weight="1"
-            android:text="Support"
-            android:textSize="20sp"
+            android:text="@string/support_title"
+            android:textSize="24sp"
             android:textColor="@android:color/black"
             android:textStyle="bold"
             android:gravity="center" />
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/title_support_type"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_spinner"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select the type of issue"
-        android:textSize="16sp"
-        android:textColor="@color/dark_gray"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="10dp"
+        app:errorEnabled="true">
 
-    <Spinner
-        android:id="@+id/spinner_support_type"
+        <Spinner
+            android:id="@+id/spinner_support_type"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/rounded_edittext"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/rounded_edittext"/>
+        android:hint="@string/support_description_details"
+        app:boxBackgroundMode="outline"
+        android:layout_marginTop="10dp"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:errorEnabled="true">
 
-    <TextView
-        android:id="@+id/title_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Describe your issue"
-        android:textSize="16sp"
-        android:textColor="@color/dark_gray"
-        android:layout_marginBottom="8dp"/>
-
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_content"
             android:layout_width="match_parent"
-            android:layout_height="126dp"
-            android:background="@drawable/rounded_edittext"
-            android:gravity="top|start"
-            android:hint="Enter offer details..."
+            android:layout_height="178dp"
+            android:background="@null"
+            android:gravity="start"
             android:inputType="textMultiLine"
             android:maxLines="6"
             android:minLines="4"
             android:padding="12dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grey"
             android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btn_send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Send"
+        android:text="@string/btn_send"
         android:layout_marginBottom="16dp" />
 
 </LinearLayout>

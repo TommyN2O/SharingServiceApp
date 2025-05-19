@@ -20,18 +20,18 @@
             android:id="@+id/menu_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:text="Menu"
-            android:textColor="@android:color/black"
-            android:textSize="25sp"
-            android:layout_weight="1"
             android:layout_marginTop="6dp"
-            android:gravity="start" />
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="start"
+            android:text="@string/more_title"
+            android:textColor="@android:color/black"
+            android:textSize="25sp" />
 
         <ImageView
             android:id="@+id/icon_setting"
             android:layout_width="35dp"
-            android:layout_height="36dp"
+            android:layout_height="30dp"
             android:layout_marginTop="5dp"
             android:src="@drawable/ic_setting" />
     </LinearLayout>
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="49dp"
                 android:gravity="center"
-                android:text="Saved"
+                android:text="@string/btn_saved"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="30dp"
                 android:gravity="center"
-                android:text="My Created Tasker"
+                android:text="@string/btn_tasker_prof"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -135,15 +135,15 @@
                 android:id="@+id/icon_history_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginRight="45dp"
+                android:layout_marginRight="50dp"
                 android:src="@drawable/ic_history" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="45dp"
+                android:layout_marginRight="50dp"
                 android:gravity="center"
-                android:text="History"
+                android:text="@string/btn_history"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -164,15 +164,15 @@
                 android:id="@+id/icon_balance_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginRight="45dp"
+                android:layout_marginRight="50dp"
                 android:src="@drawable/ic_balance" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="45dp"
+                android:layout_marginRight="50dp"
                 android:gravity="center"
-                android:text="Balance"
+                android:text="@string/btn_balance"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -213,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="50dp"
                 android:gravity="center"
-                android:text="Support"
+                android:text="@string/btn_support"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -255,7 +255,7 @@
                 android:layout_height="wrap_content"
 
                 android:layout_marginRight="30dp"
-                android:text="Requests/Offers"
+                android:text="@string/btn_requests_offers"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -283,7 +283,7 @@
                 android:layout_height="wrap_content"
 
                 android:layout_marginRight="45dp"
-                android:text="Create Task"
+                android:text="@string/btn_create_task"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
