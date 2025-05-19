@@ -145,11 +145,6 @@ class HistoryActivity : AppCompatActivity() {
             fetchMyTasksHistory()
         }
 
-        loadFilterSettings()
-    }
-
-    private fun loadFilterSettings() {
-        //  Add filter logic
     }
 
     private fun navigateToTaskDetails(task: TaskResponse) {

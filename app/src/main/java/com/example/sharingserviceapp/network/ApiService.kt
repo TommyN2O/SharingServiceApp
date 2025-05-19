@@ -270,4 +270,22 @@ interface ApiService {
         @Body body: SetAsOpenTask,
         @Path("taskRequestId") taskRequestId: Int
     ): Call<OpenTaskResponse>
+
+    @POST ("reviews")
+    fun sendReview(
+        @Header("Authorization") token: String,
+        @Body body: Review,
+    ): Call<Review>
+
+    @GET ("reviews/tasker/{taskerId}")
+    fun TaskersReviews(
+        @Header("Authorization") token: String,
+        @Path("taskerId") taskerId: Int
+    ): Call<List<ReviewList>>
+
+    @GET ("reviews/task-request/{taskRequestId}/status")
+    fun checkTaskReview(
+        @Header("Authorization") token: String,
+        @Path("taskRequestId") taskRequestId: Int
+    ): Call<HistoryReview>
 }

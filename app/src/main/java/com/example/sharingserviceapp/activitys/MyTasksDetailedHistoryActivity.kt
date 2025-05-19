@@ -21,6 +21,7 @@ import com.example.sharingserviceapp.activitys.TaskDetailActivity
 import com.example.sharingserviceapp.adapters.GalleryAdapter
 import com.example.sharingserviceapp.models.CreateChat
 import com.example.sharingserviceapp.models.CreateChatBody
+import com.example.sharingserviceapp.models.HistoryReview
 import com.example.sharingserviceapp.models.TaskResponse
 import com.example.sharingserviceapp.network.ApiServiceInstance
 import retrofit2.Call
@@ -30,6 +31,7 @@ import java.net.URL
 
 class MyTasksDetailedHistoryActivity : AppCompatActivity() {
     private var taskId: Int = -1
+    private lateinit var sendReview: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_tasks_detailed_history)
@@ -41,15 +43,24 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
             finish()
             return
         }
+        sendReview = findViewById(R.id.btn_review)
+
         loadTaskDetailed(taskId)
-        setupBackButton()
+        buttonListener(taskId)
+        checkReview(taskId)
     }
 
-    private fun setupBackButton() {
+    private fun buttonListener(taskId: Int) {
+
         findViewById<ImageView>(R.id.backArrowButton).setOnClickListener {
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
             finish()
+        }
+        sendReview.setOnClickListener {
+            val intent = Intent(this, ReviewsActivity::class.java)
+            intent.putExtra("TASK_ID", taskId)
+            startActivity(intent)
         }
     }
 
@@ -191,6 +202,36 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
     private fun updateArrowsVisibility(currentIndex: Int, totalSize: Int, arrowLeft: ImageView, arrowRight: ImageView) {
         arrowLeft.visibility = if (currentIndex > 0) View.VISIBLE else View.GONE
         arrowRight.visibility = if (currentIndex < totalSize - 1) View.VISIBLE else View.GONE
+    }
+
+    private fun checkReview(taskId: Int) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+
+        val api = ApiServiceInstance.Auth.apiServices
+        val taskRequestId=taskId
+        val call = api.checkTaskReview("Bearer $token", taskRequestId)
+
+        call.enqueue(object : Callback<HistoryReview> {
+            override fun onResponse(call: Call<HistoryReview>, response: Response<HistoryReview>) {
+                if (response.isSuccessful && response.body() != null) {
+                    val hasReview = response.body()?.hasReview ?: false
+
+                    if (hasReview) {
+                        sendReview.visibility = View.GONE
+                    } else {
+                        sendReview.visibility = View.VISIBLE
+                    }
+                } else {
+                    Toast.makeText(this@MyTasksDetailedHistoryActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<HistoryReview>, t: Throwable) {
+                Toast.makeText(this@MyTasksDetailedHistoryActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
 }

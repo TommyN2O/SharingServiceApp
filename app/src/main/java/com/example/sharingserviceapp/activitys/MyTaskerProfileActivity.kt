@@ -21,6 +21,8 @@ import retrofit2.Response
 import java.net.URL
 import android.app.Dialog
 import android.view.View
+import com.example.sharingserviceapp.adapters.ReviewAdapter
+import com.example.sharingserviceapp.models.ReviewList
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -33,21 +35,14 @@ class MyTaskerProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_tasker_profile)
-
-        // Setup view references
         val menuButton: ImageView = findViewById(R.id.menu_button)
-        val readMoreButton: TextView = findViewById(R.id.read_more)
-        val descriptionTextView: TextView = findViewById(R.id.detail_description)
-
         loadTaskerProfile()
-
         val backButton: ImageView = findViewById(R.id.back_arrow)
         backButton.setOnClickListener {
             val intent = Intent(this, MoreActivity::class.java)
             startActivity(intent)
             finish()
         }
-
         menuButton.setOnClickListener { view ->
             val popupMenu = PopupMenu(this, view)
             val inflater: MenuInflater = menuInflater
@@ -250,7 +245,6 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         })
     }
 
-
     fun showTaskerProfile(profileResponse: TaskerProfileResponse) {
         val detailProfileImage: ImageView = findViewById(R.id.detail_profile_image)
         val detailName: TextView = findViewById(R.id.detail_name)
@@ -266,7 +260,7 @@ class MyTaskerProfileActivity : AppCompatActivity() {
             profileResponse.surname?.firstOrNull()?.uppercase() ?: ""
         }.".trim()
         detailRating.text = "Rating: ${profileResponse.rating}"
-        detailReviews.text = "(${profileResponse.reviewCount} reviews)"
+        detailReviews.text = "(${profileResponse.review_count} reviews)"
         detailCategories.text = profileResponse.categories.joinToString(", ") { it.name }
         detailCities.text = profileResponse.cities.joinToString(", ") { it.name }
         detailHourlyRate.text = "Hourly Rate: €${profileResponse.hourly_rate}"
@@ -307,6 +301,37 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         galleryRecyclerView.adapter = GalleryAdapter(galleryImages, { position ->
             showZoomDialog(galleryImages, position, baseUrl)
         }, baseUrl)
+
+        val userId=profileResponse.id
+        fetchReviews(userId)
+    }
+    fun fetchReviews(userId: Int) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+        val api = ApiServiceInstance.Auth.apiServices
+        val taskerId = userId
+        val call = api.TaskersReviews("Bearer $token", taskerId )
+
+        call.enqueue(object : Callback<List<ReviewList>> {
+            override fun onResponse(call: Call<List<ReviewList>>, response: Response<List<ReviewList>>) {
+                if (response.isSuccessful) {
+                    val reviews = response.body() ?: emptyList()
+                    val reviewAdapter = ReviewAdapter(reviews)
+
+                    val recyclerView = findViewById<RecyclerView>(R.id.reviewRecyclerView)
+                    recyclerView.adapter = reviewAdapter
+                    recyclerView.layoutManager = LinearLayoutManager(this@MyTaskerProfileActivity)
+
+                } else {
+                    Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.payments_error_fetch), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<ReviewList>>, t: Throwable) {
+                Toast.makeText(this@MyTaskerProfileActivity, "Network error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     fun showZoomDialog(images: List<String>, startPosition: Int, baseUrl: String) {

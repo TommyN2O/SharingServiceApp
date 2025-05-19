@@ -80,7 +80,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_star"/>
+                    android:src="@drawable/ic_star_gold"/>
 
                 <TextView
                     android:id="@+id/detail_rating"
@@ -200,9 +200,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reviewRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="172dp"
                 android:nestedScrollingEnabled="false"
-                android:scrollbars="vertical"/>
+                android:scrollbars="vertical" />
         </LinearLayout>
     </ScrollView>
 

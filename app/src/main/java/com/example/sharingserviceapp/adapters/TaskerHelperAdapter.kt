@@ -70,7 +70,7 @@ class TaskerHelperAdapter(
             customer.surname?.firstOrNull()?.uppercase() ?: ""
             }.".trim()
             rating.text = customer.rating.toString()
-            reviewCount.text = "(${customer.reviewCount} reviews)"
+            reviewCount.text = "(${customer.review_count} reviews)"
             price.text = "${customer.hourly_rate}€/h"
             city.text = customer.cities.joinToString(", ") { it.name }
             shortDescription.text = customer.description

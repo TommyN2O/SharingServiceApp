@@ -1,9 +1,7 @@
 package com.example.sharingserviceapp.models
 
-import okhttp3.MultipartBody
-
 data class TaskerProfileResponse(
-    val user_id: Int,
+    val id: Int,
     val name: String,
     val surname: String,
     val description: String,
@@ -12,7 +10,7 @@ data class TaskerProfileResponse(
     val cities: List<City>,
     val availability: List<AvailabilitySlot>,
     val rating: Double,
-    val reviewCount: Int,
+    val review_count: Int,
     val profile_photo: String?,
     val gallery: List<String>
 )

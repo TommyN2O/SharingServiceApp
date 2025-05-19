@@ -1,5 +1,6 @@
 package com.example.sharingserviceapp.activitys
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -10,12 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
-import com.example.sharingserviceapp.activitys.MyTaskerProfileActivity
+import com.example.sharingserviceapp.activitys.BalanceActivity
+import com.example.sharingserviceapp.adapters.BalanceAdapter
 import com.example.sharingserviceapp.models.TaskerHelper
 import com.example.sharingserviceapp.adapters.GalleryAdapter
 import com.example.sharingserviceapp.adapters.ReviewAdapter
-import com.example.sharingserviceapp.models.Review
-import com.example.sharingserviceapp.models.TaskerProfileResponse
+import com.example.sharingserviceapp.models.ReviewList
+import com.example.sharingserviceapp.models.WalletResponse
 import com.example.sharingserviceapp.network.ApiServiceInstance
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,7 +30,6 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
     private var categoryId: Int = -1
     private var selectedCityIds: List<String> = emptyList()
     private var selectedCategoryIds: List<String> = emptyList()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +53,7 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
         setupBackButton()
 
         loadTaskerProfile(userId)
+        fetchReviews(userId)
     }
     private fun setupBackButton() {
         findViewById<ImageView>(R.id.btn_back).setOnClickListener {
@@ -82,6 +84,34 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
         }
         startActivity(intent)
         finish()
+    }
+    fun fetchReviews(userId: Int) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+        val api = ApiServiceInstance.Auth.apiServices
+        val taskerId = userId
+        val call = api.TaskersReviews("Bearer $token", taskerId )
+
+        call.enqueue(object : Callback<List<ReviewList>> {
+            override fun onResponse(call: Call<List<ReviewList>>, response: Response<List<ReviewList>>) {
+                if (response.isSuccessful) {
+                    val reviews = response.body() ?: emptyList()
+                    val reviewAdapter = ReviewAdapter(reviews)
+
+                    val recyclerView = findViewById<RecyclerView>(R.id.reviewRecyclerView)
+                    recyclerView.adapter = reviewAdapter
+                    recyclerView.layoutManager = LinearLayoutManager(this@TaskerHelperDetailActivity)
+
+                } else {
+                    Toast.makeText(this@TaskerHelperDetailActivity, getString(R.string.payments_error_fetch), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<ReviewList>>, t: Throwable) {
+                Toast.makeText(this@TaskerHelperDetailActivity, "Network error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun loadTaskerProfile(userId: Int) {
@@ -123,11 +153,12 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
         val detailDescription: TextView = findViewById(R.id.detail_description)
         val readMore: TextView = findViewById(R.id.read_more)
 
+
         detailName.text = "${profileResponse.name ?: "Unknown"} ${profileResponse.surname?.firstOrNull()?.uppercase() ?: ""}.".trim()
 
         detailRating.text = "Rating: ${profileResponse.rating}"
 
-        detailReviews.text = "(${profileResponse.reviewCount} reviews)"
+        detailReviews.text = "(${profileResponse.review_count} reviews)"
 
         detailCategories.text = profileResponse.categories.joinToString(", "){ it.name }
 
