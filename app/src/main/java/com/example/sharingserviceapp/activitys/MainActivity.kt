@@ -1,8 +1,13 @@
 package com.example.sharingserviceapp.activitys
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import android.widget.Button
 import com.example.sharingserviceapp.R
 import com.example.sharingserviceapp.models.AuthResponse
@@ -12,6 +17,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+private val REQUEST_CODE_NOTIFICATION = 1001
+
 class MainActivity : AppCompatActivity() {
     private lateinit var btnLogin: Button
     private lateinit var btnCreateAcc: Button
@@ -19,6 +26,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    REQUEST_CODE_NOTIFICATION
+                )
+            }
+        }
         val email = getSharedPrefString("email") ?: ""
         val password = getSharedPrefString("password") ?: ""
 

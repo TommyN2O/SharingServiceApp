@@ -288,4 +288,10 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("taskRequestId") taskRequestId: Int
     ): Call<HistoryReview>
+
+    @POST("devices/token")
+    fun registerDeviceToken(
+        @Header("Authorization") authToken: String,
+        @Body request: TokenRequest
+    ): Call<TokenResponse>
 }

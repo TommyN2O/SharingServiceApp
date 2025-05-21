@@ -116,7 +116,7 @@ class RequestsOffersActivity : AppCompatActivity() {
                 response: Response<List<TaskResponse>>
             ) {
                 if (response.isSuccessful) {
-                    val tasks = response.body()?.filter { it.status.lowercase() != "completed" && it.status.lowercase() != "paid"} ?: emptyList()
+                    val tasks = response.body()?.filter { it.status.lowercase() != "completed" && it.status.lowercase() != "paid" && it.status.lowercase() != "refunded"} ?: emptyList()
                     myTasksList.clear()
                     myTasksList.addAll(tasks)
 
@@ -146,7 +146,7 @@ class RequestsOffersActivity : AppCompatActivity() {
             .enqueue(object : Callback<List<TaskResponse>> {
                 override fun onResponse(call: Call<List<TaskResponse>>, response: Response<List<TaskResponse>>) {
                     if (response.isSuccessful) {
-                        val requests = response.body()?.filter { it.status.lowercase() != "completed" && it.status.lowercase() != "paid" && it.status.lowercase() != "canceled" && it.status.lowercase() != "declined"} ?: emptyList()
+                        val requests = response.body()?.filter { it.status.lowercase() != "completed" && it.status.lowercase() != "paid" && it.status.lowercase() != "canceled" && it.status.lowercase() != "declined" && it.status.lowercase() != "refunded"} ?: emptyList()
                         peopleRequestsAdapter = PeopleRequestsAdapter(this@RequestsOffersActivity, requests) { request ->
                             navigateToRequestDetails(request)
                         }

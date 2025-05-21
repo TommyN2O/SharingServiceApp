@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "285224455707",
+    "project_id": "bdnesthelper",
+    "storage_bucket": "bdnesthelper.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285224455707:android:554d8c89cbf3c58941b2be",
+        "android_client_info": {
+          "package_name": "com.example.sharingserviceapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjzcpC-cUJtNoRjcTNUnLOvPj3l8K8n2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

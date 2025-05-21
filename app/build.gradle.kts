@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id ("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -62,8 +63,12 @@ dependencies {
     // ViewModel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    //calendar
+    //Calendar
     implementation ("com.applandeo:material-calendar-view:1.9.2")
     implementation ("com.github.yalantis:ucrop:2.2.8")
+    //Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation("com.google.firebase:firebase-messaging:23.3.1")
+    implementation("com.google.firebase:firebase-analytics")
 
 }
