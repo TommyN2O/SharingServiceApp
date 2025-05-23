@@ -43,6 +43,7 @@ class RequestDetailActivity : AppCompatActivity() {
     private var receiverId: Int ?= -1
     private lateinit var btnAccept: Button
     private lateinit var btnDecline: Button
+    private lateinit var btnCancel: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +62,7 @@ class RequestDetailActivity : AppCompatActivity() {
         galleryRecyclerView = findViewById(R.id.galleryRecyclerView)
         btnAccept = findViewById(R.id.btnAccept)
         btnDecline = findViewById(R.id.btnDecline)
+        btnCancel = findViewById(R.id.btnCancel)
 
         taskId = intent.getIntExtra("task_id", -1)
         if (taskId == -1) {
@@ -75,25 +77,32 @@ class RequestDetailActivity : AppCompatActivity() {
             updateTaskStatus("Accepted")
         }
 
+        btnCancel.setOnClickListener {
+            showConfirmationDialog("Canceled")
+        }
         btnDecline.setOnClickListener {
-            showDeclineConfirmationDialog()
+            showConfirmationDialog("Declined")
         }
 
         setupBackButton()
         setupChatActivity()
     }
 
-    private fun showDeclineConfirmationDialog() {
+    private fun showConfirmationDialog(taskstatus: String) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_confirmation)
 
         val confirmationMessage = dialog.findViewById<TextView>(R.id.confirmationMessage)
-        confirmationMessage.text = "Are you sure you want to decline this request?"
-
+        if(taskstatus == "Declined" ) {
+            confirmationMessage.text = "Are you sure you want to decline this request?"
+        }
+        else{
+            confirmationMessage.text = "Are you sure you want to cancel this request?"
+        }
 
         val btnYes = dialog.findViewById<Button>(R.id.btnYes)
         btnYes.setOnClickListener {
-            updateTaskStatus("Declined")
+            updateTaskStatus(taskstatus)
             val intent = Intent(this, RequestsOffersActivity::class.java)
             startActivity(intent)
             finish()
@@ -227,16 +236,12 @@ class RequestDetailActivity : AppCompatActivity() {
 
         if (status.equals("Waiting for Payment", ignoreCase = true)) {
             btnAccept.visibility = View.GONE
-            val paramsDecline = btnDecline.layoutParams
-            paramsDecline.width = dpToPx(320f)
-            btnDecline.layoutParams = paramsDecline
+            btnDecline.visibility = View.GONE
+            btnCancel.visibility = View.VISIBLE
         } else {
             btnAccept.visibility = View.VISIBLE
-        }
-        if (status.equals("Declined", ignoreCase = true)) {
-            btnAccept.visibility = View.GONE
-            btnDecline.visibility = View.GONE
-
+            btnDecline.visibility = View.VISIBLE
+            btnCancel.visibility = View.GONE
         }
 
         val imageUrl = request.sender.profile_photo?.let {

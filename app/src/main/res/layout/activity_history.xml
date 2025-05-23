@@ -31,18 +31,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="History"
+                android:text="@string/history_title"
                 android:textColor="@color/black"
-                android:textSize="26sp"
+                android:layout_marginEnd="30dp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05" />
 
-            <ImageView
-                android:id="@+id/btn_filter"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/filter_btn"
-                android:contentDescription="Filter" />
         </LinearLayout>
 
         <LinearLayout
@@ -63,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/my_light_primary"
-                android:text="My Tasks"
+                android:text="@string/history_my_tasks"
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
@@ -73,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/white"
-                android:text="People Requests"
+                android:text="@string/history_people_tasks"
                 android:textColor="@android:color/black"
                 android:textStyle="bold" />
         </LinearLayout>

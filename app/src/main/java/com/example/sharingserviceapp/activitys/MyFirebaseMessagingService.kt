@@ -9,19 +9,10 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.sharingserviceapp.R
-import com.example.sharingserviceapp.activitys.MainActivity
-import com.example.sharingserviceapp.models.TokenRequest
-import com.example.sharingserviceapp.models.TokenResponse
-import com.example.sharingserviceapp.network.ApiService
+import com.example.sharingserviceapp.activitys.HomeActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.POST
+
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
@@ -46,12 +37,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String?, messageBody: String?, data: Map<String, String>) {
-        val intent = Intent(this, MainActivity::class.java).apply {
+        val intent = Intent(this, HomeActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-
-            data.forEach { (key, value) ->
-                putExtra(key, value)
-            }
+            data.forEach { (key, value) -> putExtra(key, value) }
         }
 
         val pendingIntent = PendingIntent.getActivity(
@@ -60,16 +48,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         )
 
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notification) // Make sure you have this icon
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
-            .setContentText(messageBody)
+            .setContentText(messageBody) // Still needed for devices that don’t support styles
+            .setStyle(NotificationCompat.BigTextStyle().bigText(messageBody)) // <--- Enables multiline text
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Create the notification channel for Android Oreo and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
@@ -82,9 +70,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
             notificationManager.createNotificationChannel(channel)
         }
+
         notificationCounter++
         notificationManager.notify(notificationCounter, notificationBuilder.build())
     }
-
-
 }

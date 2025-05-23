@@ -162,6 +162,7 @@ class HelperListActivity : AppCompatActivity() {
     private fun fetchTaskers() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
+        val userId =sharedPreferences.getInt("user_id",0)
 
         if (token.isNullOrEmpty()) {
             Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
@@ -184,6 +185,7 @@ class HelperListActivity : AppCompatActivity() {
             maxPrice = selectedMaxPrice,
             rating = selectedRating,
             category = categoryId,
+            excludeUserId = userId,
         ).enqueue(object : Callback<List<TaskerHelper>> {
             override fun onResponse(
                 call: Call<List<TaskerHelper>>,
@@ -225,6 +227,7 @@ class HelperListActivity : AppCompatActivity() {
     private fun fetchOpenedTasks() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
+        val userId =sharedPreferences.getInt("user_id",0)
 
         if (token.isNullOrEmpty()) {
             Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
@@ -245,7 +248,7 @@ class HelperListActivity : AppCompatActivity() {
             minBudget = selectedMinBudget,
             maxBudget = selectedMaxBudget,
             duration = selectedDuration,
-
+            excludeUserId = userId,
             ).enqueue(object : Callback<List<OpenedTasksHelper>> {
             override fun onResponse(
                 call: Call<List<OpenedTasksHelper>>,
@@ -315,6 +318,15 @@ class HelperListActivity : AppCompatActivity() {
         val ratingBar = view.findViewById<RatingBar>(R.id.rating_bar)
         val btnApplyFilters = view.findViewById<Button>(R.id.btn_apply_filters)
 
+        citiesTextView.text = selectedCityNames.joinToString(", ")
+        dateTextView.text = selectedDate ?: ""
+
+        minPriceEdit.setText(selectedMinPrice?.toString() ?: "")
+        maxPriceEdit.setText(selectedMaxPrice?.toString() ?: "")
+
+
+        ratingBar.rating = selectedRating?.toFloat() ?: 0f
+
         val timeOptions = (7..21).map { String.format("%02d:00", it) }
         val initialAdapter = ArrayAdapter(
             this,
@@ -325,6 +337,16 @@ class HelperListActivity : AppCompatActivity() {
 
         timeFromSpinner.adapter = initialAdapter
         timeToSpinner.adapter = initialAdapter
+
+        selectedTimeFrom?.let {
+            val index = initialAdapter.getPosition(it)
+            if (index >= 0) timeFromSpinner.setSelection(index)
+        }
+
+        selectedTimeTo?.let {
+            val index = initialAdapter.getPosition(it)
+            if (index >= 0) timeToSpinner.setSelection(index)
+        }
 
         timeFromSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -352,7 +374,15 @@ class HelperListActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+        selectedTimeFrom?.let {
+            val index = initialAdapter.getPosition(it)
+            if (index >= 0) timeFromSpinner.setSelection(index)
+        }
 
+        selectedTimeTo?.let {
+            val index = initialAdapter.getPosition(it)
+            if (index >= 0) timeToSpinner.setSelection(index)
+        }
         dateTextView.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
@@ -412,18 +442,31 @@ class HelperListActivity : AppCompatActivity() {
             skipCollapsed = true
         }
 
-        val cityTextView = view.findViewById<TextView>(R.id.text_city)
+        citiesTextView = view.findViewById<TextView>(R.id.text_city)
         val dateTextView = view.findViewById<TextView>(R.id.text_date_picker)
         val minBudgetEdit = view.findViewById<EditText>(R.id.edit_min_budget)
         val maxBudgetEdit = view.findViewById<EditText>(R.id.edit_max_budget)
         val durationSpinner = view.findViewById<Spinner>(R.id.spinner_duration)
         val btnApplyFilters = view.findViewById<Button>(R.id.btn_apply_filters)
         val durationOptions = listOf("") + (1..7).map { "${it}h" }
-        val durationAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, durationOptions)
+        val durationAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, durationOptions)
         durationSpinner.adapter = durationAdapter
 
-        cityTextView.setOnClickListener {
+        // Pre-fill previously applied values
+        citiesTextView.text = selectedCityNames.joinToString(", ")
+        dateTextView.text = selectedDate ?: ""
+
+        minBudgetEdit.setText(selectedMinBudget?.toString() ?: "")
+        maxBudgetEdit.setText(selectedMaxBudget?.toString() ?: "")
+
+        selectedDuration?.let {
+            val durationStr = "${it}h"
+            val index = (durationSpinner.adapter as ArrayAdapter<String>).getPosition(durationStr)
+            if (index >= 0) durationSpinner.setSelection(index)
+        }
+
+
+        citiesTextView.setOnClickListener {
             showCitySelectionDialog()
         }
 
@@ -464,28 +507,54 @@ class HelperListActivity : AppCompatActivity() {
     }
 
     private fun showCitySelectionDialog() {
-        if (cities.isEmpty()) return
+        if (cities.isEmpty()) {
+            Toast.makeText(this, "Cities are still loading. Please try again.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val cityNames = cities.map { it.name }
+        val selectedSet = selectedCityNames.toMutableSet()
+
         val dialogView = layoutInflater.inflate(R.layout.dialog_multiselect, null)
         val listView = dialogView.findViewById<ListView>(R.id.list_view)
         val searchView = dialogView.findViewById<SearchView>(R.id.search_view)
 
-        val adapter =
-            ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, cityNames)
+        val adapter = object : ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_multiple_choice,
+            cityNames.toMutableList()
+        ) {
+            override fun hasStableIds(): Boolean = true
+        }
+
         listView.adapter = adapter
         listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
 
-        for (i in cityNames.indices) {
-            if (selectedCityNames.contains(cityNames[i])) {
+        for (i in 0 until adapter.count) {
+            val cityName = adapter.getItem(i)
+            if (selectedSet.contains(cityName)) {
                 listView.setItemChecked(i, true)
+            }
+        }
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val cityName = adapter.getItem(position) ?: return@setOnItemClickListener
+            if (selectedSet.contains(cityName)) {
+                selectedSet.remove(cityName)
+            } else {
+                selectedSet.add(cityName)
             }
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = false
             override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.filter.filter(newText)
+                adapter.filter.filter(newText) {
+                    for (i in 0 until adapter.count) {
+                        val cityName = adapter.getItem(i)
+                        listView.setItemChecked(i, selectedSet.contains(cityName))
+                    }
+                }
                 return true
             }
         })
@@ -494,20 +563,16 @@ class HelperListActivity : AppCompatActivity() {
             .setTitle("Select Cities")
             .setView(dialogView)
             .setPositiveButton("OK") { _, _ ->
-                val checkedPositions = listView.checkedItemPositions
                 selectedCityNames.clear()
                 selectedCityIds.clear()
 
-                for (i in 0 until listView.count) {
-                    if (checkedPositions[i]) {
-                        val cityName = adapter.getItem(i)!!
-                        val city = cities.find { it.name == cityName }
-                        if (city != null) {
-                            selectedCityNames.add(city.name)
-                            selectedCityIds.add(city.id)
-                        }
+                for (city in cities) {
+                    if (selectedSet.contains(city.name)) {
+                        selectedCityNames.add(city.name)
+                        selectedCityIds.add(city.id)
                     }
                 }
+
                 citiesTextView.text = selectedCityNames.joinToString(", ")
             }
             .setNegativeButton("Cancel", null)
@@ -516,6 +581,7 @@ class HelperListActivity : AppCompatActivity() {
 
     private fun toggleTaskerMode(isTasker: Boolean) {
         isTaskerMode = isTasker
+        clearFilters()
         if (isTasker) {
             btnCustomer.setBackgroundColor(resources.getColor(R.color.white))
             btnTasker.setBackgroundColor(resources.getColor(R.color.my_light_primary))
@@ -536,6 +602,20 @@ class HelperListActivity : AppCompatActivity() {
             fetchTaskers()
         }
 
+    }
+    private fun clearFilters() {
+        selectedCityIds.clear()
+        selectedCityNames.clear()
+        selectedDate = null
+        selectedTimeTo = null
+        selectedTimeFrom = null
+        selectedCity = null
+        selectedMinPrice = null
+        selectedMaxPrice = null
+        selectedRating = null
+        selectedMinBudget = null
+        selectedMaxBudget = null
+        selectedDuration = null
     }
 
     fun showZoomDialog(images: List<String>, position: Int, baseUrl: String) {

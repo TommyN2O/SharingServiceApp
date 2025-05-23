@@ -9,7 +9,7 @@ data class OpenedTasksHelper(
     val creator:User,
     val duration: Int,
     val availability: List<AvailabilitySlot>,
-    val gallery_images: List<String>
+    val gallery: List<String>
 
 )
 

@@ -18,11 +18,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class HistoryActivity : AppCompatActivity() {
+
     private lateinit var myTasksAdapter: MyTasksAdapter
     private lateinit var peopleRequestsAdapter: PeopleRequestsAdapter
     private var isShowingPeopleRequests = false
     private lateinit var recyclerView: RecyclerView
     private var myTasksList = mutableListOf<TaskResponse>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
@@ -61,7 +63,7 @@ class HistoryActivity : AppCompatActivity() {
         val token = sharedPreferences.getString("auth_token", null)
 
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
@@ -87,7 +89,7 @@ class HistoryActivity : AppCompatActivity() {
                         recyclerView.adapter = myTasksAdapter
                     }
                 } else {
-                    Toast.makeText(this@HistoryActivity, "Failed to load tasks", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@HistoryActivity, getString(R.string.history_failed_to_load), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -100,6 +102,13 @@ class HistoryActivity : AppCompatActivity() {
     private fun fetchPeopleRequestsHistory() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
+
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
 
         ApiServiceInstance.Auth.apiServices.TaskReceivedHistory("Bearer $token")
             .enqueue(object : Callback<List<TaskResponse>> {
@@ -117,7 +126,7 @@ class HistoryActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<List<TaskResponse>>, t: Throwable) {
-                    Toast.makeText(this@HistoryActivity, "Failed to load requests", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@HistoryActivity, getString(R.string.history_failed_to_load), Toast.LENGTH_SHORT).show()
                 }
             })
     }

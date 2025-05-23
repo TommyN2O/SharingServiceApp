@@ -6,7 +6,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:padding="16dp">
 
@@ -21,7 +21,7 @@
                 android:orientation="horizontal"
                 android:gravity="start">
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/btn_back"
                     android:layout_width="53dp"
                     android:layout_height="match_parent"
@@ -149,7 +149,7 @@
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="67dp"
+                android:layout_height="117dp"
                 android:padding="4dp">
 
                 <LinearLayout
@@ -173,6 +173,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Create Request"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

@@ -34,7 +34,7 @@ class SupportActivity : AppCompatActivity() {
         val token = sharedPreferences.getString("auth_token", null)
 
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
@@ -46,12 +46,12 @@ class SupportActivity : AppCompatActivity() {
         api.createSupportTicket("Bearer $token", request).enqueue(object : Callback<CreateTicketResponse> {
             override fun onResponse(call: Call<CreateTicketResponse>, response: Response<CreateTicketResponse>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@SupportActivity, "Support ticket sent!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@SupportActivity, getString(R.string.support_message_successful) , Toast.LENGTH_LONG).show()
                     val intent = Intent(this@SupportActivity, SupportTicketConfirmationActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(this@SupportActivity, "Failed to send ticket: ${response.message()}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@SupportActivity, "Failed: ${response.message()}", Toast.LENGTH_LONG).show()
                 }
             }
 

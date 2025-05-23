@@ -4,10 +4,8 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -20,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
 import com.example.sharingserviceapp.activitys.CreateMyTaskerProfileActivity.Companion.REQUEST_CODE_SELECT_DAYS_AND_TIME
-import com.example.sharingserviceapp.activitys.LoginActivity
-import com.example.sharingserviceapp.activitys.RequestDetailActivity
 import com.example.sharingserviceapp.adapters.GalleryAdapter
 import com.example.sharingserviceapp.adapters.OfferListAdapter
 import com.example.sharingserviceapp.models.AvailabilitySlot
@@ -29,7 +25,6 @@ import com.example.sharingserviceapp.models.CreateChat
 import com.example.sharingserviceapp.models.CreateChatBody
 import com.example.sharingserviceapp.models.Offer
 import com.example.sharingserviceapp.models.OpenTaskResponse
-import com.example.sharingserviceapp.models.OpenedTasksHelper
 import com.example.sharingserviceapp.models.SetAsOpenTask
 import com.example.sharingserviceapp.models.StatusUpdate
 import com.example.sharingserviceapp.models.TaskResponse
@@ -47,6 +42,7 @@ class TaskDetailActivity : AppCompatActivity() {
     private var receiverId: Int ?= -1
     private lateinit var btnPayment: Button
     private lateinit var btnCancel: Button
+    private lateinit var btnCancelOpenTask: Button
     private lateinit var btnOffers: ImageView
     private lateinit var btnMessage: ImageView
     private lateinit var btnSetAsOpenTask:Button
@@ -62,6 +58,7 @@ class TaskDetailActivity : AppCompatActivity() {
         btnOffers = findViewById(R.id.btn_offers)
         btnMessage = findViewById(R.id.messageButton)
         btnSetAsOpenTask = findViewById(R.id.btn_SetAsOpenTask)
+        btnCancelOpenTask = findViewById(R.id.btnDeleteOpenTask)
 
         taskId = intent.getIntExtra("TASK_ID", -1)
         if (taskId == -1) {
@@ -77,11 +74,14 @@ class TaskDetailActivity : AppCompatActivity() {
         }
 
         btnCancel.setOnClickListener {
-            showCancelConfirmationDialog()
+            showCancelConfirmationDialog("Task")
         }
 
         btnSetAsOpenTask.setOnClickListener {
                 showSetAsOpTaskDialog(taskId)
+        }
+        btnCancelOpenTask.setOnClickListener {
+            showCancelConfirmationDialog("OpenTask")
         }
 
 
@@ -113,8 +113,6 @@ class TaskDetailActivity : AppCompatActivity() {
                 behavior.skipCollapsed = true
             }
         }
-
-
 
         val editTextBudget = dialogView.findViewById<EditText>(R.id.edit_budget)
         val btnSelectDaysTime = dialogView.findViewById<Button>(R.id.btn_select_days_time)
@@ -314,19 +312,35 @@ class TaskDetailActivity : AppCompatActivity() {
 
     }
 
-    private fun showCancelConfirmationDialog() {
+    private fun showCancelConfirmationDialog(taskType: String) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_confirmation)
 
         val confirmationMessage = dialog.findViewById<TextView>(R.id.confirmationMessage)
-        confirmationMessage.text = "Are you sure you want to cancel this request?"
+        if(taskType == "Task") {
+            confirmationMessage.text = "Are you sure you want to cancel this request?"
 
-        val btnYes = dialog.findViewById<Button>(R.id.btnYes)
-        btnYes.setOnClickListener {
-             updateTaskStatus("Canceled")
-            dialog.dismiss()
+            val btnYes = dialog.findViewById<Button>(R.id.btnYes)
+            btnYes.setOnClickListener {
+                updateTaskStatus("Canceled by sender")
+//                val intent = Intent(this, RequestsOffersActivity::class.java)
+//                startActivity(intent)
+//                finish()
+                dialog.dismiss()
+            }
         }
+        else{
+            confirmationMessage.text = "Are you sure you want to cancel this open task?"
 
+            val btnYes = dialog.findViewById<Button>(R.id.btnYes)
+            btnYes.setOnClickListener {
+                deleteOpenTaskStatus()
+//                val intent = Intent(this, RequestsOffersActivity::class.java)
+//                startActivity(intent)
+//                finish()
+                dialog.dismiss()
+            }
+        }
         val btnNo = dialog.findViewById<Button>(R.id.btnNo)
         btnNo.setOnClickListener {
             dialog.dismiss()
@@ -364,6 +378,30 @@ class TaskDetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun deleteOpenTaskStatus() {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+        if (token != null) {
+            val api = ApiServiceInstance.Auth.apiServices
+            val call = api.deleteOpenTask("Bearer $token", taskId)
+
+            call.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@TaskDetailActivity, "Successfully deleted open task", Toast.LENGTH_SHORT).show()
+                        loadTaskDetailed(taskId)
+                    } else {
+                        Toast.makeText(this@TaskDetailActivity, "Failed to update status", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@TaskDetailActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
+    }
 
     private fun loadTaskDetailed(taskId: Int) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
@@ -418,6 +456,7 @@ class TaskDetailActivity : AppCompatActivity() {
             "Pending" -> taskStatus.setTextColor(resources.getColor(R.color.status_pending))
             "Waiting for Payment" -> taskStatus.setTextColor(resources.getColor(R.color.status_waiting_payment))
             "Declined"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
+            "Canceled"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
             else -> taskStatus.setTextColor(resources.getColor(R.color.status_default))
         }
 
@@ -460,6 +499,8 @@ class TaskDetailActivity : AppCompatActivity() {
             taskerProfileImage.visibility = View.GONE
             taskerName.visibility = View.GONE
             btnMessage.visibility = View.GONE
+            btnCancel.visibility = View.GONE
+            btnCancelOpenTask.visibility = View.VISIBLE
             btnOffers.visibility = View.VISIBLE
             taskPrice.text = "Budget: $${task.budget}"
             taskDateTime.text = slot?.let {"Due Date: ${it.date}"}
@@ -484,6 +525,8 @@ class TaskDetailActivity : AppCompatActivity() {
             taskerName.visibility = View.VISIBLE
             titleTasker.visibility = View.VISIBLE
             btnMessage.visibility = View.VISIBLE
+            btnCancel.visibility = View.VISIBLE
+            btnCancelOpenTask.visibility = View.GONE
             btnOffers.visibility = View.GONE
             taskPrice.text = "Price: $${task.tasker?.hourly_rate}/h"
             taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}

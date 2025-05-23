@@ -68,7 +68,8 @@ interface ApiService {
         @Query("timeTo") timeTo: String? = null,
         @Query("minPrice") minPrice: Int? = null,
         @Query("maxPrice") maxPrice: Int? = null,
-        @Query("rating") rating: Int? = null
+        @Query("rating") rating: Int? = null,
+        @Query("excludeUserId") excludeUserId: Int
     ): Call<List<TaskerHelper>>
 
     @GET("open-tasks/")
@@ -80,6 +81,7 @@ interface ApiService {
         @Query("minBudget") minBudget: Int? = null,
         @Query("maxBudget") maxBudget: Int? = null,
         @Query("duration") duration: Int? = null,
+        @Query("excludeUserId") excludeUserId: Int
     ): Call<List<OpenedTasksHelper>>
 
     // GET CITIES
@@ -140,6 +142,10 @@ interface ApiService {
     @GET("tasker/tasks/sent")
     fun getMyTasks(
         @Header("Authorization") token: String,
+        @Query("category") category: String? = null,
+        @Query("city") city: String? = null,
+        @Query("date") date: String? = null,
+        @Query("status") status: String? = null,
     ): Call<List<TaskResponse>>
 
     @GET("tasker/tasks/sent/{id}")
@@ -161,10 +167,13 @@ interface ApiService {
         @Path("offerId") offerId: Int
     ): Call<Void>
 
-
     @GET("tasker/tasks/received")
     fun getPeopleRequests(
         @Header("Authorization") token: String,
+        @Query("category") category: String? = null,
+        @Query("city") city: String? = null,
+        @Query("date") date: String? = null,
+        @Query("status") status: String? = null,
     ): Call<List<TaskResponse>>
 
     @GET("tasker/tasks/received/{id}")
@@ -294,4 +303,10 @@ interface ApiService {
         @Header("Authorization") authToken: String,
         @Body request: TokenRequest
     ): Call<TokenResponse>
+
+    @DELETE("/api/open-tasks/{id}")
+    fun deleteOpenTask(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Call<Void>
 }

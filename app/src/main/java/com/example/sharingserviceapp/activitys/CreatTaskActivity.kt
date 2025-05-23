@@ -38,6 +38,7 @@ class CreatTaskActivity : AppCompatActivity() {
     private lateinit var budgetEditText: EditText
     private lateinit var btnAddPhoto: Button
     private lateinit var btnCreateRequest: Button
+    private lateinit var backButton: ImageView
     private lateinit var galleryContainer: LinearLayout
 
     private var selectedCategoryName: String? = null
@@ -52,7 +53,12 @@ class CreatTaskActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creat_task)
+        fetchCategories()
+        fetchCities()
+        setupListeners()
+    }
 
+    private fun setupListeners() {
         TaskDescription = findViewById(R.id.edit_task_description)
         citiesTextView = findViewById(R.id.tv_selected_cities)
         categoriesTextView = findViewById(R.id.tv_selected_categories)
@@ -61,15 +67,14 @@ class CreatTaskActivity : AppCompatActivity() {
         budgetEditText = findViewById(R.id.edit_budget)
         btnCreateRequest = findViewById(R.id.btn_create_request)
         galleryContainer = findViewById(R.id.gallery_container)
+        backButton = findViewById(R.id.btn_back)
 
-        val backButton: ImageButton = findViewById(R.id.btn_back)
         backButton.setOnClickListener {
             val intent = Intent(this, MoreActivity::class.java)
             startActivity(intent)
-            finish() }
+            finish()
+        }
 
-        fetchCategories()
-        fetchCities()
         citiesTextView.setOnClickListener {
             showCitySelectionDialog()
         }
@@ -84,6 +89,8 @@ class CreatTaskActivity : AppCompatActivity() {
         }
         btnCreateRequest.setOnClickListener {
             createOpenTask()
+
+
         }
 
         val btnSelectDaysTime = findViewById<Button>(R.id.btn_select_days_time)
@@ -92,11 +99,9 @@ class CreatTaskActivity : AppCompatActivity() {
                 val parts = it.split(" ")
                 AvailabilitySlot(parts[0], parts[1])
             }
-
             val intent = Intent(this, DaysAndTimeActivity::class.java)
             intent.putParcelableArrayListExtra("PREVIOUS_AVAILABILITY", ArrayList(availabilitySlotList))
             startActivityForResult(intent, REQUEST_CODE_SELECT_DAYS_AND_TIME)
-
         }
     }
 
@@ -253,23 +258,11 @@ class CreatTaskActivity : AppCompatActivity() {
             .show()
     }
 
-
-
-
-
     private fun createOpenTask() {
         val description = TaskDescription.text.toString().trim()
         val duration = selectedDuration?.replace("h", "")?.toIntOrNull() ?: 1
-        val cityName = citiesTextView.text.toString()
         val budgetText = budgetEditText.text.toString().toDoubleOrNull()
-
-
-        if (description.isEmpty()
-        ) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+        val cityName = citiesTextView.text.toString()
         val selectedCity = cities.find { it.name == cityName }
 
         if (selectedCity == null) {
@@ -286,7 +279,6 @@ class CreatTaskActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enter a valid budget", Toast.LENGTH_SHORT).show()
             return
         }
-
 
         val request = OpenTaskBody(
             description = description,
@@ -467,7 +459,7 @@ class CreatTaskActivity : AppCompatActivity() {
                     val imageUri = it.data!!
                     galleryUris.add(imageUri)
                 }
-                displayImagesInGallery() // <-- THIS is what updates your gallery_container
+                displayImagesInGallery()
             }
         }
 

@@ -42,10 +42,13 @@ class RequestsOffersActivity : AppCompatActivity() {
 
     private lateinit var myTasksAdapter: MyTasksAdapter
     private lateinit var peopleRequestsAdapter: PeopleRequestsAdapter
+    private lateinit var cityTextView: TextView
+    private lateinit var categoryTextView: TextView
     private var isShowingPeopleRequests = false
     private lateinit var recyclerView: RecyclerView
     private var cities: List<City> = emptyList()
     private var categories: List<Category> = listOf()
+
     private var selectedCityIds: MutableList<Int> = mutableListOf()
     private var selectedCategoryIds: MutableList<Int> = mutableListOf()
     private var selectedCityNames: MutableList<String> = mutableListOf()
@@ -110,13 +113,19 @@ class RequestsOffersActivity : AppCompatActivity() {
 
         val apiService = ApiServiceInstance.Auth.apiServices
 
-        apiService.getMyTasks("Bearer $token").enqueue(object : Callback<List<TaskResponse>> {
+        apiService.getMyTasks(
+            token = "Bearer $token",
+            category = selectedCategory,
+            city = selectedCity,
+            date = selectedDate,
+            status = selectedStatus
+        ).enqueue(object : Callback<List<TaskResponse>> {
             override fun onResponse(
                 call: Call<List<TaskResponse>>,
                 response: Response<List<TaskResponse>>
             ) {
                 if (response.isSuccessful) {
-                    val tasks = response.body()?.filter { it.status.lowercase() != "completed" && it.status.lowercase() != "paid" && it.status.lowercase() != "refunded"} ?: emptyList()
+                    val tasks = response.body()?.filter { it.status.lowercase() != "completed" && it.status.lowercase() != "paid" && it.status.lowercase() != "refunded" && it.status.lowercase() != "canceled by sender"} ?: emptyList()
                     myTasksList.clear()
                     myTasksList.addAll(tasks)
 
@@ -142,11 +151,16 @@ class RequestsOffersActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
 
-        ApiServiceInstance.Auth.apiServices.getPeopleRequests("Bearer $token")
+        ApiServiceInstance.Auth.apiServices.getPeopleRequests(
+            "Bearer $token",
+            category = selectedCategory,
+            city = selectedCity,
+            date = selectedDate,
+            status = selectedStatus)
             .enqueue(object : Callback<List<TaskResponse>> {
                 override fun onResponse(call: Call<List<TaskResponse>>, response: Response<List<TaskResponse>>) {
                     if (response.isSuccessful) {
-                        val requests = response.body()?.filter { it.status.lowercase() != "completed" && it.status.lowercase() != "paid" && it.status.lowercase() != "canceled" && it.status.lowercase() != "declined" && it.status.lowercase() != "refunded"} ?: emptyList()
+                        val requests = response.body()?.filter { it.status.lowercase() != "completed" && it.status.lowercase() != "paid" && it.status.lowercase() != "canceled" && it.status.lowercase() != "declined" && it.status.lowercase() != "refunded" && it.status.lowercase() != "canceled by sender"} ?: emptyList()
                         peopleRequestsAdapter = PeopleRequestsAdapter(this@RequestsOffersActivity, requests) { request ->
                             navigateToRequestDetails(request)
                         }
@@ -171,7 +185,7 @@ class RequestsOffersActivity : AppCompatActivity() {
         val btnPeopleRequests = findViewById<Button>(R.id.btn_people_requests)
 
         clearFilters()
-        if (showPeopleRequests) {
+        if (isShowingPeopleRequests) {
             btnMyTasks.setBackgroundColor(getColor(R.color.white))
             btnPeopleRequests.setBackgroundColor(getColor(R.color.my_light_primary))
             btnMyTasks.setTextColor(getColor(R.color.blacktxt))
@@ -211,26 +225,47 @@ class RequestsOffersActivity : AppCompatActivity() {
             skipCollapsed = true
         }
 
-        val categoryTextView = view.findViewById<TextView>(R.id.text_category)
+        categoryTextView = view.findViewById<TextView>(R.id.text_category)
         val statusSpinner = view.findViewById<Spinner>(R.id.spinner_status)
-        val cityTextView = view.findViewById<TextView>(R.id.text_city)
+        cityTextView = view.findViewById<TextView>(R.id.text_city)
         val dateTextView = view.findViewById<TextView>(R.id.text_date_picker)
         val btnApplyFilters = view.findViewById<Button>(R.id.btn_apply_filters)
         val backButton = view.findViewById<ImageView>(R.id.btn_back_filter)
 
-        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
-            listOf("","Pending", "Waiting for Payment", "Open", "Canceled", "Declined"))
+        val statusAdapter: ArrayAdapter<String> = if (isShowingPeopleRequests) {
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                listOf("", "Pending", "Waiting for Payment")
+            )
+        } else {
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                listOf("", "Pending", "Waiting for Payment", "Open", "Canceled", "Declined")
+            )
+        }
+
         statusSpinner.adapter = statusAdapter
+
+        categoryTextView.text = selectedItems.joinToString(", ")
+        cityTextView.text = selectedCityNames.joinToString(", ")
+        dateTextView.text = selectedDate ?: ""
+
+        selectedStatus?.let {
+            val index = statusAdapter.getPosition(it)
+            if (index >= 0) statusSpinner.setSelection(index)
+        }
 
         fetchCities()
         fetchCategories()
 
         categoryTextView.setOnClickListener {
-            showCategorySelectionDialog(categoryTextView)
+            showCategorySelectionDialog()
         }
 
         cityTextView.setOnClickListener {
-            showCitySelectionDialog(cityTextView)
+            showCitySelectionDialog()
         }
 
         dateTextView.setOnClickListener {
@@ -257,101 +292,140 @@ class RequestsOffersActivity : AppCompatActivity() {
             selectedCity = selectedCityIds.joinToString(",")
             selectedCategory = selectedCategoryIds.joinToString(",")
             selectedStatus = statusSpinner.selectedItem?.toString()
-            fetchMyTasks()
+            if(isShowingPeopleRequests){
+                fetchPeopleRequests()
+            }
+            else{
+                fetchMyTasks()
+            }
             dialog.dismiss()
         }
 
         dialog.show()
     }
 
-    private fun showCategorySelectionDialog(categoryTextView: TextView) {
+    private fun showCategorySelectionDialog() {
         if (categories.isEmpty()) {
             Toast.makeText(this, "Categories are still loading. Please try again.", Toast.LENGTH_SHORT).show()
             return
         }
 
         val items = categories.map { it.name }
+        val selectedSet = selectedItems.toMutableSet()
+
         val dialogView = layoutInflater.inflate(R.layout.dialog_multiselect, null)
         val listView = dialogView.findViewById<ListView>(R.id.list_view)
         val searchView = dialogView.findViewById<SearchView>(R.id.search_view)
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, items)
-        listView.adapter = adapter
-
-        for (i in 0 until listView.count) {
-            if (selectedItems.contains(items[i])) {
-                listView.setItemChecked(i, true)
-            }
+        val adapter = object : ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_multiple_choice,
+            items.toMutableList()
+        ) {
+            override fun hasStableIds(): Boolean = true
         }
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = false
-            override fun onQueryTextChange(newText: String?): Boolean {
-                (listView.adapter as ArrayAdapter<*>).filter.filter(newText)
-                return false
-            }
-        })
-
-        val builder = AlertDialog.Builder(this)
-            .setTitle("Select Categories")
-            .setView(dialogView)
-            .setPositiveButton("OK") { _, _ ->
-                val selectedPositions = listView.checkedItemPositions
-                val newSelectedItems = mutableListOf<String>()
-
-                for (i in 0 until listView.count) {
-                    if (selectedPositions[i]) {
-                        newSelectedItems.add(items[i])
-                        val categoryId = categories[i].id
-                        selectedCategoryIds.add(categoryId)
-                    }
-                }
-
-                val selectedCategoriesText = newSelectedItems.joinToString(", ")
-                categoryTextView.text = selectedCategoriesText
-
-                selectedItems.clear()
-                selectedItems.addAll(newSelectedItems)
-            }
-            .setNegativeButton("Cancel", null)
-
-        val dialog = builder.create()
-        dialog.setOnShowListener {
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            positiveButton.isEnabled = selectedItems.isNotEmpty()
-            listView.setOnItemClickListener { _, _, _, _ ->
-                positiveButton.isEnabled = listView.checkedItemCount > 0
-            }
-        }
-
-        dialog.show()
-    }
-
-    private fun showCitySelectionDialog(cityTextView: TextView) {
-        if (cities.isEmpty()) {
-            Toast.makeText(this, "Cities are still loading. Please try again.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val cityNames = cities.map { it.name }
-        val dialogView = layoutInflater.inflate(R.layout.dialog_multiselect, null)
-        val listView = dialogView.findViewById<ListView>(R.id.list_view)
-        val searchView = dialogView.findViewById<SearchView>(R.id.search_view)
-
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, cityNames)
         listView.adapter = adapter
         listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
 
-        for (i in cityNames.indices) {
-            if (selectedCityNames.contains(cityNames[i])) {
+        for (i in 0 until adapter.count) {
+            val name = adapter.getItem(i)
+            if (selectedSet.contains(name)) {
                 listView.setItemChecked(i, true)
+            }
+        }
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val item = adapter.getItem(position) ?: return@setOnItemClickListener
+            if (selectedSet.contains(item)) {
+                selectedSet.remove(item)
+            } else {
+                selectedSet.add(item)
             }
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = false
             override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.filter.filter(newText)
+                adapter.filter.filter(newText) {
+
+                    for (i in 0 until adapter.count) {
+                        val itemName = adapter.getItem(i)
+                        listView.setItemChecked(i, selectedSet.contains(itemName))
+                    }
+                }
+                return true
+            }
+        })
+
+        AlertDialog.Builder(this)
+            .setTitle("Select Categories")
+            .setView(dialogView)
+            .setPositiveButton("OK") { _, _ ->
+                selectedItems.clear()
+                selectedCategoryIds.clear()
+
+                for (name in selectedSet) {
+                    selectedItems.add(name)
+                    categories.find { it.name == name }?.let { selectedCategoryIds.add(it.id) }
+                }
+
+                categoryTextView.text = selectedItems.joinToString(", ")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+
+    private fun showCitySelectionDialog() {
+        if (cities.isEmpty()) {
+            Toast.makeText(this, "Cities are still loading. Please try again.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val cityNames = cities.map { it.name }
+        val selectedSet = selectedCityNames.toMutableSet()
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_multiselect, null)
+        val listView = dialogView.findViewById<ListView>(R.id.list_view)
+        val searchView = dialogView.findViewById<SearchView>(R.id.search_view)
+
+        val adapter = object : ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_multiple_choice,
+            cityNames.toMutableList()
+        ) {
+            override fun hasStableIds(): Boolean = true
+        }
+
+        listView.adapter = adapter
+        listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+
+        for (i in 0 until adapter.count) {
+            val cityName = adapter.getItem(i)
+            if (selectedSet.contains(cityName)) {
+                listView.setItemChecked(i, true)
+            }
+        }
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val cityName = adapter.getItem(position) ?: return@setOnItemClickListener
+            if (selectedSet.contains(cityName)) {
+                selectedSet.remove(cityName)
+            } else {
+                selectedSet.add(cityName)
+            }
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText) {
+                    for (i in 0 until adapter.count) {
+                        val cityName = adapter.getItem(i)
+                        listView.setItemChecked(i, selectedSet.contains(cityName))
+                    }
+                }
                 return true
             }
         })
@@ -360,25 +434,23 @@ class RequestsOffersActivity : AppCompatActivity() {
             .setTitle("Select Cities")
             .setView(dialogView)
             .setPositiveButton("OK") { _, _ ->
-                val checkedPositions = listView.checkedItemPositions
                 selectedCityNames.clear()
                 selectedCityIds.clear()
 
-                for (i in 0 until listView.count) {
-                    if (checkedPositions[i]) {
-                        val cityName = adapter.getItem(i)!!
-                        val city = cities.find { it.name == cityName }
-                        if (city != null) {
-                            selectedCityNames.add(city.name)
-                            selectedCityIds.add(city.id)
-                        }
+                for (city in cities) {
+                    if (selectedSet.contains(city.name)) {
+                        selectedCityNames.add(city.name)
+                        selectedCityIds.add(city.id)
                     }
                 }
+
                 cityTextView.text = selectedCityNames.joinToString(", ")
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
+
+
 
     private fun fetchCategories() {
         val apiService = ApiServiceInstance.Auth.apiServices

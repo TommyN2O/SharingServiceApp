@@ -90,7 +90,7 @@ class OpenTasksHelperAdapter(
             val lastAvailabilityDate = tasker.availability?.lastOrNull()?.date ?: "-"
             dueDateText.text = "Due: $lastAvailabilityDate"
             descriptionText.text = tasker.description ?: "No description"
-            val galleryImages = tasker.gallery_images ?: emptyList()
+            val galleryImages = tasker.gallery ?: emptyList()
             if (galleryImages.isNotEmpty()) {
                 galleryRecyclerView.visibility = View.VISIBLE
                 galleryRecyclerView.layoutManager =

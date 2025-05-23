@@ -13,9 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
+import com.example.sharingserviceapp.activitys.TaskDetailActivity
 import com.example.sharingserviceapp.adapters.GalleryAdapter
 import com.example.sharingserviceapp.models.CreateChat
 import com.example.sharingserviceapp.models.CreateChatBody
+import com.example.sharingserviceapp.models.StatusUpdate
 import com.example.sharingserviceapp.models.TaskResponse
 import com.example.sharingserviceapp.network.ApiServiceInstance
 import retrofit2.Call
@@ -104,13 +106,15 @@ class MyPlannedTaskDetailedActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_confirmation)
 
         val confirmationMessage = dialog.findViewById<TextView>(R.id.confirmationMessage)
-        confirmationMessage.text = "Are you sure you want to cancel this Planned Task?"
+        confirmationMessage.text = "Are you sure you want to cancel this planed task?"
 
         val btnYes = dialog.findViewById<Button>(R.id.btnYes)
         btnYes.setOnClickListener {
-            //   #TODO()
-//            updateTaskStatus("Declined")  // Update the task status to Declined
-            dialog.dismiss()  // Dismiss the dialog
+            updateTaskStatus("Canceled")
+            val intent = Intent(this, PlannedTasksActivity::class.java)
+            startActivity(intent)
+            finish()
+            dialog.dismiss()
         }
 
         val btnNo = dialog.findViewById<Button>(R.id.btnNo)
@@ -120,6 +124,36 @@ class MyPlannedTaskDetailedActivity : AppCompatActivity() {
 
         dialog.show()
     }
+
+    private fun updateTaskStatus(status: String) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+        if (token != null) {
+            val api = ApiServiceInstance.Auth.apiServices
+
+            val statusUpdate = StatusUpdate(status)
+
+            val call = api.updateTaskStatus("Bearer $token", taskId, statusUpdate)
+
+            call.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@MyPlannedTaskDetailedActivity, "$status successfully", Toast.LENGTH_SHORT).show()
+                        loadTaskDetailed(taskId)
+
+                    } else {
+                        Toast.makeText(this@MyPlannedTaskDetailedActivity, "Failed to update status", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@MyPlannedTaskDetailedActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
+    }
+
 
     private fun loadTaskDetailed(taskId: Int) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)

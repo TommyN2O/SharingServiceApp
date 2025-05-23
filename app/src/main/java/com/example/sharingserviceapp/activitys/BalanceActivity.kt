@@ -1,6 +1,7 @@
 package com.example.sharingserviceapp.activitys
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -40,6 +41,13 @@ class BalanceActivity : AppCompatActivity() {
     private fun fetchWalletPayments() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
+
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
 
         val api = ApiServiceInstance.Auth.apiServices
         val call = api.getWalletPayments("Bearer $token")

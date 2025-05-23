@@ -253,10 +253,20 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
+            android:visibility="gone"
             android:backgroundTint="@color/black"
-            android:text="Cancel"
+            android:text="Delete Request"
             android:textColor="@android:color/white" />
 
+        <Button
+            android:id="@+id/btnDeleteOpenTask"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:text="Delete Open Task"
+            android:textColor="@android:color/white" />
         <ImageView
             android:id="@+id/messageButton"
             android:layout_width="48dp"

@@ -36,7 +36,7 @@ class BalanceAdapter(private val transactions: List<WalletPaymentsResponse>) : R
 
             textDate.text = parsedDate?.let { outputFormat.format(it) } ?: transaction.paymentDate
             textStatus.text = transaction.paymentStatus
-            textAmount.text = if (transaction.type == "earning") "+€${transaction.amount}" else "-€${transaction.amount}"
+            textAmount.text = if (transaction.type == "earning") "+${transaction.amount}€" else "-${transaction.amount}€"
             textAmount.setTextColor(
                 if (transaction.type == "earning") Color.parseColor("#4CAF50") // Green
                 else Color.parseColor("#F44336") // Red

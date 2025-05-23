@@ -85,6 +85,7 @@
     <string name="error_type_issue">Please select a support type</string>
     <string name="support_description_details">Describe your issue</string>
     <string name="error_support_description">Description cannot be empty</string>
+    <string name="support_message_successful">Support ticket sent</string>
     <string name="btn_send">Send</string>
     <!---->
     <!--                  Support Ticket Confirmation                        -->
@@ -95,4 +96,18 @@
     <string name="balance_title">Balance</string>
     <string name="payments_header">Payments</string>
     <string name="payments_error_fetch">Error fetching data</string>
+    <!---->
+    <!--                  History                        -->
+    <string name="history_title">History</string>
+    <string name="history_my_tasks">My Tasks</string>
+    <string name="history_failed_to_load">Failed to load tasks</string>
+    <!---->
+    <!--                  PeopleRequestsAdapter                        -->
+    <string name="status">Status</string>
+    <string name="history_people_tasks">People Requests</string>
+    <!---->
+    <!--                  Create Task                        -->
+    <string name="crt_task">Fraud</string>
+    <string name="crt_task_description">Task</string>
+    <string name="crt_task_description_text">Account</string>
 </resources>

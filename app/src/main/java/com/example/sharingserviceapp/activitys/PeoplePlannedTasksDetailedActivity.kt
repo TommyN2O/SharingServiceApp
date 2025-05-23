@@ -85,12 +85,15 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_confirmation)
 
         val confirmationMessage = dialog.findViewById<TextView>(R.id.confirmationMessage)
-        confirmationMessage.text = "Are you sure you want to decline this request?"
+        confirmationMessage.text = "Are you sure you want to cancel this planed task?"
 
 
         val btnYes = dialog.findViewById<Button>(R.id.btnYes)
         btnYes.setOnClickListener {
             updateTaskStatus("Canceled")
+            val intent = Intent(this, PlannedTasksActivity::class.java)
+            startActivity(intent)
+            finish()
             dialog.dismiss()
         }
 
