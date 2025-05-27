@@ -12,10 +12,9 @@
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@drawable/chevron_arrow_left"
-            android:contentDescription="Back"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:clickable="true"
@@ -24,23 +23,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Your Profile"
-            android:textSize="22sp"
+            android:text="@string/edit_my_tasker_profile_title"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:layout_centerInParent="true"/>
 
-        <ImageView
-            android:id="@+id/btn_delete_account"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="Delete Account"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            android:onClick="onDeleteAccountClick" />
     </RelativeLayout>
 
     <ScrollView
@@ -68,32 +55,53 @@
                 android:id="@+id/btn_upload_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Upload Photo"
+                android:text="@string/edit_my_tasker_profile_btn_upload_profile_photo"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Description"/>
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"
+                android:text="@string/edit_my_tasker_profile_description_header"/>
+
             <EditText
                 android:id="@+id/edit_description"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
+                android:minHeight="100dp"
                 android:background="@drawable/rounded_edittext"
-                android:hint="Describe yourself"
+                android:hint="@string/edit_my_tasker_profile_description_text"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:textSize="16sp"
                 android:gravity="top|start"
                 android:inputType="textMultiLine"/>
 
             <TextView
+                android:id="@+id/error_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_my_tasker_error_text" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Upload Photos"
+                android:text="@string/edit_my_tasker_profile_gallery_header"
+                android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="117dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="5dp"
                 android:padding="4dp">
 
                 <LinearLayout
@@ -107,19 +115,21 @@
                 android:id="@+id/btn_add_photos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Photo"/>
+                android:layout_marginTop="5dp"
+                android:text="@string/edit_my_tasker_profile_gallery_btn"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Categories"/>
+                android:text="@string/edit_my_tasker_profile_categories_header"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/tv_selected_categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Categories"
-                android:textColor="@android:color/black"
+                android:hint="@string/edit_my_tasker_profile_categories_text"
                 android:layout_marginTop="5dp"
                 android:padding="10dp"
                 android:textSize="16sp"
@@ -128,29 +138,59 @@
                 android:background="@drawable/rounded_edittext"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hourly Rate"
-                android:layout_marginTop="8dp"/>
-            <EditText
-                android:id="@+id/edit_hourly_rate"
+                android:id="@+id/error_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter your hourly rate"
-                android:inputType="numberDecimal"
-                android:background="@drawable/rounded_edittext"/>
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_my_tasker_error_text"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Available Cities"/>
+                android:text="@string/edit_my_tasker_profile_hourly_rate_header"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
+
+            <EditText
+                android:id="@+id/edit_hourly_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/edit_my_tasker_profile_hourly_rate_text"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:textSize="16sp"
+                android:inputType="numberDecimal"
+                android:background="@drawable/rounded_edittext"/>
+
+            <TextView
+                android:id="@+id/error_hourly_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_my_tasker_error_text_hourly_rate" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_my_tasker_profile_cities_header"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/tv_selected_cities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Cities"
-                android:textColor="@android:color/black"
+                android:hint="@string/edit_my_tasker_profile_cities_text"
                 android:layout_marginTop="5dp"
                 android:padding="10dp"
                 android:textSize="16sp"
@@ -159,14 +199,29 @@
                 android:background="@drawable/rounded_edittext"/>
 
             <TextView
+                android:id="@+id/error_cities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_my_tasker_error_text" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Available Days and Time"/>
+                android:text="@string/edit_my_tasker_profile_availability_header"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
             <Button
                 android:id="@+id/btn_select_days_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Available Days and Time"/>
+                android:layout_marginTop="5dp"
+                android:text="@string/edit_my_tasker_profile_availability_btn"/>
         </LinearLayout>
     </ScrollView>
 
@@ -174,6 +229,6 @@
         android:id="@+id/btn_submit_tasker_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Profile"
+        android:text="@string/edit_my_tasker_profile_btn_save"
         android:layout_marginTop="8dp"/>
 </LinearLayout>

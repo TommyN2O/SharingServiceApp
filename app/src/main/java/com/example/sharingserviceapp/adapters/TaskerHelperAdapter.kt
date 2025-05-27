@@ -40,8 +40,8 @@ class TaskerHelperAdapter(
         private val city: TextView = itemView.findViewById(R.id.detail_cities)
         private val shortDescription: TextView = itemView.findViewById(R.id.short_description)
 
-        fun bind(customer: TaskerHelper) {
-            val profilePhotoPath = customer.profile_photo
+        fun bind(tasker: TaskerHelper) {
+            val profilePhotoPath = tasker.profile_photo
 
             if (!profilePhotoPath.isNullOrEmpty()) {
                 try {
@@ -66,16 +66,21 @@ class TaskerHelperAdapter(
                     .into(profileImage)
             }
 
-            name.text = "${customer.name ?: "Unknown"} ${
-            customer.surname?.firstOrNull()?.uppercase() ?: ""
-            }.".trim()
-            rating.text = customer.rating.toString()
-            reviewCount.text = "(${customer.review_count} reviews)"
-            price.text = "${customer.hourly_rate}€/h"
-            city.text = customer.cities.joinToString(", ") { it.name }
-            shortDescription.text = customer.description
+            name.text = "${tasker.name ?: "Unknown"} ${tasker.surname?.firstOrNull()?.uppercase() ?: ""}.".trim()
+            rating.text = tasker.rating.toString()
+            reviewCount.text = "(${getReviewsText(tasker.review_count)})"
+            price.text = "${tasker.hourly_rate}€/val."
+            city.text = tasker.cities.joinToString(", ") { it.name }
+            shortDescription.text = tasker.description
 
-            itemView.setOnClickListener { onItemClick(customer) }
+            itemView.setOnClickListener { onItemClick(tasker) }
+        }
+    }
+    private fun getReviewsText(count: Int): String {
+        return when {
+            count == 1 -> "$count atsiliepimas"
+            (count % 10 in 2..9) && !(count % 100 in 11..19) -> "$count atsiliepimai"
+            else -> "$count atsiliepimų"
         }
     }
 }

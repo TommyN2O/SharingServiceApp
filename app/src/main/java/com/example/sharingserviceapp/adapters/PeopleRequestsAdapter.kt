@@ -20,6 +20,13 @@ class PeopleRequestsAdapter(
     private val onItemClick: (TaskResponse) -> Unit
 ) : RecyclerView.Adapter<PeopleRequestsAdapter.PeopleRequestViewHolder>() {
 
+    private val statusTranslations = mapOf(
+        "Pending" to "Laukiama patvirtinimo",
+        "Waiting for Payment" to "Laukiama apmokėjimo",
+        "Declined" to "Atmestas",
+        "Canceled" to "Atšauktas",
+        "Completed" to "Užbaigtas",
+    )
     inner class PeopleRequestViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgProfile: ImageView = itemView.findViewById(R.id.img_category)
         val txtName: TextView = itemView.findViewById(R.id.txt_user_name)
@@ -45,17 +52,18 @@ class PeopleRequestsAdapter(
 
             txtName.text = "${request.sender.name.replaceFirstChar { it.uppercase() }} ${request.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
 
-            txtCategory.text = "Category: ${request.categories.joinToString { it.name }}"
+            txtCategory.text = "${request.categories.joinToString { it.name }}"
 
             val slot = request.availability.firstOrNull()
-            txtDateTime.text = slot?.let { "${it.date}, ${it.time.dropLast(3)}" } ?: "Not set"
+            txtDateTime.text = slot?.let { "${it.date}, ${it.time.dropLast(3)}" } ?: "Nenurodyta"
 
             txtCity.text = request.city.name
 
-            val status = request.status.replaceFirstChar { it.uppercase() }
-            txtStatus.text = "Status: $status"
+            val statusOriginal = request.status.replaceFirstChar { it.uppercase() }
+            val translatedStatus = statusTranslations[statusOriginal] ?: statusOriginal
+            txtStatus.text = translatedStatus
 
-            when (status) {
+            when (statusOriginal) {
                 "Pending" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_pending))
                 "Waiting for Payment" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_waiting_payment))
                 "Declined"->txtStatus.setTextColor(context.resources.getColor(R.color.status_declined))

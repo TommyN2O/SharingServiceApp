@@ -5,50 +5,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:padding="16dp"
     tools:context=".activitys.ProfileDetailsActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/header_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/button_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_back"
-            android:layout_gravity="center_vertical" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/chevron_arrow_left"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/title_profile_details"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Profile Details"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="@string/profile_details_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
 
         <TextView
             android:id="@+id/text_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit"
-            android:textSize="16sp"
+            android:text="@string/profile_details_btn_edit"
+            android:textSize="18sp"
             android:textColor="@android:color/holo_blue_dark"
-            android:layout_gravity="center_vertical"
+            android:src="@drawable/chevron_arrow_left"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginEnd="8dp"
             android:onClick="onEditClicked" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -76,7 +75,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name"
+                android:text="@string/profile_details_name_header"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="16dp"/>
@@ -92,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Surname"
+                android:text="@string/profile_details_surname_header"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="16dp"/>
@@ -108,7 +107,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date of Birth"
+                android:text="@string/profile_details_date_of_birth_header"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="16dp"/>
@@ -124,7 +123,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email"
+                android:text="@string/profile_details_email_header"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="16dp"/>
@@ -144,7 +143,7 @@
         android:id="@+id/btn_delete_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete Account"
+        android:text="@string/profile_details_btn_delete_account"
         android:layout_marginTop="8dp"
         android:backgroundTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"/>

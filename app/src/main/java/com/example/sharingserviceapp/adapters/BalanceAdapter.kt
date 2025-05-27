@@ -35,12 +35,26 @@ class BalanceAdapter(private val transactions: List<WalletPaymentsResponse>) : R
             }
 
             textDate.text = parsedDate?.let { outputFormat.format(it) } ?: transaction.paymentDate
-            textStatus.text = transaction.paymentStatus
-            textAmount.text = if (transaction.type == "earning") "+${transaction.amount}€" else "-${transaction.amount}€"
-            textAmount.setTextColor(
-                if (transaction.type == "earning") Color.parseColor("#4CAF50") // Green
-                else Color.parseColor("#F44336") // Red
-            )
+            val lithuanianStatus = when (transaction.paymentStatus.lowercase()) {
+                "refunded" -> "Grąžinta"
+                "on hold" -> "Rezervuota"
+                "completed" -> "Įvykdyta"
+                else -> transaction.paymentStatus
+            }
+            textStatus.text = lithuanianStatus
+
+            if (transaction.paymentStatus.lowercase() == "refunded") {
+                textAmount.text = "+${transaction.amount}€"
+                textAmount.setTextColor(Color.parseColor("#4CAF50")) // green
+            } else {
+                if (transaction.type == "earning") {
+                    textAmount.text = "+${transaction.amount}€"
+                    textAmount.setTextColor(Color.parseColor("#4CAF50")) // green
+                } else {
+                    textAmount.text = "-${transaction.amount}€"
+                    textAmount.setTextColor(Color.parseColor("#F44336")) // red
+                }
+            }
         }
     }
 

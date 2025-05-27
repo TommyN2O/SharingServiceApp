@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sharingserviceapp.R
 import com.example.sharingserviceapp.adapters.MyPlannedTasksAdapter
 import com.example.sharingserviceapp.adapters.PeoplePlanedTasksAdapter
-
+import java.util.Locale
 import com.example.sharingserviceapp.models.PlannedTaskListItem
 import com.example.sharingserviceapp.models.TaskResponse
 import com.example.sharingserviceapp.network.ApiServiceInstance
@@ -93,8 +93,9 @@ class PlannedTasksActivity : AppCompatActivity() {
                     myTasksList.addAll(tasks)
 
                     val groupedList = mutableListOf<PlannedTaskListItem>()
-                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    val displayFormat = SimpleDateFormat("MMMM dd", Locale.getDefault())
+                    val lithuanianLocale = Locale("lt", "LT")
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // input date format doesn't change
+                    val displayFormat = SimpleDateFormat("MMMM dd", lithuanianLocale) // use Lithuanian locale here
 
                     val grouped = tasks.groupBy { task ->
                         task.availability.firstOrNull()?.date ?: "Unknown Date"
@@ -102,7 +103,11 @@ class PlannedTasksActivity : AppCompatActivity() {
 
                     for ((date, tasksOnDate) in grouped) {
                         val parsedDate = try { dateFormat.parse(date) } catch (e: Exception) { null }
-                        val displayDate = parsedDate?.let { displayFormat.format(it) } ?: date
+                        val displayDate = parsedDate?.let {
+                            displayFormat.format(it).replaceFirstChar { char ->
+                                if (char.isLowerCase()) char.titlecase(lithuanianLocale) else char.toString()
+                            }
+                        } ?: date
                         groupedList.add(PlannedTaskListItem.DateHeader(displayDate))
 
                         for (task in tasksOnDate) {
@@ -118,7 +123,7 @@ class PlannedTasksActivity : AppCompatActivity() {
                     }
 
                 } else {
-                    Toast.makeText(this@PlannedTasksActivity, getString(R.string.failed_load_my_tasks), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PlannedTasksActivity, getString(R.string.planned_tasks_failed_load_my_tasks), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -146,8 +151,10 @@ class PlannedTasksActivity : AppCompatActivity() {
                         val requests = response.body() ?: emptyList()
 
                         val groupedList2 = mutableListOf<PlannedTaskListItem>()
-                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        val displayFormat = SimpleDateFormat("MMMM dd", Locale.getDefault())
+                        val lithuanianLocale = Locale("lt", "LT")
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // input date format doesn't change
+                        val displayFormat = SimpleDateFormat("MMMM dd", lithuanianLocale) // use Lithuanian locale here
+
 
                         val grouped = requests.groupBy { request ->
                             request.availability.firstOrNull()?.date ?: "Unknown Date"
@@ -155,7 +162,11 @@ class PlannedTasksActivity : AppCompatActivity() {
 
                         for ((date, tasksOnDate) in grouped) {
                             val parsedDate = try { dateFormat.parse(date) } catch (e: Exception) { null }
-                            val displayDate = parsedDate?.let { displayFormat.format(it) } ?: date
+                            val displayDate = parsedDate?.let {
+                                displayFormat.format(it).replaceFirstChar { char ->
+                                    if (char.isLowerCase()) char.titlecase(lithuanianLocale) else char.toString()
+                                }
+                            } ?: date
                             groupedList2.add(PlannedTaskListItem.DateHeader(displayDate))
 
                             for (task in tasksOnDate) {
@@ -171,7 +182,7 @@ class PlannedTasksActivity : AppCompatActivity() {
                             recyclerView.adapter = peoplePlanedTasksAdapter
                         }
                     } else {
-                        Toast.makeText(this@PlannedTasksActivity, getString(R.string.failed_load_people_tasks), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@PlannedTasksActivity, getString(R.string.planned_tasks_failed_load_people_tasks), Toast.LENGTH_SHORT).show()
                     }
                 }
 

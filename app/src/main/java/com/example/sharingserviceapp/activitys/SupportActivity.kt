@@ -22,10 +22,18 @@ class SupportActivity : AppCompatActivity() {
     private lateinit var contentEditText: EditText
     private lateinit var sendButton: Button
     private lateinit var backButton: ImageView
+    private lateinit var errorType: TextView
+    private lateinit var contentLayout: TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_support)
+        spinner = findViewById(R.id.spinner_support_type)
+        contentEditText = findViewById(R.id.et_content)
+        sendButton = findViewById(R.id.btn_send)
+        backButton = findViewById(R.id.btn_back)
+        contentLayout = findViewById(R.id.layout_content)
+        errorType = findViewById(R.id.error_type)
         setupListeners()
     }
 
@@ -62,12 +70,6 @@ class SupportActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        val spinnerLayout = findViewById<TextInputLayout>(R.id.layout_spinner)
-        val contentLayout = findViewById<TextInputLayout>(R.id.layout_content)
-        spinner = findViewById(R.id.spinner_support_type)
-        contentEditText = findViewById(R.id.et_content)
-        sendButton = findViewById(R.id.btn_send)
-        backButton = findViewById(R.id.btn_back)
 
         val types = listOf(
             getString(R.string.type_select_issue),
@@ -82,8 +84,8 @@ class SupportActivity : AppCompatActivity() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedType = spinner.selectedItem.toString()
-                if (selectedType != getString(R.string.type_select_issue)) {
-                    spinnerLayout.error = null
+                if (selectedType == getString(R.string.type_select_issue)) {
+                    errorType.visibility = View.GONE
                     spinner.background = ContextCompat.getDrawable(this@SupportActivity, R.drawable.rounded_corner)
                 }
             }
@@ -103,11 +105,11 @@ class SupportActivity : AppCompatActivity() {
             var valid = true
 
             if (selectedType == getString(R.string.type_select_issue)) {
-                spinnerLayout.error = getString(R.string.error_type_issue)
+                errorType.visibility = View.VISIBLE
                 spinner.background = ContextCompat.getDrawable(this, R.drawable.spinner_border_error)
                 valid = false
             } else {
-                spinnerLayout.error = null
+                errorType.visibility = View.GONE
                 spinner.background = ContextCompat.getDrawable(this, R.drawable.rounded_corner)
             }
 

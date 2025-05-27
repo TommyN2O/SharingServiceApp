@@ -2,32 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="15dp"
-        android:gravity="start">
-
-        <ImageButton
-            android:id="@+id/btn_back"
-            android:layout_width="53dp"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/chevron_arrow_left" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="80dp"
-            android:layout_weight="1"
-            android:text="Offer"
-            android:textAlignment="center"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-    </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -39,31 +16,68 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/chevron_arrow_left"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_offer_title"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_centerInParent="true" />
+            </RelativeLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Describe Your Offer"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:text="@string/create_offer_description_header"
+                android:textSize="14sp"
+                android:layout_marginTop="15dp"/>
 
             <EditText
                 android:id="@+id/edit_task_description"
                 android:layout_width="match_parent"
-                android:layout_height="126dp"
+                android:layout_height="wrap_content"
+                android:minHeight="100dp"
                 android:background="@drawable/rounded_edittext"
                 android:gravity="top|start"
-                android:hint="Enter offer details..."
+                android:hint="@string/create_offer_description_hint"
                 android:inputType="textMultiLine"
+                android:layout_marginTop="5dp"
                 android:maxLines="6"
                 android:minLines="4"
                 android:padding="12dp"
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/error_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_offer_error_description_text" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hourly rate"
+                android:textSize="14sp"
+                android:text="@string/create_offer_hourly_rate_header"
                 android:layout_marginTop="8dp"/>
 
             <EditText
@@ -71,14 +85,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
-                android:hint="Enter your price"
+                android:layout_marginTop="5dp"
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:hint="@string/create_offer_hourly_rate_hint"
                 android:background="@drawable/rounded_edittext"/>
+            <TextView
+                android:id="@+id/error_hourly_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_my_tasker_error_text_hourly_rate" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Select Days and Time" />
+                android:textSize="14sp"
+                android:text="@string/create_offer_day_and_time_header" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -93,6 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
+                    android:padding="10dp"
                     android:background="@drawable/rounded_edittext"/>
 
                 <Spinner
@@ -100,6 +130,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:padding="10dp"
                     android:background="@drawable/rounded_edittext"
                     android:layout_weight="1" />
             </LinearLayout>
@@ -108,7 +139,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text=" Select Duration" />
+                android:textSize="14sp"
+                android:text="@string/create_offer_duration_header" />
 
             <TextView
                 android:id="@+id/tv_selected_duration"
@@ -118,21 +150,17 @@
                 android:background="@drawable/rounded_edittext"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="10dp"
-                android:text="Select Duration"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="16sp" />
-
-
-
-        </LinearLayout>
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:text="@string/create_offer_duration_hint"
+                android:textColor="@android:color/darker_gray" />
+            </LinearLayout>
     </ScrollView>
-
     <Button
         android:id="@+id/btn_submit_request"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Offer"
+        android:text="@string/create_offer_btn_send_offer"
+        android:layout_margin="10dp"
         android:layout_marginTop="16dp"/>
-
 </LinearLayout>

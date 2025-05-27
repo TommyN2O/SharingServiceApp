@@ -7,14 +7,11 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import com.example.sharingserviceapp.R
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class SettingsActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
         setupListeners()
     }
 
@@ -44,7 +41,6 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-
         val logout = findViewById<Button>(R.id.btn_logout)
         logout?.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
@@ -57,7 +53,6 @@ class SettingsActivity : AppCompatActivity() {
                 remove("password")
                 apply()
             }
-
             finish()
         }
     }

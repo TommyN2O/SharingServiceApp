@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,61 +16,75 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="start">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/btn_back"
-                    android:layout_width="53dp"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/chevron_arrow_left" />
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/chevron_arrow_left"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"  />
 
                 <TextView
-                    android:layout_width="253dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="80dp"
-                    android:text="Request"
-                    android:textAlignment="center"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_task_title"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_centerInParent="true" />
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Describe Your Task"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
+                android:text="@string/create_task_description_header"
+                android:textSize="14sp"
+                android:layout_marginTop="15dp"/>
 
             <EditText
                 android:id="@+id/edit_task_description"
                 android:layout_width="match_parent"
-                android:layout_height="83dp"
+                android:layout_height="wrap_content"
+                android:minHeight="100dp"
                 android:background="@drawable/rounded_edittext"
                 android:gravity="top|start"
-                android:hint="Enter task details..."
+                android:hint="@string/create_task_description_hint"
                 android:inputType="textMultiLine"
+                android:layout_marginTop="5dp"
                 android:maxLines="6"
                 android:minLines="4"
                 android:padding="12dp"
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/error_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_task_error_description_text" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Category"
+                android:text="@string/create_task_category_header"
+                android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/tv_selected_categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Categories"
+                android:text="@string/create_task_category_hint"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="5dp"
                 android:padding="10dp"
@@ -79,9 +94,22 @@
                 android:background="@drawable/rounded_edittext"/>
 
             <TextView
+                android:id="@+id/error_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_task_error_category_text" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Budget ($)"
+                android:text="@string/create_task_budget_header"
+                android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 
             <EditText
@@ -89,20 +117,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
-                android:hint="Enter your budget"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:textSize="16sp"
+                android:hint="@string/create_task_budget_hint"
                 android:background="@drawable/rounded_edittext"/>
+
+            <TextView
+                android:id="@+id/error_budget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_task_error_budget_text" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Select Location"
+                android:text="@string/create_task_city_header"
+                android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/tv_selected_cities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Location"
+                android:text="@string/create_task_city_hint"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="5dp"
                 android:padding="10dp"
@@ -112,27 +156,55 @@
                 android:background="@drawable/rounded_edittext"/>
 
             <TextView
+                android:id="@+id/error_cities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_task_error_city_text" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Days and Time"
+                android:textSize="14sp"
+                android:text="@string/create_task_date_and_time_header"
                 android:layout_marginTop="8dp"/>
+
             <Button
                 android:id="@+id/btn_select_days_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Select Days and Time"/>
+                android:text="@string/create_task_btn_date_and_time"/>
+
+            <TextView
+                android:id="@+id/error_availability"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_task_error_availability_text" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Select Duration"
+                android:text="@string/create_task_duration_header"
+                android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
+
             <TextView
                 android:id="@+id/tv_selected_duration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Categories"
+                android:text="@string/create_task_duration_hint"
                 android:textColor="@android:color/darker_gray"
                 android:layout_marginTop="5dp"
                 android:padding="10dp"
@@ -142,14 +214,39 @@
                 android:background="@drawable/rounded_edittext"/>
 
             <TextView
+                android:id="@+id/error_duration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_task_error_duration_text" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Upload Photos"
+                android:text="@string/create_task_gallery_header"
+                android:textSize="14sp"
                 android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/error_photos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:text="@string/create_task_error_gallery_text" />
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="117dp"
+                android:layout_height="80dp"
                 android:padding="4dp">
 
                 <LinearLayout
@@ -163,7 +260,7 @@
                 android:id="@+id/btn_add_photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Photo"/>
+                android:text="@string/create_task_btn_add_gallery"/>
 
         </LinearLayout>
     </ScrollView>
@@ -172,7 +269,8 @@
         android:id="@+id/btn_create_request"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create Request"
-        android:layout_marginTop="10dp"/>
+        android:layout_margin="10dp"
+        android:text="@string/create_task_btn_create_open_task"
+        android:layout_marginTop="5dp"/>
 
 </LinearLayout>

@@ -39,15 +39,19 @@ class ReviewAdapter(private val reviewList: List<ReviewList>) :
         holder.reviewerName.text = "${review.reviewer.name} ${review.reviewer.surname.firstOrNull()?.uppercase() ?: ""}.".trim()
         holder.reviewRatingBar.rating = review.rating.toFloat()
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMMM yyyy", Locale("lt"))
 
         try {
             val parsedDate = inputFormat.parse(review.created_at)
-            val formattedDate = outputFormat.format(parsedDate!!)
+            var formattedDate = outputFormat.format(parsedDate!!)
+            formattedDate = formattedDate.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale("lt")) else it.toString()
+            }
             holder.reviewDate.text = formattedDate
         } catch (e: Exception) {
-            holder.reviewDate.text = review.created_at // fallback
+            holder.reviewDate.text = review.created_at
         }
+
         holder.reviewText.text = review.review
         val profilePhotoPath = review.reviewer.profile_photo
         if (!profilePhotoPath.isNullOrEmpty()) {

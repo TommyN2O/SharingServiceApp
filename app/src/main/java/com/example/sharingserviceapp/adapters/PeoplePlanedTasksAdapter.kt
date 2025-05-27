@@ -24,7 +24,6 @@ class PeoplePlanedTasksAdapter(
     private val VIEW_TYPE_DATE_HEADER = 0
     private val VIEW_TYPE_TASK_ITEM = 1
 
-
     inner class DateHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val txtDateHeader: TextView = itemView.findViewById(R.id.txt_date_header)
 
@@ -34,7 +33,7 @@ class PeoplePlanedTasksAdapter(
     }
 
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imgProfile: ImageView = itemView.findViewById(R.id.img_category)
+        val imgProfile: ImageView = itemView.findViewById(R.id.img_user)
         val txtName: TextView = itemView.findViewById(R.id.txt_user_name)
         val txtCategory: TextView = itemView.findViewById(R.id.txt_category)
         val txtDateTime: TextView = itemView.findViewById(R.id.txt_day_time)
@@ -56,14 +55,11 @@ class PeoplePlanedTasksAdapter(
             } ?: imgProfile.setImageResource(R.drawable.placeholder_image_user)
 
             txtName.text = "${request.sender.name.replaceFirstChar { it.uppercase() }} ${request.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
-
-            txtCategory.text = "Category: ${request.categories.joinToString { it.name }}"
+            txtCategory.text = "${request.categories.joinToString { it.name }}"
 
             val slot = request.availability.firstOrNull()
-            txtDateTime.text = slot?.let { it.time.dropLast(3) } ?: "Not set"
-
+            txtDateTime.text = slot?.let { it.time.dropLast(3) } ?: "Nenurodyta"
             txtCity.text = request.city.name
-
             itemView.setOnClickListener { onItemClick(request) }
         }
     }

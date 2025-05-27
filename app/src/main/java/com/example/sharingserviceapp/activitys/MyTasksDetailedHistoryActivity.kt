@@ -2,7 +2,12 @@ package com.example.sharingserviceapp.activitys
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -36,15 +41,13 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_tasks_detailed_history)
 
+        sendReview = findViewById(R.id.btn_review)
         taskId = intent.getIntExtra("TASK_ID", -1)
-
         if (taskId == -1) {
-            Toast.makeText(this, "Invalid Task ID", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_taskId), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
-        sendReview = findViewById(R.id.btn_review)
-
         loadTaskDetailed(taskId)
         buttonListener(taskId)
         checkReview(taskId)
@@ -68,7 +71,6 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
 
-
         val api = ApiServiceInstance.Auth.apiServices
         val call = api.getMyTasksById("Bearer $token", taskId)
 
@@ -77,7 +79,7 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     showRequestDetailed(response.body()!!)
                 } else {
-                    Toast.makeText(this@MyTasksDetailedHistoryActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyTasksDetailedHistoryActivity, getString(R.string.history_detailed_my_tasks_error_load), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -87,8 +89,6 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
         })
     }
     private fun showRequestDetailed(task: TaskResponse) {
-
-        val customerName: TextView = findViewById(R.id.customerName)
         val taskCategory: TextView = findViewById(R.id.taskCategory)
         val taskDateTime: TextView = findViewById(R.id.taskDateTime)
         val taskDuration: TextView = findViewById(R.id.taskDuration)
@@ -96,49 +96,58 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
         val taskStatus: TextView = findViewById(R.id.taskStatus)
         val taskPrice: TextView = findViewById(R.id.taskPrice)
         val taskDescription: TextView = findViewById(R.id.taskDescription)
-        val profileImage: ImageView = findViewById(R.id.customerProfileImage)
         val galleryRecyclerView: RecyclerView = findViewById(R.id.galleryRecyclerView)
         val taskerProfileImage: ImageView = findViewById(R.id.taskerProfileImage)
         val taskerName: TextView = findViewById(R.id.taskerName)
 
-        customerName.text = "${task.sender.name.replaceFirstChar { it.uppercase() }} ${task.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
-        taskCategory.text = "Category: ${task.categories.joinToString { it.name }}"
+        taskCategory.text = "Paslauga: ${task.categories.joinToString { it.name }}"
         val slot = task.availability.firstOrNull()
-        taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
-        taskDuration.text = "Duration: ${task.duration}"
-        taskLocation.text = "Location: ${task.city.name}"
-        taskPrice.text = "Price: $${task.tasker?.hourly_rate}/h"
+        taskDateTime.text = slot?.let {"Data ir laikas: ${it.date}, ${it.time.dropLast(3)}"}
+        taskDuration.text = "Trukmė: ${task.duration} val."
+        taskLocation.text = "Miestas: ${task.city.name}"
         taskDescription.text = task.description
 
-        val status = task.status.replaceFirstChar { it.uppercase() }
-        taskStatus.text = "Status: $status"
+        val priceText = "Valandinis: ${task.tasker?.hourly_rate}€/val."
+        val spannablePrice = SpannableString(priceText)
+        val greenColor = resources.getColor(R.color.my_light_primary)
 
-        when (status) {
-            "Pending" -> taskStatus.setTextColor(resources.getColor(R.color.status_pending))
-            "Waiting for Payment" -> taskStatus.setTextColor(resources.getColor(R.color.status_waiting_payment))
-            "Declined"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
-            else -> taskStatus.setTextColor(resources.getColor(R.color.status_default))
-        }
+        val valandinisLength = "Valandinis: ".length
+        spannablePrice.setSpan(
+            ForegroundColorSpan(greenColor),
+            valandinisLength,
+            priceText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
 
-        val imageUrl = task.sender.profile_photo?.let {
-            URL(URL(ApiServiceInstance.BASE_URL), it)
-        } ?: R.drawable.placeholder_image_user
+        spannablePrice.setSpan(
+            StyleSpan(Typeface.BOLD),
+            valandinisLength,
+            priceText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
 
-        Glide.with(this)
-            .load(imageUrl)
-            .placeholder(R.drawable.placeholder_image_user)
-            .error(R.drawable.error)
-            .circleCrop()
-            .into(profileImage)
+        taskPrice.text = spannablePrice
+
+        val statusOriginal = task.status.replaceFirstChar { it.uppercase() }
+        taskStatus.text = statusTranslations[statusOriginal] ?: statusOriginal
+        taskStatus.setTextColor(resources.getColor(R.color.status_default))
 
         val galleryImages = task.gallery
-        val baseUrl = ApiServiceInstance.BASE_URL
+        val galleryTitle: TextView = findViewById(R.id.galleryTitle)
 
-        galleryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        galleryRecyclerView.adapter = GalleryAdapter(galleryImages, { position ->
-            showZoomDialog(galleryImages, position, baseUrl)
-        }, baseUrl)
+        if (galleryImages.isNullOrEmpty()) {
+            galleryRecyclerView.visibility = View.GONE
+            galleryTitle.visibility = View.GONE
+        } else {
+            galleryRecyclerView.visibility = View.VISIBLE
+            galleryTitle.visibility = View.VISIBLE
 
+            val baseUrl = ApiServiceInstance.BASE_URL
+            galleryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            galleryRecyclerView.adapter = GalleryAdapter(galleryImages, { position ->
+                showZoomDialog(galleryImages, position, baseUrl)
+            }, baseUrl)
+        }
 
         val taskerImageUrl = task.tasker?.profile_photo?.let {
             URL(URL(ApiServiceInstance.BASE_URL), it)
@@ -154,6 +163,10 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
         taskerName.text = "${task.tasker?.name?.replaceFirstChar { it.uppercase() }} ${task.tasker?.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
 
     }
+    private val statusTranslations = mapOf(
+        "Completed" to "Užbaigtas"
+    )
+
 
     fun showZoomDialog(images: List<String>, startPosition: Int, baseUrl: String) {
         val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
@@ -207,7 +220,6 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
     private fun checkReview(taskId: Int) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
 
         val api = ApiServiceInstance.Auth.apiServices
         val taskRequestId=taskId

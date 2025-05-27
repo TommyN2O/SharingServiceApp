@@ -39,7 +39,6 @@ class ChatAdapter(
         holder.messageText.text = message.message
         holder.messageTime.text = formatMessageTime(message.createdAt)
 
-
         if (isSentByUser) {
             holder.profileImage?.visibility = View.GONE
         } else {
@@ -75,7 +74,7 @@ class ChatAdapter(
     private fun formatMessageTime(timeString: String?): String {
         if (timeString.isNullOrEmpty()) return ""
 
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
 
         val messageDate: Date = try {
@@ -88,12 +87,23 @@ class ChatAdapter(
         val messageCal = Calendar.getInstance()
         messageCal.time = messageDate
 
-        return when {
-            isSameDay(now, messageCal) -> SimpleDateFormat("HH:mm", Locale.getDefault()).format(messageDate)
-            isSameWeek(now, messageCal) -> SimpleDateFormat("EEE HH:mm", Locale.getDefault()).format(messageDate)
-            isSameYear(now, messageCal) -> SimpleDateFormat("MMM dd", Locale.getDefault()).format(messageDate)
-            else -> SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(messageDate)
+        val lithuanianLocale = Locale("lt")
+
+        val result = when {
+            isSameDay(now, messageCal) -> {
+                SimpleDateFormat("HH:mm", lithuanianLocale).format(messageDate)
+            }
+            isSameWeek(now, messageCal) -> {
+                SimpleDateFormat("EEE", lithuanianLocale).format(messageDate)
+            }
+            isSameYear(now, messageCal) -> {
+                SimpleDateFormat("MMM dd", lithuanianLocale).format(messageDate)
+            }
+            else -> {
+                SimpleDateFormat("d MMM yyyy", lithuanianLocale).format(messageDate)
+            }
         }
+        return result.replaceFirstChar { if (it.isLowerCase()) it.titlecase(lithuanianLocale) else it.toString() }
     }
 
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {

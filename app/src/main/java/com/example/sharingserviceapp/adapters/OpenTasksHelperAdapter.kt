@@ -2,6 +2,11 @@ package com.example.sharingserviceapp.adapters
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +28,6 @@ import java.net.URL
 class OpenTasksHelperAdapter(
     private val context: HelperListActivity,
     private var custumerList: MutableList<OpenedTasksHelper>,
-    private val onItemClick: (OpenedTasksHelper) -> Unit
 ) : RecyclerView.Adapter<OpenTasksHelperAdapter.TaskerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskerViewHolder {
@@ -77,19 +81,36 @@ class OpenTasksHelperAdapter(
                     .into(profileImage)
             }
 
-            nameText.text = "${tasker.creator.name ?: "Unknown"} ${
-                tasker.creator.surname?.firstOrNull()?.uppercase() ?: ""
-            }.".trim()
-            cityText.text = tasker.city?.name ?: "No city"
-            categoryText.text = tasker.category?.name ?: "No category"
-            durationText.text = "Duration: ${tasker.duration ?: "-"}h"
+            nameText.text = "${tasker.creator.name} ${tasker.creator.surname?.firstOrNull()?.uppercase() ?: ""}.".trim()
+            cityText.text = tasker.city?.name
+            categoryText.text = tasker.category?.name
+            durationText.text = "Trukmė: ${tasker.duration ?: "-"} val."
             val formattedBudget = tasker.budget?.let {
                 if (it % 1.0 == 0.0) it.toInt().toString() else it.toString()
             } ?: "-"
-            budgetText.text = "Budget: $formattedBudget€"
+            val priceText = "Biudžetas: ${formattedBudget}€"
+            val spannablePrice = SpannableString(priceText)
+            val greenColor = context.getColor(R.color.my_light_primary)
+            val valandinisLength = "Biudžetas: ".length
+            spannablePrice.setSpan(
+                ForegroundColorSpan(greenColor),
+                valandinisLength,
+                priceText.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            spannablePrice.setSpan(
+                StyleSpan(Typeface.BOLD),
+                valandinisLength,
+                priceText.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            budgetText.text = spannablePrice
+
             val lastAvailabilityDate = tasker.availability?.lastOrNull()?.date ?: "-"
-            dueDateText.text = "Due: $lastAvailabilityDate"
-            descriptionText.text = tasker.description ?: "No description"
+            dueDateText.text = "Terminas: $lastAvailabilityDate"
+
+            descriptionText.text = tasker.description
+
             val galleryImages = tasker.gallery ?: emptyList()
             if (galleryImages.isNotEmpty()) {
                 galleryRecyclerView.visibility = View.VISIBLE
@@ -104,9 +125,6 @@ class OpenTasksHelperAdapter(
                 galleryRecyclerView.visibility = View.GONE
             }
 
-            itemView.setOnClickListener { onItemClick(tasker) }
-
-
             sendOfferButton.setOnClickListener {
                 context.hasTaskerProfile { isTasker ->
                     if (!isTasker) {
@@ -120,13 +138,13 @@ class OpenTasksHelperAdapter(
 
         private fun showTaskerProfileAlertDialog() {
             AlertDialog.Builder(context)
-                .setTitle("Tasker Profile Required")
-                .setMessage("You don't have a Tasker profile. Would you like to create one?")
-                .setPositiveButton("Yes") { dialog, _ ->
+                .setTitle(context.getString(R.string.open_task_dialog_tasker_profile_tile))
+                .setMessage(context.getString(R.string.open_task_dialog_tasker_profile_text))
+                .setPositiveButton("Taip") { dialog, _ ->
                     context.startActivity(Intent(context, CreateMyTaskerProfileActivity::class.java))
                     dialog.dismiss()
                 }
-                .setNegativeButton("No") { dialog, _ ->
+                .setNegativeButton("Ne") { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()
@@ -135,6 +153,7 @@ class OpenTasksHelperAdapter(
         private fun navigateToTaskDetailOfferActivity(task: OpenedTasksHelper) {
             val intent = Intent(context, TaskDetailOfferActivity::class.java).apply {
                 putExtra("task_id", task.id)
+                putExtra("duration", task.duration)
             }
             context.startActivity(intent)
         }

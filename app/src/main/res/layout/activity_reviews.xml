@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="@color/white"
     tools:context=".activitys.ReviewsActivity">
 
     <LinearLayout
@@ -18,8 +19,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageButton
-            android:id="@+id/backArrowButton"
+        <ImageView
+            android:id="@+id/btn_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/chevron_arrow_left"
@@ -31,8 +32,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Rate your experience"
-            android:textSize="20sp"
+            android:text="@string/review_title"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginEnd="30dp" />
@@ -52,30 +53,45 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layout_review"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:hint="Write your review..."
+        android:layout_marginBottom="16dp"
+        android:hint="@string/review_hint"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@id/rating_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_review"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:background="@android:color/transparent"
-            android:gravity="top"
-            android:inputType="textMultiLine" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_review"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="100dp"
+        android:background="@null"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:maxLines="6"
+        android:minLines="4"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey"
+        android:textSize="16sp" />
+</com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+
+<Button
         android:id="@+id/btn_submit_review"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="1dp"
-        android:text="Submit Review"
+        android:text="@string/review_btn_submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

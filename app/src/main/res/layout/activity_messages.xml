@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".activitys.MessagesActivity">
 
     <TextView
@@ -21,10 +22,10 @@
 
     <ImageView
         android:id="@+id/search_button"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginTop="18dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="18dp"
         android:src="@drawable/ic_search"
         android:contentDescription="Search"
         app:layout_constraintTop_toTopOf="parent"

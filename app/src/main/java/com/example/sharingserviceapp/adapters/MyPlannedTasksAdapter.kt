@@ -30,10 +30,9 @@ class MyPlannedTasksAdapter(
             txtDateHeader.text = date
         }
     }
-
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imgProfile: ImageView = itemView.findViewById(R.id.img_category)
-        private val txtName: TextView = itemView.findViewById(R.id.txt_user_name)
+        private val txtCategory: TextView = itemView.findViewById(R.id.txt_category)
         private val txtDateTime: TextView = itemView.findViewById(R.id.txt_day_time)
         private val txtCity: TextView = itemView.findViewById(R.id.txt_city)
         private val txtTasker: TextView = itemView.findViewById(R.id.txt_tasker)
@@ -56,16 +55,16 @@ class MyPlannedTasksAdapter(
                 imgProfile.setImageResource(R.drawable.placeholder_image_user)
             }
 
-            txtName.text = task.categories.joinToString { it.name }
+            txtCategory.text = task.categories.joinToString { it.name }
 
             val slot = task.availability.firstOrNull()
-            txtDateTime.text = slot?.let { it.time.dropLast(3) } ?: "Not set"
+            txtDateTime.text = slot?.let { it.time.dropLast(3) } ?: "Nesustatyta"
 
             txtCity.text = task.city.name
 
             txtTasker.text = task.tasker?.let {
-                "Tasker: ${it.name} ${it.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
-            } ?: "Tasker: Not chosen"
+                "${it.name} ${it.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
+            } ?: "Nepasirinktas"
 
             itemView.setOnClickListener { onItemClick(task) }
         }

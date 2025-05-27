@@ -109,13 +109,14 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_city" />
+                    android:src="@drawable/ic_city"
+                    android:tint="@color/dark_gray"/>
 
                 <TextView
                     android:id="@+id/detail_cities"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="3dp"
                     android:text="Cities: New York, Los Angeles"
                     android:textSize="14sp"
                     android:textColor="#7f7f7f"/>
@@ -130,6 +131,7 @@
                 android:text="This is a short description about the person or item."
                 android:textColor="#7f7f7f"
                 android:textSize="14sp"
+                android:layout_marginEnd="25dp"
                 android:layout_marginTop="7dp"/>
 
         </LinearLayout>

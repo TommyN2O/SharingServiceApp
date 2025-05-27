@@ -21,9 +21,10 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Button
-import android.widget.LinearLayout
-import com.example.sharingserviceapp.activitys.EditMyTaskerProfileActivity
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.yalantis.ucrop.UCrop
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -32,14 +33,16 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.net.URL
 
-
 class EditProfileDetailsActivity : AppCompatActivity() {
 
     private lateinit var editFullname: EditText
     private lateinit var editSurname: EditText
-    private lateinit var editBirthdate: EditText
+    private lateinit var editBirthdate: TextView
     private lateinit var profileImage: ImageView
     private lateinit var btnUploadPhoto: Button
+    private lateinit var errorName: TextView
+    private lateinit var errorSurname: TextView
+    private lateinit var errorDateOfBirth: TextView
 
     private val PROFILE_IMAGE_PICK_REQUEST = 1
     private var profilePhotoUri: Uri? = null
@@ -47,13 +50,14 @@ class EditProfileDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile_details)
-
         editFullname = findViewById(R.id.edit_fullname)
         editSurname = findViewById(R.id.edit_surname)
         editBirthdate = findViewById(R.id.edit_birthdate)
         profileImage = findViewById(R.id.img_profile_photo)
         btnUploadPhoto = findViewById(R.id.btn_upload_photo)
-
+        errorName = findViewById(R.id.error_name)
+        errorSurname = findViewById(R.id.error_surname)
+        errorDateOfBirth = findViewById(R.id.error_day_of_birth)
 
         fetchUserProfile()
         setupListeners()
@@ -69,7 +73,6 @@ class EditProfileDetailsActivity : AppCompatActivity() {
         updateButton?.setOnClickListener {
             updateProfile()
         }
-
         editBirthdate.setOnClickListener { showDatePickerDialog() }
         btnUploadPhoto.setOnClickListener { openGallery() }
     }
@@ -78,47 +81,46 @@ class EditProfileDetailsActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
 
-        if (token != null) {
-            val api = ApiServiceInstance.Auth.apiServices
-            val call = api.getUserProfile("Bearer $token")
-
-            call.enqueue(object : Callback<UserProfileResponse> {
-                override fun onResponse(call: Call<UserProfileResponse>, response: Response<UserProfileResponse>) {
-                    if (response.isSuccessful) {
-                        val userProfile = response.body()
-                        userProfile?.let { user ->
-                            editFullname.setText(user.name)
-                            editSurname.setText(user.surname)
-                            editBirthdate.setText(formatDate(user.date_of_birth))
-
-                            if (user.profile_photo.isNullOrEmpty()) {
-                                Glide.with(this@EditProfileDetailsActivity)
-                                    .load(R.drawable.placeholder_image_user)
-                                    .circleCrop()
-                                    .into(profileImage)
-                            } else {
-                                val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), user.profile_photo)
-
-                                Glide.with(this@EditProfileDetailsActivity)
-                                    .load(fullImageUrl.toString())
-                                    .placeholder(R.drawable.placeholder_image_user)
-                                    .error(R.drawable.error)
-                                    .circleCrop()
-                                    .into(profileImage)
-                            }
-                        }
-                    } else {
-                        Toast.makeText(this@EditProfileDetailsActivity, "Error fetching data", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<UserProfileResponse>, t: Throwable) {
-                    Toast.makeText(this@EditProfileDetailsActivity, "Network error", Toast.LENGTH_SHORT).show()
-                }
-            })
-        } else {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
         }
+        val api = ApiServiceInstance.Auth.apiServices
+        val call = api.getUserProfile("Bearer $token")
+
+        call.enqueue(object : Callback<UserProfileResponse> {
+            override fun onResponse(call: Call<UserProfileResponse>, response: Response<UserProfileResponse>) {
+                if (response.isSuccessful) {
+                    val userProfile = response.body()
+                    userProfile?.let { user ->
+                        editFullname.setText(user.name)
+                        editSurname.setText(user.surname)
+                        editBirthdate.setText(formatDate(user.date_of_birth))
+                        if (user.profile_photo.isNullOrEmpty()) {
+                            Glide.with(this@EditProfileDetailsActivity)
+                                .load(R.drawable.placeholder_image_user)
+                                .circleCrop()
+                                .into(profileImage)
+                        } else {
+                            val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), user.profile_photo)
+                            Glide.with(this@EditProfileDetailsActivity)
+                                .load(fullImageUrl.toString())
+                                .placeholder(R.drawable.placeholder_image_user)
+                                .error(R.drawable.error)
+                                .circleCrop()
+                                .into(profileImage)
+                        }
+                    }
+                } else {
+                    Toast.makeText(this@EditProfileDetailsActivity, getString(R.string.edit_profile_details_error_fetch), Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<UserProfileResponse>, t: Throwable) {
+                Toast.makeText(this@EditProfileDetailsActivity, getString(R.string.edit_profile_details_network_error), Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun formatDate(dateString: String): String {
@@ -151,7 +153,6 @@ class EditProfileDetailsActivity : AppCompatActivity() {
             },
             year, month, day
         )
-
         datePickerDialog.show()
     }
 
@@ -186,7 +187,6 @@ class EditProfileDetailsActivity : AppCompatActivity() {
                         .start(this)
                 }
             }
-
             UCrop.REQUEST_CROP -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     val resultUri = UCrop.getOutput(data)
@@ -198,12 +198,12 @@ class EditProfileDetailsActivity : AppCompatActivity() {
 
                         profilePhotoUri = resultUri
                     } else {
-                        Toast.makeText(this, "Cropping failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.edit_profile_details_failed_cropping), Toast.LENGTH_SHORT).show()
                     }
                 } else if (resultCode == UCrop.RESULT_ERROR && data != null) {
                     val cropError = UCrop.getError(data)
                     cropError?.printStackTrace()
-                    Toast.makeText(this, "Crop error: ${cropError?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error: ${cropError?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -214,16 +214,45 @@ class EditProfileDetailsActivity : AppCompatActivity() {
         val surname = editSurname.text.toString().trim()
         val birthdate = editBirthdate.text.toString().trim()
 
-        if (fullname.isEmpty() || surname.isEmpty() || birthdate.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+        clearErrors()
+        var isValid = true
+
+        if (fullname.isEmpty()) {
+            errorName.visibility = View.VISIBLE
+            editFullname.setBackgroundResource(R.drawable.spinner_border_error)
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (12 * scale + 0.5f).toInt()
+            editFullname.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            isValid = false
+        }
+        if (surname.isEmpty()) {
+            errorSurname.visibility = View.VISIBLE
+            editSurname.setBackgroundResource(R.drawable.spinner_border_error)
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (12 * scale + 0.5f).toInt()
+            editSurname.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            isValid = false
+        }
+        if (birthdate.isEmpty()) {
+            errorDateOfBirth.visibility = View.VISIBLE
+            editBirthdate.setBackgroundResource(R.drawable.spinner_border_error)
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (12 * scale + 0.5f).toInt()
+            editBirthdate.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            isValid = false
+        }
+        if (!isValid) {
+            Toast.makeText(this, getString(R.string.edit_my_tasker_profile_error_fill_field), Toast.LENGTH_SHORT).show()
             return
         }
 
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null) ?: ""
 
-        if (token.isEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
             return
         }
 
@@ -261,20 +290,27 @@ class EditProfileDetailsActivity : AppCompatActivity() {
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@EditProfileDetailsActivity, "Profile updated successfully!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditProfileDetailsActivity, getString(R.string.edit_profile_details_update_successful), Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@EditProfileDetailsActivity, ProfileDetailsActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(this@EditProfileDetailsActivity, "Error updating profile", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditProfileDetailsActivity, getString(R.string.edit_profile_details_update_failed), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@EditProfileDetailsActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@EditProfileDetailsActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+    private fun clearErrors() {
+        errorName.visibility = View.GONE
+        editFullname.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
+        errorSurname.visibility = View.GONE
+        editSurname.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
+        errorDateOfBirth.visibility = View.GONE
+        editBirthdate.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
     }
 
 }

@@ -10,9 +10,11 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Gravity
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.sharingserviceapp.R
@@ -43,6 +45,10 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
     private lateinit var saveButton: Button
     private lateinit var citiesTextView: TextView
     private lateinit var categoriesTextView: TextView
+    private lateinit var errorDescription: TextView
+    private lateinit var errorCities: TextView
+    private lateinit var errorCategory: TextView
+    private lateinit var errorHourlyRate: TextView
 
     private val deletedGalleryUrls = mutableListOf<String>()
     private val existingGalleryUrls = mutableListOf<String>()
@@ -51,47 +57,47 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
     private var availabilityList: List<String> = listOf()
     private var categories: List<Category> = listOf()
     private var cities: List<City> = listOf()
-
-
+    private val selectedCityNames = mutableListOf<String>()
+    private val selectedCategoryNames = mutableListOf<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creat_my_tasker_profile)
-
         profileImageView = findViewById(R.id.img_profile_photo)
         descriptionEditText = findViewById(R.id.edit_description)
         hourlyRateEditText = findViewById(R.id.edit_hourly_rate)
         saveButton = findViewById(R.id.btn_submit_tasker_profile)
         citiesTextView = findViewById(R.id.tv_selected_cities)
         categoriesTextView = findViewById(R.id.tv_selected_categories)
+        errorDescription = findViewById(R.id.error_description)
+        errorCities = findViewById(R.id.error_cities)
+        errorCategory = findViewById(R.id.error_category)
+        errorHourlyRate = findViewById(R.id.error_hourly_rate)
+
+        fetchCategories()
+        fetchCities()
+        setupListeners()
+    }
+    private fun setupListeners(){
 
         citiesTextView.setOnClickListener {
             showCitySelectionDialog()
         }
-
         categoriesTextView.setOnClickListener {
             showCategorySelectionDialog()
         }
-
-        fetchCategories()
-        fetchCities()
-
         findViewById<ImageView>(R.id.btn_back).setOnClickListener {
             val intent = Intent(this, MoreActivity::class.java)
             startActivity(intent)
             finish()
         }
-
         findViewById<Button>(R.id.btn_upload_photo).setOnClickListener {
             checkStoragePermissionAndOpenGallery(isForProfile = true)
         }
-
         findViewById<Button>(R.id.btn_add_photos).setOnClickListener {
             checkStoragePermissionAndOpenGallery(isForProfile = false)
         }
-
         saveButton.setOnClickListener {
             createTaskerProfile()
-            navigateToMoreActivity()
         }
 
         val btnSelectDaysTime = findViewById<Button>(R.id.btn_select_days_time)
@@ -100,11 +106,9 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
                 val parts = it.split(" ")
                 AvailabilitySlot(parts[0], parts[1])
             }
-
             val intent = Intent(this, DaysAndTimeActivity::class.java)
             intent.putParcelableArrayListExtra("PREVIOUS_AVAILABILITY", ArrayList(availabilitySlotList))
             startActivityForResult(intent, REQUEST_CODE_SELECT_DAYS_AND_TIME)
-
         }
     }
 
@@ -113,106 +117,144 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
         startActivityForResult(intent, PROFILE_IMAGE_PICK_REQUEST)
     }
 
-    private fun navigateToMoreActivity() {
-        val intent = Intent(this, MoreActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
     private fun showCitySelectionDialog() {
-        val items = cities.map { it.name }
-        val selectedItems = mutableListOf<String>()
+        val originalItems = cities.map { it.name }
+        val selectedItems = mutableSetOf<String>()
+
         val dialogView = layoutInflater.inflate(R.layout.dialog_multiselect, null)
         val listView = dialogView.findViewById<ListView>(R.id.list_view)
         val searchView = dialogView.findViewById<SearchView>(R.id.search_view)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, items)
-        listView.adapter = adapter
+        val displayedItems = originalItems.toMutableList()
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
+        val adapter = object : ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_multiple_choice,
+            displayedItems
+        ) {
+            override fun getCount(): Int = displayedItems.size
+            override fun getItem(position: Int): String = displayedItems[position]
+        }
+        listView.adapter = adapter
+        listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+
+        selectedItems.addAll(selectedCityNames)
+        fun refreshCheckedStates() {
+            for (i in displayedItems.indices) {
+                val item = displayedItems[i]
+                listView.setItemChecked(i, selectedItems.contains(item))
             }
+        }
+        refreshCheckedStates()
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val clickedItem = displayedItems[position]
+            if (selectedItems.contains(clickedItem)) {
+                selectedItems.remove(clickedItem)
+            } else {
+                selectedItems.add(clickedItem)
+            }
+        }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                (listView.adapter as ArrayAdapter<*>).filter.filter(newText)
-                return false
+                val query = newText?.trim()?.lowercase() ?: ""
+                displayedItems.clear()
+                displayedItems.addAll(
+                    if (query.isEmpty()) originalItems
+                    else originalItems.filter { it.lowercase().contains(query) }
+                )
+                adapter.notifyDataSetChanged()
+                refreshCheckedStates()
+                return true
             }
         })
-
         val builder = AlertDialog.Builder(this)
-            .setTitle("Select Cities")
+            .setTitle(getString(R.string.create_my_tasker_select_city_dialog_title))
             .setView(dialogView)
-            .setPositiveButton("OK") { _, _ ->
-                val selectedPositions = listView.checkedItemPositions
-                selectedItems.clear()
-                for (i in 0 until listView.count) {
-                    if (selectedPositions[i]) {
-                        selectedItems.add(items[i])
-                    }
-                }
+            .setPositiveButton("Patvirtinti") { _, _ ->
+                selectedCityNames.clear()
+                selectedCityNames.addAll(selectedItems)
 
                 val selectedCitiesText = selectedItems.joinToString(", ")
                 val citiesTextView = findViewById<TextView>(R.id.tv_selected_cities)
                 citiesTextView.text = selectedCitiesText
             }
-            .setNegativeButton("Cancel", null)
-
+            .setNegativeButton("Atšaukti", null)
         builder.create().show()
     }
 
-
     private fun showCategorySelectionDialog() {
-        val items = categories.map { it.name }
-
-        val selectedItems = mutableListOf<String>()
+        val originalItems = categories.map { it.name }
+        val displayedItems = originalItems.toMutableList()
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_multiselect, null)
         val listView = dialogView.findViewById<ListView>(R.id.list_view)
         val searchView = dialogView.findViewById<SearchView>(R.id.search_view)
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, items)
+        val adapter = object : ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_multiple_choice,
+            displayedItems
+        ) {
+            override fun getCount() = displayedItems.size
+            override fun getItem(position: Int) = displayedItems[position]
+        }
+
         listView.adapter = adapter
+        listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+
+        fun restoreCheckedStates() {
+            listView.clearChoices()
+            for (i in displayedItems.indices) {
+                if (selectedCategoryNames.contains(displayedItems[i])) {
+                    listView.setItemChecked(i, true)
+                }
+            }
+            adapter.notifyDataSetChanged()
+        }
+        restoreCheckedStates()
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val item = displayedItems[position]
+            if (listView.isItemChecked(position)) {
+                selectedCategoryNames.add(item)
+            } else {
+                selectedCategoryNames.remove(item)
+            }
+        }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+            override fun onQueryTextSubmit(query: String?) = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                (listView.adapter as ArrayAdapter<*>).filter.filter(newText)
-                return false
+                val query = newText?.trim()?.lowercase().orEmpty()
+
+                displayedItems.clear()
+                displayedItems.addAll(
+                    if (query.isEmpty()) originalItems
+                    else originalItems.filter { it.lowercase().contains(query) }
+                )
+                adapter.notifyDataSetChanged()
+                restoreCheckedStates()
+                return true
             }
         })
 
         val builder = AlertDialog.Builder(this)
-            .setTitle("Select Categories")
+            .setTitle(getString(R.string.create_my_tasker_select_category_dialog_title))
             .setView(dialogView)
-            .setPositiveButton("OK") { _, _ ->
-                val selectedPositions = listView.checkedItemPositions
-                selectedItems.clear()
-                for (i in 0 until listView.count) {
-                    if (selectedPositions[i]) {
-                        selectedItems.add(items[i])
-                    }
-                }
-
-                val selectedCategorysText = selectedItems.joinToString(", ")
-                val citiesTextView = findViewById<TextView>(R.id.tv_selected_categories)
-                citiesTextView.text = selectedCategorysText
+            .setPositiveButton("Patvirtinti") { _, _ ->
+                val categoriesTextView = findViewById<TextView>(R.id.tv_selected_categories)
+                categoriesTextView.text = selectedCategoryNames.joinToString(", ")
             }
-            .setNegativeButton("Cancel", null)
-
+            .setNegativeButton("Atšaukti", null)
         builder.create().show()
     }
-
-
 
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         startActivityForResult(intent, IMAGE_PICK_REQUEST)
     }
-
 
     companion object {
         const val REQUEST_CODE_SELECT_DAYS_AND_TIME = 2
@@ -276,12 +318,12 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
 
                         profilePhotoUri = resultUri
                     } else {
-                        Toast.makeText(this, "Cropping failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.create_my_tasker_failed_cropping), Toast.LENGTH_SHORT).show()
                     }
                 } else if (resultCode == UCrop.RESULT_ERROR && data != null) {
                     val cropError = UCrop.getError(data)
                     cropError?.printStackTrace()
-                    Toast.makeText(this, "Crop error: ${cropError?.message}", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "Error: ${cropError?.message}", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -306,35 +348,70 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
                 }
             }
         }
-
         if (requestCode == REQUEST_CODE_SELECT_DAYS_AND_TIME && resultCode == RESULT_OK) {
             val selectedAvailability = data?.getParcelableArrayListExtra<AvailabilitySlot>("SELECTED_AVAILABILITY")
             if (selectedAvailability != null) {
                 availabilityList = selectedAvailability.map { "${it.date} ${it.time}" }
-                Toast.makeText(this, "Availability: ${availabilityList.joinToString("\n")}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Data ir laikas: ${availabilityList.joinToString("\n")}", Toast.LENGTH_LONG).show()
             }
         }
     }
 
     private fun createTaskerProfile() {
-
         val description = descriptionEditText.text.toString().trim()
         val hourlyRate = hourlyRateEditText.text.toString().toDoubleOrNull()
-
         val selectedCityNames = citiesTextView.text.toString().split(",").map { it.trim() }
         val selectedCities = cities.filter { selectedCityNames.contains(it.name) }
-
         val selectedCategoryNames = categoriesTextView.text.toString().split(",").map { it.trim() }
         val selectedCategories = categories.filter { selectedCategoryNames.contains(it.name) }
 
-        if (description.isEmpty() || hourlyRate == null || selectedCities.isEmpty() || selectedCategories.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields and select at least one city and category", Toast.LENGTH_SHORT).show()
+        clearErrors()
+        var isValid = true
+
+        if (description.isEmpty()) {
+            errorDescription.visibility = View.VISIBLE
+            descriptionEditText.setBackgroundResource(R.drawable.spinner_border_error)
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (12 * scale + 0.5f).toInt()
+            descriptionEditText.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            isValid = false
+        }
+
+        if (hourlyRate == null || hourlyRate <= 0) {
+            errorHourlyRate.visibility = View.VISIBLE
+            hourlyRateEditText.background = ContextCompat.getDrawable(this, R.drawable.spinner_border_error)
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (12 * scale + 0.5f).toInt()
+            hourlyRateEditText.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            isValid = false
+        }
+
+        if (selectedCategories.isEmpty()) {
+            errorCategory.visibility = View.VISIBLE
+            categoriesTextView.background = ContextCompat.getDrawable(this, R.drawable.spinner_border_error)
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (12 * scale + 0.5f).toInt()
+            categoriesTextView.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            isValid = false
+        }
+
+        if (selectedCities.isEmpty()) {
+            errorCities.visibility = View.VISIBLE
+            citiesTextView.background = ContextCompat.getDrawable(this, R.drawable.spinner_border_error)
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (12 * scale + 0.5f).toInt()
+            citiesTextView.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            isValid = false
+        }
+
+        if (!isValid) {
+            Toast.makeText(this, getString(R.string.create_my_tasker_error_fill_field), Toast.LENGTH_SHORT).show()
             return
         }
 
         val taskerProfileRequest = TaskerProfileRequest(
             description = description,
-            hourly_rate = hourlyRate,
+            hourly_rate = hourlyRate!!,
             categories = selectedCategories,
             cities = selectedCities,
             availability = availabilityList.map {
@@ -371,14 +448,16 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null) ?: ""
 
-        if (token.isEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
             return
         }
 
         val call = ApiServiceInstance.Auth.apiServices.createTaskerProfile(
             "Bearer $token",
-            profileImage = profilePhotoPart, // null if no image!
+            profileImage = profilePhotoPart,
             taskerProfileJson = taskerProfileRequestBody,
             galleryImages = galleryParts
         )
@@ -386,18 +465,29 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
         call.enqueue(object : Callback<TaskerProfileResponse> {
             override fun onResponse(call: Call<TaskerProfileResponse>, response: Response<TaskerProfileResponse>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@CreateMyTaskerProfileActivity, "Profile created successfully!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateMyTaskerProfileActivity, getString(R.string.create_my_tasker_created_successful), Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@CreateMyTaskerProfileActivity, MoreActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 } else {
-                    Toast.makeText(this@CreateMyTaskerProfileActivity, "Error creating profile", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateMyTaskerProfileActivity, getString(R.string.create_my_tasker_failed_create), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<TaskerProfileResponse>, t: Throwable) {
-                Toast.makeText(this@CreateMyTaskerProfileActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CreateMyTaskerProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
-
+    private fun clearErrors() {
+        errorCities.visibility = View.GONE
+        citiesTextView.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
+        errorCategory.visibility = View.GONE
+        categoriesTextView.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
+        errorHourlyRate.visibility = View.GONE
+        hourlyRateEditText.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
+        errorDescription.visibility = View.GONE
+        descriptionEditText.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
+    }
 
     fun getRealPathFromURI(contentUri: Uri): String {
         val proj = arrayOf(MediaStore.Images.Media.DATA)
@@ -408,8 +498,6 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
         cursor?.close()
         return filePath ?: ""
     }
-
-
 
     private fun fetchCategories() {
         val apiService = ApiServiceInstance.Auth.apiServices
@@ -423,16 +511,14 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
                 } else {
-                    Toast.makeText(this@CreateMyTaskerProfileActivity, "Failed to load categories", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateMyTaskerProfileActivity, getString(R.string.create_my_tasker_failed_load_categories), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<Category>>, t: Throwable) {
                 Toast.makeText(this@CreateMyTaskerProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
-
 
     private fun fetchCities() {
         val apiService = ApiServiceInstance.Auth.apiServices
@@ -440,16 +526,13 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<City>>, response: Response<List<City>>) {
                 if (response.isSuccessful) {
                     cities = response.body() ?: emptyList()
-
                     val cityNames = cities.map { it.name }
-
                     val adapter = ArrayAdapter(this@CreateMyTaskerProfileActivity, android.R.layout.simple_spinner_item, cityNames)
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 } else {
-                    Toast.makeText(this@CreateMyTaskerProfileActivity, "Failed to load cities", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CreateMyTaskerProfileActivity, getString(R.string.create_my_tasker_failed_load_cities), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<City>>, t: Throwable) {
                 Toast.makeText(this@CreateMyTaskerProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
@@ -459,17 +542,15 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
     private fun updateGalleryView() {
         val galleryContainer = findViewById<LinearLayout>(R.id.gallery_container)
         galleryContainer.removeAllViews()
-
         val linearLayoutParams = LinearLayout.LayoutParams(200, 200).apply {
             setMargins(10, 10, 10, 10)
         }
 
         val existingSet = existingGalleryUrls.map { it.toString() }.toSet()
-
         val glideOptions = RequestOptions()
             .override(300, 300)
             .centerCrop()
-            .placeholder(R.drawable.placeholder_image_user)
+            .placeholder(R.drawable.placeholder_image)
             .error(R.drawable.error)
             .dontTransform()
 
@@ -541,14 +622,12 @@ class CreateMyTaskerProfileActivity : AppCompatActivity() {
             }
         }
     }
-    private fun showDeleteConfirmationDialog(onConfirm: () -> Unit) {
+     fun showDeleteConfirmationDialog(onConfirm: () -> Unit) {
         AlertDialog.Builder(this)
-            .setTitle("Delete Image")
-            .setMessage("Are you sure you want to remove this image?")
-            .setPositiveButton("Yes") { _, _ -> onConfirm() }
-            .setNegativeButton("No", null)
+            .setTitle(getString(R.string.create_my_tasker_delete_image_dialog_title))
+            .setMessage(getString(R.string.create_my_tasker_delete_image_dialog_text))
+            .setPositiveButton("Taip") { _, _ -> onConfirm() }
+            .setNegativeButton("Ne", null)
             .show()
     }
-
-
 }

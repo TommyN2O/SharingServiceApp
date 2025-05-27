@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.applandeo.materialcalendarview.CalendarView
@@ -23,6 +24,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import java.util.Locale
 
 class DaysAndTimeActivity : AppCompatActivity() {
 
@@ -36,12 +38,12 @@ class DaysAndTimeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_days_and_time)
 
         calendarView = findViewById(R.id.calendarView)
+
         val backButton = findViewById<ImageView>(R.id.backButton)
         val saveButton = findViewById<Button>(R.id.saveButton)
 
         backButton.setOnClickListener {
             finish() }
-
 
         val preSelectedAvailability = intent.getParcelableArrayListExtra<AvailabilitySlot>("PREVIOUS_AVAILABILITY")
 
@@ -67,28 +69,26 @@ class DaysAndTimeActivity : AppCompatActivity() {
                 val selectedDate = eventDay.calendar
 
                 if (isPastDate(selectedDate)) {
-                    Toast.makeText(this@DaysAndTimeActivity, "You can't select past dates!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DaysAndTimeActivity, getString(R.string.day_and_time_past_date), Toast.LENGTH_SHORT).show()
                     return
                 }
-
                 showAvailableTimeSlots(selectedDate)
             }
         })
 
         saveButton.setOnClickListener {
             if (selectedTimeSlots.isEmpty()) {
-                Toast.makeText(this, "Please select a date and time!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.day_and_time_empty_error), Toast.LENGTH_SHORT).show()
             } else {
                 val selectedSlots = ArrayList<AvailabilitySlot>()
 
                 selectedTimeSlots.forEach { (date, buttons) ->
                     buttons.forEach { button ->
-                        val time = button.text.toString() + ":00" // Add seconds to time
+                        val time = button.text.toString() + ":00"
                         val slot = AvailabilitySlot(date, time)
                         selectedSlots.add(slot)
                     }
                 }
-
                 val resultIntent = Intent()
                 resultIntent.putParcelableArrayListExtra("SELECTED_AVAILABILITY", selectedSlots)
                 setResult(Activity.RESULT_OK, resultIntent)
@@ -96,7 +96,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
 
             }
         }
-
     }
 
     private fun updateCalendarMarkers() {
@@ -138,13 +137,11 @@ class DaysAndTimeActivity : AppCompatActivity() {
 
     private fun toggleTimeSlot(button: Button, selectedDate: Calendar) {
         if (selectedDate == null) {
-            Toast.makeText(this, "Please select a date first!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.day_and_time_select_date_first), Toast.LENGTH_SHORT).show()
             return
         }
-
         val formattedDate = formatDate(selectedDate)
         val timeSlotsForDay = selectedTimeSlots.getOrPut(formattedDate) { mutableSetOf() }
-
         if (timeSlotsForDay.contains(button)) {
             button.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY))
             timeSlotsForDay.remove(button)
@@ -152,7 +149,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
             button.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN))
             timeSlotsForDay.add(button)
         }
-
         updateCalendarMarkers()
     }
 
@@ -161,7 +157,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
             button.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY))
             button.isEnabled = false
         }
-
         val currentTime = Calendar.getInstance()
         val formattedDate = formatDate(selectedDate)
 
@@ -170,7 +165,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
         } else {
             enableAllTimeSlots()
         }
-
         selectedTimeSlots[formattedDate]?.forEach { button ->
             button.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN))
         }
@@ -178,7 +172,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
 
     private fun enableTimeSlotsForToday() {
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 2
-
         for (button in allButtons) {
             val hour = button.text.toString().split(":")[0].toInt()
             if (hour >= currentHour) {
@@ -245,7 +238,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
     }
 
     private fun getTimeSlotButtonForTime(time: String): Button? {
-        // Match time to button (in "HH:00" format)
         return when (time) {
             "07:00:00" -> findViewById<Button>(R.id.timeSlot_07_00)
             "08:00:00" -> findViewById<Button>(R.id.timeSlot_08_00)
@@ -263,19 +255,18 @@ class DaysAndTimeActivity : AppCompatActivity() {
             "20:00:00" -> findViewById<Button>(R.id.timeSlot_20_00)
             "21:00:00" -> findViewById<Button>(R.id.timeSlot_21_00)
             "22:00:00" -> findViewById<Button>(R.id.timeSlot_22_00)
-
             else -> null
         }
     }
     private fun fetchAvailabilityFromDatabase() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
             return
         }
-
         val call = ApiServiceInstance.Auth.apiServices.getUserTaskerProfile("Bearer $token")
         call.enqueue(object : Callback<TaskerProfileResponse> {
             override fun onResponse(call: Call<TaskerProfileResponse>, response: Response<TaskerProfileResponse>) {
@@ -286,7 +277,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
                         for (slot in availabilityList) {
                             markSlotOnCalendar(slot)
                         }
-                        Toast.makeText(this@DaysAndTimeActivity, "Availability loaded", Toast.LENGTH_SHORT).show()
                     } else {
                         Log.d("DaysAndTime", "No availability data found")
                     }
@@ -297,7 +287,6 @@ class DaysAndTimeActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<TaskerProfileResponse>, t: Throwable) {
                 Toast.makeText(this@DaysAndTimeActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-                Log.e("DaysAndTime", "Fetch error", t)
             }
         })
     }

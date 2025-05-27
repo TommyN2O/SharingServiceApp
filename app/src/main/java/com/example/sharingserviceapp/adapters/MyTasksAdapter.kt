@@ -19,6 +19,14 @@ class MyTasksAdapter(
     private val onItemClick: (TaskResponse) -> Unit
 ) : RecyclerView.Adapter<MyTasksAdapter.TaskViewHolder>() {
 
+    private val statusTranslations = mapOf(
+        "Pending" to "Laukiama patvirtinimo",
+        "Waiting for Payment" to "Laukiama apmokėjimo",
+        "Declined" to "Atmestas",
+        "Canceled" to "Atšauktas",
+        "Completed" to "Užbaigtas",
+        "Open" to "Atidarytas"
+    )
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgProfile: ImageView = itemView.findViewById(R.id.img_category)
         val txtName: TextView = itemView.findViewById(R.id.txt_user_name)
@@ -51,24 +59,25 @@ class MyTasksAdapter(
             txtCategory.text = task.categories.joinToString { it.name }
 
             val slot = task.availability.firstOrNull()
-            txtDateTime.text = slot?.let { "${it.date}, ${it.time.dropLast(3)}" } ?: "Not set"
+            txtDateTime.text = slot?.let { "${it.date}, ${it.time.dropLast(3)}" } ?: "Nenurodyta"
 
             txtCity.text = task.city.name
 
-            val status = task.status.replaceFirstChar { it.uppercase() }
-            txtStatus.text = "Status: $status"
+            val statusOriginal = task.status.replaceFirstChar { it.uppercase() }
+            val translatedStatus = statusTranslations[statusOriginal] ?: statusOriginal
+            txtStatus.text = translatedStatus
 
-            when (status) {
+            when (statusOriginal) {
                 "Pending" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_pending))
                 "Waiting for Payment" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_waiting_payment))
-                "Declined"->txtStatus.setTextColor(context.resources.getColor(R.color.status_declined))
-                "Canceled"->txtStatus.setTextColor(context.getColor(R.color.status_declined))
-                else -> txtStatus.setTextColor(context.resources.getColor(R.color.status_default)) // Default color
+                "Declined" -> txtStatus.setTextColor(context.resources.getColor(R.color.status_declined))
+                "Canceled" -> txtStatus.setTextColor(context.getColor(R.color.status_declined))
+                else -> txtStatus.setTextColor(context.resources.getColor(R.color.status_default))
             }
 
             txtTasker.text = task.tasker?.let {
-                "Tasker: ${it.name} ${it.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
-            } ?: "Tasker: Not chosen"
+                "${it.name} ${it.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
+            } ?: "Paslaugų teikėjas nepasirinktas"
 
             itemView.setOnClickListener { onItemClick(task) }
         }

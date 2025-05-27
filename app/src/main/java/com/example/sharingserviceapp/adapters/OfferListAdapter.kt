@@ -1,11 +1,17 @@
 package com.example.sharingserviceapp.adapters
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
@@ -46,9 +52,25 @@ class OfferListAdapter(
             .circleCrop()
             .into(holder.imgPhoto)
         holder.txtName.text = offer.tasker.name
-        holder.txtDateTime.text = "${offer.availability.date} ${offer.availability.time}"
-        holder.txtDuration.text = "Duration: ${offer.duration}"
-        holder.txtPrice.text = "Price: ${offer.price}€"
+        holder.txtDateTime.text = "Data ir laikas: ${offer.availability.date}, ${offer.availability.time}"
+        holder.txtDuration.text = "Trukmė: ${offer.duration} val."
+        val priceText = "Valandinis: ${offer.price}€/val."
+        val spannablePrice = SpannableString(priceText)
+        val greenColor = ContextCompat.getColor(holder.itemView.context, R.color.my_light_primary)
+        val valandinisLength = "Valandinis: ".length
+        spannablePrice.setSpan(
+            ForegroundColorSpan(greenColor), // Use the actual color value
+            valandinisLength,
+            priceText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannablePrice.setSpan(
+            StyleSpan(Typeface.BOLD),
+            valandinisLength,
+            priceText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        holder.txtPrice.text = spannablePrice
         holder.btnAccept.setOnClickListener { onAccept(offer) }
     }
 

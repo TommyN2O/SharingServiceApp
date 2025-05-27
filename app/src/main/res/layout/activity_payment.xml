@@ -22,41 +22,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:paddingHorizontal="8dp">
+                android:layout_height="wrap_content">
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/backArrowButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@drawable/chevron_arrow_left"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Back"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <TextView
                     android:id="@+id/headerTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Review and confirm"
+                    android:text="@string/payment_title"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    android:gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
 
 
             <TextView
                 android:id="@+id/subText"
-                android:text="Don't worry, you won't be billed until your task is complete."
+                android:text="@string/payment_header"
                 android:textSize="16sp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
@@ -86,7 +79,7 @@
 
                     <TextView
                         android:id="@+id/taskDateTime"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Saturday - January 6, 2024 9:30 a.m. EST"
@@ -94,7 +87,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="52dp"
+                    android:layout_width="2dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
@@ -106,6 +99,7 @@
                         android:layout_width="50dp"
                         android:layout_height="43dp"
                         android:layout_gravity="end"
+                        android:layout_marginEnd="8dp"
                         android:layout_marginBottom="4dp"
                         android:src="@drawable/user" />
 
@@ -122,7 +116,7 @@
 
             <TextView
                 android:id="@+id/paymentTitle"
-                android:text="Payment Method"
+                android:text="@string/payment_method_header"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_width="wrap_content"
@@ -133,29 +127,38 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="2dp">
 
                 <RadioButton
                     android:id="@+id/walletRadio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Wallet"
+                    android:text="Skaitmeninė piniginė"
                     android:textSize="16sp" />
 
                 <RadioButton
                     android:id="@+id/cardRadio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Card"
+                    android:text="Kortelė"
                     android:textSize="16sp"
                     android:layout_marginStart="16dp" />
             </RadioGroup>
-
+            <TextView
+                android:id="@+id/balanceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Balansas: 0.00 €"
+                android:textSize="15sp"
+                android:textColor="@color/dark_gray"
+                android:visibility="gone"
+                android:layout_marginBottom="8dp"/>
             <TextView
                 android:id="@+id/priceDetailsTitle"
-                android:text="Price Details"
+                android:text="@string/payment_price_details_header"
                 android:textStyle="bold"
                 android:textSize="18sp"
+                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -173,7 +176,7 @@
                     android:layout_marginTop="8dp">
 
                     <TextView
-                        android:text="Hourly Rate"
+                        android:text="@string/payment_price_details_hourly_rate"
                         android:textSize="16sp"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -194,7 +197,7 @@
                     android:layout_marginTop="8dp">
 
                     <TextView
-                        android:text="Trust and Support Fee"
+                        android:text="@string/payment_price_details_trust_fee"
                         android:textSize="16sp"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -215,7 +218,7 @@
                     android:layout_marginTop="8dp">
 
                     <TextView
-                        android:text="Duration"
+                        android:text="@string/payment_price_details_duration"
                         android:textSize="16sp"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -236,7 +239,7 @@
                 android:text="Total Rate: $52.25/hr"
                 android:textStyle="bold"
                 android:textSize="18sp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -254,15 +257,16 @@
     <LinearLayout
         android:id="@+id/actionButtonsLayout"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
             android:id="@+id/confirmButton"
-            android:text="Confirm"
+            android:text="@string/payment_btn_continue"
             android:textSize="18sp"
+            android:layout_margin="16dp"
             android:backgroundTint="@color/my_light_primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

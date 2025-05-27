@@ -23,17 +23,16 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var categoryAdapter: CategoryAdapter
     private var fullCategoryList: List<Category> = emptyList()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
-
         fetchCategories()
-        setupListeners()
         setupBottomNavigation()
+        setupListeners()
+
     }
 
     private fun fetchCategories() {
@@ -54,7 +53,6 @@ class HomeActivity : AppCompatActivity() {
                     Toast.makeText(this@HomeActivity, getString(R.string.failed_load_categories), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<Category>>, t: Throwable) {
                 Toast.makeText(this@HomeActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
@@ -71,14 +69,12 @@ class HomeActivity : AppCompatActivity() {
         val searchButton: ImageView = findViewById(R.id.search_button)
         val searchView: SearchView = findViewById(R.id.search_view)
         val title: TextView = findViewById(R.id.welcome_title)
-
         searchButton.setOnClickListener {
             searchButton.visibility = View.GONE
             title.visibility=View.GONE
             searchView.visibility = View.VISIBLE
             searchView.requestFocus()
         }
-
         searchView.setOnCloseListener {
             searchView.visibility = View.GONE
             title.visibility=View.VISIBLE
@@ -94,6 +90,7 @@ class HomeActivity : AppCompatActivity() {
             }
         })
     }
+
     private fun setupBottomNavigation() {
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.menu_home

@@ -1,5 +1,6 @@
 package com.example.sharingserviceapp.activitys
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -27,22 +28,23 @@ import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 
-
 class MyTaskerProfileActivity : AppCompatActivity() {
-
     private var isExpanded = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_tasker_profile)
-        val menuButton: ImageView = findViewById(R.id.menu_button)
         loadTaskerProfile()
+        setupListeners()
+    }
+
+    private fun setupListeners(){
         val backButton: ImageView = findViewById(R.id.back_arrow)
         backButton.setOnClickListener {
             val intent = Intent(this, MoreActivity::class.java)
             startActivity(intent)
             finish()
         }
+        val menuButton: ImageView = findViewById(R.id.menu_button)
         menuButton.setOnClickListener { view ->
             val popupMenu = PopupMenu(this, view)
             val inflater: MenuInflater = menuInflater
@@ -70,19 +72,14 @@ class MyTaskerProfileActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == REQUEST_CODE_SELECT_DAYS_AND_TIME && resultCode == RESULT_OK) {
             val updatedAvailability = data?.getParcelableArrayListExtra<AvailabilitySlot>("SELECTED_AVAILABILITY")
             if (!updatedAvailability.isNullOrEmpty()) {
-                Log.d("UpdatedAvailability", updatedAvailability.toString())
                 updateAvailabilityToServer(updatedAvailability)
-            } else {
-                Log.d("UpdatedAvailability", "No new availability selected")
             }
         }
     }
@@ -90,12 +87,12 @@ class MyTaskerProfileActivity : AppCompatActivity() {
     private fun updateAvailabilityToServer(availabilityList: List<AvailabilitySlot>) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
             return
         }
-
         val request = mapOf("availability" to availabilityList)
         val gson = Gson()
         val json = gson.toJson(request)
@@ -105,17 +102,17 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@MyTaskerProfileActivity, "Availability updated", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.my_tasker_profile_availability_updated), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@MyTaskerProfileActivity, "Update failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.my_tasker_profile_availability_update_failed), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Toast.makeText(this@MyTaskerProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
     companion object {
         const val REQUEST_CODE_SELECT_DAYS_AND_TIME = 1
     }
@@ -127,18 +124,15 @@ class MyTaskerProfileActivity : AppCompatActivity() {
     private fun setTimeAndDateAvailability() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
             return
         }
-
         val call = ApiServiceInstance.Auth.apiServices.getUserTaskerProfile("Bearer $token")
         call.enqueue(object : Callback<TaskerProfileResponse> {
-            override fun onResponse(
-                call: Call<TaskerProfileResponse>,
-                response: Response<TaskerProfileResponse>
-            ) {
+            override fun onResponse(call: Call<TaskerProfileResponse>, response: Response<TaskerProfileResponse>) {
                 if (response.isSuccessful) {
                     val availabilityList = response.body()?.availability ?: emptyList()
 
@@ -146,12 +140,11 @@ class MyTaskerProfileActivity : AppCompatActivity() {
                     intent.putParcelableArrayListExtra("PREVIOUS_AVAILABILITY", ArrayList(availabilityList))
                     startActivityForResult(intent, REQUEST_CODE_SELECT_DAYS_AND_TIME)
                 } else {
-                    Toast.makeText(this@MyTaskerProfileActivity, "Failed to load availability", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.my_tasker_profile_availability_load_failed), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<TaskerProfileResponse>, t: Throwable) {
-                Toast.makeText(this@MyTaskerProfileActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MyTaskerProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -159,50 +152,33 @@ class MyTaskerProfileActivity : AppCompatActivity() {
     private fun deleteAccount() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null) ?: ""
-
-        if (token.isEmpty()) {
-            Toast.makeText(this, "No auth token found. Please log in again.", Toast.LENGTH_SHORT)
-                .show()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
             return
         }
-
         val call = ApiServiceInstance.Auth.apiServices.deleteUserTaskerProfile("Bearer $token")
         call.enqueue(object : Callback<TaskerProfileResponse> {
-            override fun onResponse(
-                call: Call<TaskerProfileResponse>,
-                response: Response<TaskerProfileResponse>
-            ) {
+            override fun onResponse(call: Call<TaskerProfileResponse>, response: Response<TaskerProfileResponse>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(
-                        this@MyTaskerProfileActivity,
-                        "Profile deleted successfully!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
+                    Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.my_tasker_profile_delete_profile_successful), Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@MyTaskerProfileActivity, MoreActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    intent.putExtra(
-                        "toast_message",
-                        "Profile deleted successfully!"
-                    )
                     startActivity(intent)
-
                     finish()
                 } else {
-                    Toast.makeText(
-                        this@MyTaskerProfileActivity,
-                        "Failed to delete profile: ${response.code()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if(response.code() == 400)
+                    {
+                        showActiveTasksDialog()
+                    }
+                    else {
+                        Toast.makeText(this@MyTaskerProfileActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-
             override fun onFailure(call: Call<TaskerProfileResponse>, t: Throwable) {
-                Toast.makeText(
-                    this@MyTaskerProfileActivity,
-                    "Network error: ${t.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@MyTaskerProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -210,37 +186,23 @@ class MyTaskerProfileActivity : AppCompatActivity() {
     private fun loadTaskerProfile() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
         }
-
         val call = ApiServiceInstance.Auth.apiServices.getUserTaskerProfile("Bearer $token")
         call.enqueue(object : Callback<TaskerProfileResponse> {
-            override fun onResponse(
-                call: Call<TaskerProfileResponse>,
-                response: Response<TaskerProfileResponse>
-            ) {
+            override fun onResponse(call: Call<TaskerProfileResponse>, response: Response<TaskerProfileResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     showTaskerProfile(response.body()!!)
                 } else {
-                    Toast.makeText(
-                        this@MyTaskerProfileActivity,
-                        "Failed to load profile",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.my_tasker_profile_failed_load_profile), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<TaskerProfileResponse>, t: Throwable) {
-                Toast.makeText(
-                    this@MyTaskerProfileActivity,
-                    "Error: ${t.message}",
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(this@MyTaskerProfileActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -256,24 +218,22 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         val detailDescription: TextView = findViewById(R.id.detail_description)
         val readMore: TextView = findViewById(R.id.read_more)
 
-        detailName.text = "${profileResponse.name ?: "Unknown"} ${
-            profileResponse.surname?.firstOrNull()?.uppercase() ?: ""
-        }.".trim()
-        detailRating.text = "Rating: ${profileResponse.rating}"
-        detailReviews.text = "(${profileResponse.review_count} reviews)"
+        detailName.text = "${profileResponse.name ?: "Unknown"} ${profileResponse.surname?.firstOrNull()?.uppercase() ?: ""}.".trim()
+        detailRating.text = "Įvertinimas: ${profileResponse.rating}"
+        detailReviews.text = "(${getReviewsText(profileResponse.review_count)})"
         detailCategories.text = profileResponse.categories.joinToString(", ") { it.name }
         detailCities.text = profileResponse.cities.joinToString(", ") { it.name }
-        detailHourlyRate.text = "Hourly Rate: €${profileResponse.hourly_rate}"
+        detailHourlyRate.text = "Valandinis: ${profileResponse.hourly_rate}€/val."
 
         val shortDescription = profileResponse.description.take(100) + "..."
         detailDescription.text = shortDescription
         readMore.setOnClickListener {
             if (isExpanded) {
                 detailDescription.text = shortDescription
-                readMore.text = "Read More"
+                readMore.text = getString(R.string.my_tasker_profile_read_more_btn)
             } else {
                 detailDescription.text = profileResponse.description
-                readMore.text = "Read Less"
+                readMore.text = getString(R.string.my_tasker_profile_read_less_btn)
             }
             isExpanded = !isExpanded
         }
@@ -296,40 +256,56 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         val galleryRecyclerView: RecyclerView = findViewById(R.id.galleryRecyclerView)
         val galleryImages = profileResponse.gallery
         val baseUrl = ApiServiceInstance.BASE_URL
+        val galleryTitle: TextView = findViewById(R.id.galleryTitle)
+        if (galleryImages.isNullOrEmpty()) {
+            galleryRecyclerView.visibility = View.GONE
+            galleryTitle.visibility = View.GONE
+        } else {
+            galleryRecyclerView.visibility = View.VISIBLE
+            galleryTitle.visibility = View.VISIBLE
 
-        galleryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        galleryRecyclerView.adapter = GalleryAdapter(galleryImages, { position ->
-            showZoomDialog(galleryImages, position, baseUrl)
-        }, baseUrl)
-
+            galleryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            galleryRecyclerView.adapter = GalleryAdapter(galleryImages, { position ->
+                showZoomDialog(galleryImages, position, baseUrl)
+            }, baseUrl)
+        }
         val userId=profileResponse.id
         fetchReviews(userId)
     }
+    private fun getReviewsText(count: Int): String {
+        return when {
+            count == 1 -> "$count atsiliepimas"
+            (count % 10 in 2..9) && !(count % 100 in 11..19) -> "$count atsiliepimai"
+            else -> "$count atsiliepimų"
+        }
+    }
+
     fun fetchReviews(userId: Int) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
         val api = ApiServiceInstance.Auth.apiServices
         val taskerId = userId
         val call = api.TaskersReviews("Bearer $token", taskerId )
-
         call.enqueue(object : Callback<List<ReviewList>> {
             override fun onResponse(call: Call<List<ReviewList>>, response: Response<List<ReviewList>>) {
                 if (response.isSuccessful) {
                     val reviews = response.body() ?: emptyList()
                     val reviewAdapter = ReviewAdapter(reviews)
-
                     val recyclerView = findViewById<RecyclerView>(R.id.reviewRecyclerView)
                     recyclerView.adapter = reviewAdapter
                     recyclerView.layoutManager = LinearLayoutManager(this@MyTaskerProfileActivity)
-
                 } else {
-                    Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.payments_error_fetch), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.my_tasker_profile_failed_load_reviews), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<ReviewList>>, t: Throwable) {
-                Toast.makeText(this@MyTaskerProfileActivity, "Network error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MyTaskerProfileActivity, "Error", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -337,12 +313,10 @@ class MyTaskerProfileActivity : AppCompatActivity() {
     fun showZoomDialog(images: List<String>, startPosition: Int, baseUrl: String) {
         val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
         dialog.setContentView(R.layout.dialog_zoom_image)
-
         val photoView = dialog.findViewById<ImageView>(R.id.zoomedImageView)
         val closeButton = dialog.findViewById<ImageView>(R.id.close_button)
         val arrowLeft = dialog.findViewById<ImageView>(R.id.arrow_left)
         val arrowRight = dialog.findViewById<ImageView>(R.id.arrow_right)
-
         var currentIndex = startPosition
         val imageUrl = URL(URL(baseUrl), images[currentIndex]).toString()
         loadImage(imageUrl, photoView)
@@ -357,7 +331,6 @@ class MyTaskerProfileActivity : AppCompatActivity() {
                 updateArrowsVisibility(currentIndex, images.size, arrowLeft, arrowRight)
             }
         }
-
         arrowRight.setOnClickListener {
             if (currentIndex < images.size - 1) {
                 currentIndex++
@@ -366,9 +339,7 @@ class MyTaskerProfileActivity : AppCompatActivity() {
                 updateArrowsVisibility(currentIndex, images.size, arrowLeft, arrowRight)
             }
         }
-
         closeButton.setOnClickListener { dialog.dismiss() }
-
         dialog.show()
     }
 
@@ -384,4 +355,16 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         arrowLeft.visibility = if (currentIndex > 0) View.VISIBLE else View.GONE
         arrowRight.visibility = if (currentIndex < totalSize - 1) View.VISIBLE else View.GONE
     }
+
+    private fun showActiveTasksDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.my_tasker_profile_delete_profile_dialog_header))
+            .setMessage(getString(R.string.my_tasker_profile_delete_profile_dialog_text))
+            .setPositiveButton("Patvirtinti") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
 }

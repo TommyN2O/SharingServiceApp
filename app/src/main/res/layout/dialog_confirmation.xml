@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/my_light_primary"
-            android:text="Yes"
+            android:text="Taip"
             android:layout_marginEnd="10dp"/>
 
         <Button
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/black"
-            android:text="No"/>
+            android:text="Ne"/>
     </LinearLayout>
 
 </LinearLayout>

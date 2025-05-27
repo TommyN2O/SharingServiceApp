@@ -51,7 +51,7 @@ interface ApiService {
         @Part galleryImages: List<MultipartBody.Part>  // Multiple gallery images
     ): Call<TaskerProfileResponse>
 
-    @PUT("availability")
+    @PUT("taskers/availability")
     fun updateTaskerAvailability(
         @Header("Authorization") token: String,
         @Body body: RequestBody
@@ -304,9 +304,19 @@ interface ApiService {
         @Body request: TokenRequest
     ): Call<TokenResponse>
 
-    @DELETE("/api/open-tasks/{id}")
+    @DELETE("open-tasks/{id}")
     fun deleteOpenTask(
         @Header("Authorization") token: String,
         @Path("id") id: Int
+    ): Call<Void>
+
+    @GET ("users/wallet/balance")
+    fun usersBalance(
+        @Header("Authorization") token: String,
+    ): Call<Balance>
+
+    @DELETE ("users/account")
+    fun deleteUserProfile(
+        @Header("Authorization") token: String,
     ): Call<Void>
 }

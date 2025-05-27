@@ -33,9 +33,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Confirm Tasks"
-            android:textColor="@color/black"
-            android:textSize="26sp"
+            android:text="@string/request_offer_title"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:letterSpacing="0.05" />
 
@@ -65,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/my_light_primary"
-            android:text="My Tasks"
+            android:text="@string/request_offer_my_tasks"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
@@ -75,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/white"
-            android:text="People Requests"
+            android:text="@string/request_offer_people_request"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
     </LinearLayout>

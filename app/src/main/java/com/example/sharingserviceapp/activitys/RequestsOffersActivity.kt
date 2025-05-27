@@ -2,29 +2,24 @@ package com.example.sharingserviceapp.activitys
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ListView
-import android.widget.RatingBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharingserviceapp.R
-import com.example.sharingserviceapp.activitys.HelperListActivity
-import com.example.sharingserviceapp.activitys.RequestTaskActivity
 import com.example.sharingserviceapp.adapters.MyTasksAdapter
 import com.example.sharingserviceapp.adapters.PeopleRequestsAdapter
 import com.example.sharingserviceapp.models.Category
@@ -37,6 +32,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.Calendar
+import java.util.Locale
 
 class RequestsOffersActivity : AppCompatActivity() {
 
@@ -81,9 +77,7 @@ class RequestsOffersActivity : AppCompatActivity() {
         }
         val btnFilter = findViewById<ImageView>(R.id.btn_filter)
         btnFilter.setOnClickListener {
-
             showTaskerFilterDialog()
-
         }
         setupBackButton()
         toggleList(false)
@@ -105,7 +99,7 @@ class RequestsOffersActivity : AppCompatActivity() {
         val token = sharedPreferences.getString("auth_token", null)
 
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
@@ -137,7 +131,7 @@ class RequestsOffersActivity : AppCompatActivity() {
                         recyclerView.adapter = myTasksAdapter
                     }
                 } else {
-                    Toast.makeText(this@RequestsOffersActivity, "Failed to load tasks", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RequestsOffersActivity, getString(R.string.request_offer_failed_load_tasks), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -150,6 +144,13 @@ class RequestsOffersActivity : AppCompatActivity() {
     private fun fetchPeopleRequests() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
+
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
 
         ApiServiceInstance.Auth.apiServices.getPeopleRequests(
             "Bearer $token",
@@ -172,11 +173,10 @@ class RequestsOffersActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<List<TaskResponse>>, t: Throwable) {
-                    Toast.makeText(this@RequestsOffersActivity, "Failed to load requests", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RequestsOffersActivity, getString(R.string.request_offer_failed_load_requests), Toast.LENGTH_SHORT).show()
                 }
             })
     }
-
 
     private fun toggleList(showPeopleRequests: Boolean) {
         isShowingPeopleRequests = showPeopleRequests
@@ -200,7 +200,6 @@ class RequestsOffersActivity : AppCompatActivity() {
             recyclerView.adapter = myTasksAdapter
             fetchMyTasks()
         }
-
     }
     private fun clearFilters() {
         selectedCityIds.clear()
@@ -232,29 +231,38 @@ class RequestsOffersActivity : AppCompatActivity() {
         val btnApplyFilters = view.findViewById<Button>(R.id.btn_apply_filters)
         val backButton = view.findViewById<ImageView>(R.id.btn_back_filter)
 
-        val statusAdapter: ArrayAdapter<String> = if (isShowingPeopleRequests) {
-            ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                listOf("", "Pending", "Waiting for Payment")
-            )
+        val statusTranslationsLt = mapOf(
+            "Pending" to "Laukiama patvirtinimo",
+            "Waiting for Payment" to "Laukiama apmokėjimo",
+            "Open" to "Atidarytas",
+            "Canceled" to "Atšauktas",
+            "Declined" to "Atmestas"
+        )
+        val statusTranslationsEn = statusTranslationsLt.entries.associate { (en, lt) -> lt to en }
+
+        val statusLtList = if (isShowingPeopleRequests) {
+            listOf("") + listOf("Pending", "Waiting for Payment").map { statusTranslationsLt[it]!! }
         } else {
-            ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                listOf("", "Pending", "Waiting for Payment", "Open", "Canceled", "Declined")
-            )
+            listOf("") + statusTranslationsLt.values
         }
 
+        val statusAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            statusLtList
+        )
         statusSpinner.adapter = statusAdapter
 
         categoryTextView.text = selectedItems.joinToString(", ")
         cityTextView.text = selectedCityNames.joinToString(", ")
         dateTextView.text = selectedDate ?: ""
 
-        selectedStatus?.let {
-            val index = statusAdapter.getPosition(it)
-            if (index >= 0) statusSpinner.setSelection(index)
+        selectedStatus?.let { englishStatus ->
+            val lithuanianStatus = statusTranslationsLt[englishStatus]
+            lithuanianStatus?.let { ltStatus ->
+                val index = statusAdapter.getPosition(ltStatus)
+                if (index >= 0) statusSpinner.setSelection(index)
+            }
         }
 
         fetchCities()
@@ -267,31 +275,39 @@ class RequestsOffersActivity : AppCompatActivity() {
         cityTextView.setOnClickListener {
             showCitySelectionDialog()
         }
-
         dateTextView.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
-                dateTextView.text = formattedDate
-                selectedDate = formattedDate
-            }, year, month, day)
-
+            val localeLt = Locale("lt")
+            Locale.setDefault(localeLt)
+            val config = resources.configuration
+            config.setLocale(localeLt)
+            val greenTheme = R.style.CustomDatePickerDialogTheme
+            val datePickerDialog = DatePickerDialog(
+                ContextThemeWrapper(this, greenTheme),
+                { _, selectedYear, selectedMonth, selectedDay ->
+                    val formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+                    dateTextView.text = formattedDate
+                    selectedDate = formattedDate
+                },
+                year, month, day
+            )
+            datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Patvirtinti", datePickerDialog)
+            datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Atšaukti", datePickerDialog)
             datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
             datePickerDialog.show()
         }
-
         backButton.setOnClickListener {
             dialog.dismiss()
         }
-
         btnApplyFilters.setOnClickListener {
             selectedCity = selectedCityIds.joinToString(",")
             selectedCategory = selectedCategoryIds.joinToString(",")
-            selectedStatus = statusSpinner.selectedItem?.toString()
+            val selectedLt = statusSpinner.selectedItem?.toString()
+            selectedStatus = statusTranslationsEn[selectedLt]
             if(isShowingPeopleRequests){
                 fetchPeopleRequests()
             }
@@ -305,11 +321,6 @@ class RequestsOffersActivity : AppCompatActivity() {
     }
 
     private fun showCategorySelectionDialog() {
-        if (categories.isEmpty()) {
-            Toast.makeText(this, "Categories are still loading. Please try again.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val items = categories.map { it.name }
         val selectedSet = selectedItems.toMutableSet()
 
@@ -359,9 +370,9 @@ class RequestsOffersActivity : AppCompatActivity() {
         })
 
         AlertDialog.Builder(this)
-            .setTitle("Select Categories")
+            .setTitle("Pasirinkti Paslaugą")
             .setView(dialogView)
-            .setPositiveButton("OK") { _, _ ->
+            .setPositiveButton("Patvirtinti") { _, _ ->
                 selectedItems.clear()
                 selectedCategoryIds.clear()
 
@@ -372,17 +383,11 @@ class RequestsOffersActivity : AppCompatActivity() {
 
                 categoryTextView.text = selectedItems.joinToString(", ")
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Atšaukti", null)
             .show()
     }
 
-
     private fun showCitySelectionDialog() {
-        if (cities.isEmpty()) {
-            Toast.makeText(this, "Cities are still loading. Please try again.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val cityNames = cities.map { it.name }
         val selectedSet = selectedCityNames.toMutableSet()
 
@@ -431,9 +436,9 @@ class RequestsOffersActivity : AppCompatActivity() {
         })
 
         AlertDialog.Builder(this)
-            .setTitle("Select Cities")
+            .setTitle("Pasirinkti Miestus")
             .setView(dialogView)
-            .setPositiveButton("OK") { _, _ ->
+            .setPositiveButton("Patvirtinti") { _, _ ->
                 selectedCityNames.clear()
                 selectedCityIds.clear()
 
@@ -446,11 +451,9 @@ class RequestsOffersActivity : AppCompatActivity() {
 
                 cityTextView.text = selectedCityNames.joinToString(", ")
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Atšaukti", null)
             .show()
     }
-
-
 
     private fun fetchCategories() {
         val apiService = ApiServiceInstance.Auth.apiServices
@@ -459,7 +462,7 @@ class RequestsOffersActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     categories = response.body() ?: emptyList()
                 } else {
-                    Toast.makeText(this@RequestsOffersActivity, "Failed to load categories", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RequestsOffersActivity, getString(R.string.request_offer_failed_load_categories), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -476,7 +479,7 @@ class RequestsOffersActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     cities = response.body() ?: emptyList()
                 } else {
-                    Toast.makeText(this@RequestsOffersActivity, "Failed to load cities", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RequestsOffersActivity, getString(R.string.request_offer_failed_load_cities), Toast.LENGTH_SHORT).show()
                 }
             }
 

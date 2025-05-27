@@ -1,5 +1,6 @@
 package com.example.sharingserviceapp.activitys
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -41,7 +42,6 @@ class ProfileDetailsActivity : AppCompatActivity() {
         deleteButton = findViewById(R.id.btn_delete_account)
 
         setUpButtonListeners()
-
         fetchUserProfile()
     }
 
@@ -60,7 +60,7 @@ class ProfileDetailsActivity : AppCompatActivity() {
         }
 
         deleteButton.setOnClickListener {
-            Toast.makeText(this, "Account deletion triggered", Toast.LENGTH_SHORT).show()
+            deleteUserProfile()
         }
     }
 
@@ -68,51 +68,94 @@ class ProfileDetailsActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
 
-        if (token != null) {
-            val api = ApiServiceInstance.Auth.apiServices
-            val call = api.getUserProfile("Bearer $token")
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+        val api = ApiServiceInstance.Auth.apiServices
+        val call = api.getUserProfile("Bearer $token")
 
-            call.enqueue(object : Callback<UserProfileResponse> {
-                override fun onResponse(call: Call<UserProfileResponse>, response: Response<UserProfileResponse>) {
-                    if (response.isSuccessful) {
-                        val userProfile = response.body()
-                        userProfile?.let {
+        call.enqueue(object : Callback<UserProfileResponse> {
+            override fun onResponse(call: Call<UserProfileResponse>, response: Response<UserProfileResponse>) {
+                if (response.isSuccessful) {
+                    val userProfile = response.body()
+                    userProfile?.let {
+                        textName.text = it.name
+                        textSurname.text = it.surname
+                        textBirthdate.text = formatDate(it.date_of_birth)
 
-                            textName.text = it.name
-                            textSurname.text = it.surname
-                            textBirthdate.text = formatDate(it.date_of_birth)
+                        if (it.profile_photo.isNullOrEmpty()) {
+                            Glide.with(this@ProfileDetailsActivity)
+                                .load(R.drawable.placeholder_image_user)
+                                .circleCrop()
+                                .into(profileImage)
+                        } else {
+                            val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), it.profile_photo)
 
-
-                            if (it.profile_photo.isNullOrEmpty()) {
-                                Glide.with(this@ProfileDetailsActivity)
-                                    .load(R.drawable.placeholder_image_user)
-                                    .circleCrop()
-                                    .into(profileImage)
-                            } else {
-                                val fullImageUrl = URL(URL(ApiServiceInstance.BASE_URL), it.profile_photo)
-
-                                Glide.with(this@ProfileDetailsActivity)
-                                    .load(fullImageUrl.toString())
-                                    .placeholder(R.drawable.placeholder_image_user)
-                                    .error(R.drawable.error)
-                                    .circleCrop()
-                                    .into(profileImage)
-                            }
+                            Glide.with(this@ProfileDetailsActivity)
+                                .load(fullImageUrl.toString())
+                                .placeholder(R.drawable.placeholder_image_user)
+                                .error(R.drawable.error)
+                                .circleCrop()
+                                .into(profileImage)
                         }
-                    } else {
-                        Toast.makeText(this@ProfileDetailsActivity, "Error fetching data", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@ProfileDetailsActivity, getString(R.string.profile_details_error_fetch), Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<UserProfileResponse>, t: Throwable) {
+                Toast.makeText(this@ProfileDetailsActivity, getString(R.string.profile_details_network_error), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+    private fun deleteUserProfile() {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val token = sharedPreferences.getString("auth_token", null)
+
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
+        val api = ApiServiceInstance.Auth.apiServices
+        val call = api.deleteUserProfile("Bearer $token")
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                    with(sharedPreferences.edit()) {
+                        remove("auth_token")
+                        remove("user_id")
+                        remove("email")
+                        remove("password")
+                        remove("password")
+                        apply()
+                    }
+                    startActivity(Intent(this@ProfileDetailsActivity, MainActivity::class.java))
+                    finish()
+                } else {
+                    if(response.code() == 605)
+                    {
+                        showActiveTaskerTasksDialog()
+                    }
+                    else if(response.code() == 606)
+                    {
+                        showActiveUserTasksDialog()
                     }
                 }
-
-                override fun onFailure(call: Call<UserProfileResponse>, t: Throwable) {
-                    Toast.makeText(this@ProfileDetailsActivity, "Network error", Toast.LENGTH_SHORT).show()
-                }
-            })
-        } else {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
-        }
+            }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@ProfileDetailsActivity, getString(R.string.profile_details_network_error), Toast.LENGTH_SHORT).show()
+            }
+        })
     }
-    fun formatDate(dateString: String): String {
+
+        fun formatDate(dateString: String): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
 
@@ -125,5 +168,25 @@ class ProfileDetailsActivity : AppCompatActivity() {
             e.printStackTrace()
             dateString
         }
+    }
+    private fun showActiveTaskerTasksDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.my_tasker_profile_delete_profile_dialog_header))
+            .setMessage(getString(R.string.my_tasker_profile_delete_profile_dialog_text))
+            .setPositiveButton("Patvirtinti") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
+    }
+    private fun showActiveUserTasksDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.profile_delete_profile_dialog_header))
+            .setMessage(getString(R.string.profile_delete_profile_dialog_text))
+            .setPositiveButton("Patvirtinti") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
     }
 }

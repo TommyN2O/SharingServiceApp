@@ -5,35 +5,30 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/btn_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginStart="9dp"
-            android:contentDescription="Back"
-            android:src="@drawable/chevron_arrow_left" />
+            android:src="@drawable/chevron_arrow_left"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"  />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Selected Tasker"
-            android:layout_marginEnd="60dp"
-            android:textSize="20sp"
+            android:text="@string/select_tasker_title"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginStart="16dp" />
-    </LinearLayout>
-
-
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -110,7 +105,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_category" />
+                    android:src="@drawable/ic_category"
+                    android:tint="@color/my_light_primary"/>
 
                 <TextView
                     android:id="@+id/detail_categories"
@@ -132,7 +128,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_city" />
+                    android:src="@drawable/ic_city"
+                    android:tint="@color/dark_gray"/>
 
                 <TextView
                     android:id="@+id/detail_cities"
@@ -148,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Skills And Experience"
+                android:text="@string/my_tasker_profile_description_header"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
@@ -157,6 +154,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
                 android:text="Short description about the helper."
                 android:textColor="#7f7f7f"
                 android:textSize="14sp"/>
@@ -165,7 +163,7 @@
                 android:id="@+id/read_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="2dp"
                 android:text="Read More"
                 android:textColor="@android:color/holo_blue_dark"
                 android:textSize="14sp"
@@ -173,11 +171,12 @@
                 android:focusable="true"/>
 
             <TextView
+                android:id="@+id/galleryHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="Gallery"
+                android:text="@string/my_tasker_profile_gallery_header"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
@@ -193,15 +192,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="Reviews"
+                android:text="@string/my_tasker_profile_reviews_header"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reviewRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="172dp"
-                android:nestedScrollingEnabled="false"
+                android:layout_height="wrap_content"
+                android:minHeight="300dp"
+                android:nestedScrollingEnabled="true"
                 android:scrollbars="vertical" />
         </LinearLayout>
     </ScrollView>
@@ -215,7 +215,7 @@
 
         <TextView
             android:id="@+id/helper_price"
-            android:layout_width="178dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="€20/h"
@@ -228,7 +228,7 @@
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/my_light_primary"
-            android:text="Select"
+            android:text="@string/select_tasker_btn_select"
             android:textColor="@android:color/white" />
     </LinearLayout>
 </LinearLayout>

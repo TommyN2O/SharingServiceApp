@@ -2,6 +2,7 @@ package com.example.sharingserviceapp.activitys
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -35,7 +36,6 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-
         recyclerChat = findViewById(R.id.recycler_chat)
         editMessage = findViewById(R.id.edit_message)
         btnSend = findViewById(R.id.btn_send)
@@ -44,11 +44,10 @@ class ChatActivity : AppCompatActivity() {
             stackFromEnd = true
             reverseLayout = false
         }
-
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         currentUserId = sharedPreferences.getInt("user_id", -1)
         if (currentUserId == -1) {
-            Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_userID), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -57,44 +56,44 @@ class ChatActivity : AppCompatActivity() {
 
         chatId = intent.getIntExtra("chat_id", -1)
         if (chatId == -1) {
-            Toast.makeText(this, "Invalid Chat ID", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_chatID), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
-
         receiverId = intent.getIntExtra("receiver_id", -1)
         if (receiverId == -1) {
-            Toast.makeText(this, "Invalid Receiver ID", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_receiverID), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
         fetchMessages(chatId)
-
-        btnSend.setOnClickListener {
-            val text = editMessage.text.toString().trim()
-
-            if (text.isNotEmpty()) {
-                editMessage.text.clear()
-                sendMessage(text)
-            }
-        }
-
-        setupBackButton()
+        setupListeners()
     }
 
-    private fun setupBackButton() {
+    private fun setupListeners() {
         findViewById<ImageView>(R.id.btn_back).setOnClickListener {
             val intent = Intent(this, MessagesActivity::class.java)
             startActivity(intent)
             finish()
         }
+        btnSend.setOnClickListener {
+            val text = editMessage.text.toString().trim()
+            if (text.isNotEmpty()) {
+                editMessage.text.clear()
+                sendMessage(text)
+            }
+        }
     }
 
     private fun fetchMessages(chatId: Int) {
         val token = getSharedPreferences("user_prefs", MODE_PRIVATE).getString("auth_token", null)
-        if (token.isNullOrEmpty()) return
-
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
         ApiServiceInstance.Auth.apiServices.getConversationsById("Bearer $token", chatId)
             .enqueue(object : Callback<List<ChatMessages>> {
                 override fun onResponse(call: Call<List<ChatMessages>>, response: Response<List<ChatMessages>>) {
@@ -105,7 +104,6 @@ class ChatActivity : AppCompatActivity() {
                         chatAdapter.notifyDataSetChanged()
                         recyclerChat.scrollToPosition(messages.size - 1)
 
-                        // Find the other user (the one who is not the current user)
                         val other = sortedMessages.firstOrNull()?.let { message ->
                             if (message.sender.id == currentUserId) {
                                 message.receiver  // If current user is sender, other user is receiver
@@ -113,9 +111,18 @@ class ChatActivity : AppCompatActivity() {
                                 message.sender    // If current user is receiver, other user is sender
                             }
                         }
+
                         val userNameView = findViewById<TextView>(R.id.chat_user_name)
                         val userImageView = findViewById<ImageView>(R.id.chat_profile_image)
-
+                        if(other == null)
+                        {
+                            userNameView.visibility=View.GONE
+                            userImageView.visibility=View.GONE
+                        }
+                        else{
+                            userNameView.visibility=View.VISIBLE
+                            userImageView.visibility=View.VISIBLE
+                        }
                         userNameView.text ="${other?.name?.replaceFirstChar { it.uppercase() }} ${other?.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
                         if (!other?.profile_photo.isNullOrBlank()) {
 
@@ -129,29 +136,29 @@ class ChatActivity : AppCompatActivity() {
                         } else {
                             userImageView.setImageResource(R.drawable.placeholder_image_user)
                         }
-
-
                     } else {
-                        Toast.makeText(this@ChatActivity, "Failed to load messages", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ChatActivity, getString(R.string.chat_failed_load_messages), Toast.LENGTH_SHORT).show()
                     }
                 }
-
                 override fun onFailure(call: Call<List<ChatMessages>>, t: Throwable) {
                     Toast.makeText(this@ChatActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
     }
-
     private fun sendMessage(messageContent: String) {
         val token = getSharedPreferences("user_prefs", MODE_PRIVATE).getString("auth_token", null)
-        if (token.isNullOrEmpty()) return
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
 
         val request = SendMessage(
             chatId = chatId,
             receiverId = receiverId,
             message = messageContent
         )
-
         ApiServiceInstance.Auth.apiServices.sendMessage("Bearer $token", request)
             .enqueue(object : Callback<SendMessage> {
                 override fun onResponse(call: Call<SendMessage>, response: Response<SendMessage>) {
@@ -159,10 +166,9 @@ class ChatActivity : AppCompatActivity() {
                         fetchMessages(chatId)
                     }
                     else {
-                        Toast.makeText(this@ChatActivity, "Failed to send message", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ChatActivity, getString(R.string.chat_failed_send_message), Toast.LENGTH_SHORT).show()
                     }
                 }
-
                 override fun onFailure(call: Call<SendMessage>, t: Throwable) {
                     Toast.makeText(this@ChatActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }

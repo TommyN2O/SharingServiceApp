@@ -43,10 +43,8 @@ class MainActivity : AppCompatActivity() {
         val password = getSharedPrefString("password") ?: ""
 
         if (email.isNotEmpty() && password.isNotEmpty()) {
-            // Try auto login
             attemptAutoLogin(email, password)
         } else {
-            // No auto login credentials, show buttons
             showButtons()
         }
     }
@@ -54,7 +52,6 @@ class MainActivity : AppCompatActivity() {
     private fun attemptAutoLogin(email: String, password: String) {
         val loginRequest = LoginRequest(email, password)
         val call = ApiServiceInstance.Auth.apiServices.loginUser(loginRequest)
-
         call.enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 if (response.isSuccessful && response.body() != null) {
@@ -62,13 +59,10 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this@MainActivity, HomeActivity::class.java))
                     finish()
                 } else {
-                    // Failed, show login/register buttons
                     showButtons()
                 }
             }
-
             override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                // Network error or API failed
                 showButtons()
             }
         })
@@ -76,7 +70,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun showButtons() {
         setContentView(R.layout.activity_main)
-
         btnLogin = findViewById(R.id.btn_login)
         btnCreateAcc = findViewById(R.id.btn_con_email)
 
@@ -84,7 +77,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(intent)
         }
-
         btnCreateAcc.setOnClickListener {
             val intent = Intent(this@MainActivity, RegisterActivity::class.java)
             startActivity(intent)

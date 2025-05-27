@@ -65,6 +65,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     //Calendar
     implementation ("com.applandeo:material-calendar-view:1.9.2")
+    //crop
     implementation ("com.github.yalantis:ucrop:2.2.8")
     //Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))

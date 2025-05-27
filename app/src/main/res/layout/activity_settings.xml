@@ -4,39 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".activitys.SettingsActivity">
 
-
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        android:weightSum="1">
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/back_button"
-            android:layout_width="24dp"
-            android:layout_height="35dp"
-            android:src="@drawable/ic_back"
-            android:contentDescription="Back Button"
-            android:layout_gravity="start"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/chevron_arrow_left"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"/>
 
         <TextView
             android:id="@+id/settings_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Settings"
-            android:textColor="@android:color/black"
-            android:textSize="25sp"
+            android:text="@string/settings_title"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_weight="1"/>
+            android:layout_centerInParent="true"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/settings_scroll_view"
@@ -58,6 +54,7 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:paddingBottom="16dp">
 
                 <ImageView
@@ -95,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="Profile Details"
+                    android:text="@string/settings_profile_details"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -120,7 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="Change Password"
+                    android:text="@string/settings_change_password"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -134,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="196dp"
         android:backgroundTint="@color/black"
-        android:text="Log out"
+        android:text="@string/settings_btn_log_out"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="20dp"
         android:layout_marginEnd="8dp"

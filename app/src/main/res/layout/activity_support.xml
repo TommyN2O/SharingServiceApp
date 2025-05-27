@@ -5,57 +5,60 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:weightSum="1">
+    android:background="@color/white">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:paddingBottom="10dp">
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:contentDescription="Back"
-            android:src="@drawable/ic_back" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/chevron_arrow_left" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="40dp"
-            android:layout_weight="1"
+            android:layout_centerInParent="true"
             android:text="@string/support_title"
             android:textSize="24sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:gravity="center" />
-    </LinearLayout>
+            android:textStyle="bold" />
+    </RelativeLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layout_spinner"
+    <Spinner
+        android:id="@+id/spinner_support_type"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_edittext"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/error_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        app:errorEnabled="true">
-
-        <Spinner
-            android:id="@+id/spinner_support_type"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/rounded_edittext"
-            android:textColor="@color/dark_gray"
-            android:textSize="16sp" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="12sp"
+        android:paddingLeft="12dp"
+        android:visibility="gone"
+        android:layout_marginTop="2dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp"
+        android:text="@string/error_type_issue" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layout_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+
         android:hint="@string/support_description_details"
         app:boxBackgroundMode="outline"
         android:layout_marginTop="10dp"
@@ -68,7 +71,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_content"
             android:layout_width="match_parent"
-            android:layout_height="178dp"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
             android:background="@null"
             android:gravity="start"
             android:inputType="textMultiLine"

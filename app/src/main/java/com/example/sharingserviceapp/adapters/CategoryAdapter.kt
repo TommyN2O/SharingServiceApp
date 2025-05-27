@@ -12,8 +12,6 @@ import com.example.sharingserviceapp.models.Category
 import com.example.sharingserviceapp.network.ApiServiceInstance
 import java.net.URL
 
-
-
 class CategoryAdapter(
     private var categoryList: List<Category>,
     private val onItemClick: ((Category) -> Unit)? = null
@@ -44,6 +42,7 @@ class CategoryAdapter(
             onItemClick?.invoke(category)
         }
     }
+
     fun updateList(newList: List<Category>) {
         categoryList = newList
         notifyDataSetChanged()

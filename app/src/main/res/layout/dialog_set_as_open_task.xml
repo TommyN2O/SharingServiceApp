@@ -29,10 +29,10 @@
                     android:layout_marginBottom="10dp"
                     android:gravity="start">
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/btn_back"
-                        android:layout_width="53dp"
-                        android:layout_height="match_parent"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@drawable/chevron_arrow_left" />
 
@@ -40,18 +40,17 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="Open Task"
+                        android:text="@string/request_offer_open_task_create_title"
                         android:layout_marginEnd="40dp"
                         android:textAlignment="center"
-                        android:textSize="22sp"
+                        android:textSize="24sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
-                    android:text="Budget ($)"
+                    android:text="@string/request_offer_open_task_create_budget_header"
                     android:layout_marginTop="8dp"/>
 
                 <EditText
@@ -59,14 +58,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="Enter your budget"
+                    android:hint="@string/request_offer_open_task_create_budget_hint"
                     android:layout_marginBottom="5dp"
+                    android:padding="12dp"
                     android:background="@drawable/rounded_edittext"/>
+                <TextView
+                    android:id="@+id/error_budget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Please enter a budget"
+                    android:textColor="#FF0000"
+                    android:visibility="gone"
+                    android:textSize="12sp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Days and Time"
+                    android:text="@string/request_offer_open_task_create_day_time_header"
                     android:layout_marginTop="8dp"/>
 
                 <Button
@@ -74,7 +84,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Select Days and Time"/>
+                    android:text="@string/request_offer_open_task_create_day_time_btn"/>
+                <TextView
+                    android:id="@+id/error_availability"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"
+                    android:text="Please select at least one day and time" />
 
             </LinearLayout>
         </ScrollView>
@@ -83,7 +104,7 @@
             android:id="@+id/btn_create_open_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create As Open Task"
+            android:text="@string/request_offer_open_task_create_btn_create"
             android:layout_margin="16dp"/>
     </LinearLayout>
 </FrameLayout>

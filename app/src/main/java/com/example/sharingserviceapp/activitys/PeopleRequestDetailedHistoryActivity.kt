@@ -2,7 +2,12 @@ package com.example.sharingserviceapp.activitys
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -33,38 +38,15 @@ import java.util.Locale
 import java.util.TimeZone
 
 class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
-
-    private lateinit var customerName: TextView
-    private lateinit var taskCategory: TextView
-    private lateinit var taskDateTime: TextView
-    private lateinit var taskDuration: TextView
-    private lateinit var taskLocation: TextView
-    private lateinit var taskStatus: TextView
-    private lateinit var taskPrice: TextView
-    private lateinit var taskDescription: TextView
-    private lateinit var profileImage: ImageView
-    private lateinit var galleryRecyclerView: RecyclerView
     private var taskId: Int = -1
     private var taskDate: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_people_request_detailed_history)
 
-        customerName = findViewById(R.id.customerName)
-        taskCategory = findViewById(R.id.taskCategory)
-        taskDateTime = findViewById(R.id.taskDateTime)
-        taskDuration = findViewById(R.id.taskDuration)
-        taskLocation = findViewById(R.id.taskLocation)
-        taskStatus = findViewById(R.id.taskStatus)
-        taskPrice = findViewById(R.id.taskPrice)
-        taskDescription = findViewById(R.id.taskDescription)
-        profileImage = findViewById(R.id.customerProfileImage)
-        galleryRecyclerView = findViewById(R.id.galleryRecyclerView)
-
         taskId = intent.getIntExtra("task_id", -1)
         if (taskId == -1) {
-            Toast.makeText(this, "Invalid Task ID", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_taskId), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -92,7 +74,7 @@ class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body() != null) {
                     showRequestDetailed(response.body()!!)
                 } else {
-                    Toast.makeText(this@PeopleRequestDetailedHistoryActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PeopleRequestDetailedHistoryActivity, getString(R.string.history_detailed_my_tasks_error_load), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -102,27 +84,51 @@ class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
         })
     }
 
-
     private fun showRequestDetailed(request: TaskResponse) {
+        val profileImage: ImageView = findViewById(R.id.customerProfileImage)
+        val customerName: TextView = findViewById(R.id.customerName)
+        val taskCategory: TextView = findViewById(R.id.taskCategory)
+        val taskDateTime: TextView = findViewById(R.id.taskDateTime)
+        val taskDuration: TextView = findViewById(R.id.taskDuration)
+        val taskLocation: TextView = findViewById(R.id.taskLocation)
+        val taskStatus: TextView = findViewById(R.id.taskStatus)
+        val taskPrice: TextView = findViewById(R.id.taskPrice)
+        val taskDescription: TextView = findViewById(R.id.taskDescription)
+        val galleryRecyclerView: RecyclerView = findViewById(R.id.galleryRecyclerView)
 
         customerName.text = "${request.sender.name.replaceFirstChar { it.uppercase() }} ${request.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
-        taskCategory.text = "Category: ${request.categories.joinToString { it.name }}"
+        taskCategory.text = "Paslauga: ${request.categories.joinToString { it.name }}"
         val slot = request.availability.firstOrNull()
         taskDateTime.text = slot?.let {"Date & Time: ${it.date}, ${it.time.dropLast(3)}"}
         taskDate = slot?.date
-        taskDuration.text = "Duration: ${request.duration}h"
-        taskLocation.text = "Location: ${request.city.name}"
-        taskPrice.text = "Price: $${request.tasker?.hourly_rate}/h"
+        taskDuration.text = "Trukmė: ${request.duration} val."
+        taskLocation.text = "Miestas: ${request.city.name}"
         taskDescription.text = request.description
-        val status = request.status.replaceFirstChar { it.uppercase() }
-        taskStatus.text = "Status: $status"
-        when (status) {
-            "Pending" -> taskStatus.setTextColor(resources.getColor(R.color.status_pending))
-            "Waiting for Payment" -> taskStatus.setTextColor(resources.getColor(R.color.status_waiting_payment))
-            "Declined"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
-            "Canceled"->taskStatus.setTextColor(resources.getColor(R.color.status_declined))
-            else -> taskStatus.setTextColor(resources.getColor(R.color.status_default))
-        }
+        val priceText = "Valandinis: ${request.tasker?.hourly_rate}€/val."
+        val spannablePrice = SpannableString(priceText)
+        val greenColor = resources.getColor(R.color.my_light_primary)
+
+        val valandinisLength = "Valandinis: ".length
+        spannablePrice.setSpan(
+            ForegroundColorSpan(greenColor),
+            valandinisLength,
+            priceText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        spannablePrice.setSpan(
+            StyleSpan(Typeface.BOLD),
+            valandinisLength,
+            priceText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        taskPrice.text = spannablePrice
+
+        val statusOriginal = request.status.replaceFirstChar { it.uppercase() }
+        taskStatus.text = statusTranslations[statusOriginal] ?: statusOriginal
+        taskStatus.setTextColor(resources.getColor(R.color.status_default))
+
         val imageUrl = request.sender.profile_photo?.let {
             URL(URL(ApiServiceInstance.BASE_URL), it)
         } ?: R.drawable.placeholder_image_user
@@ -134,16 +140,27 @@ class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
             .circleCrop()
             .into(profileImage)
 
-
-        val galleryRecyclerView: RecyclerView = findViewById(R.id.galleryRecyclerView)
+        val galleryTitle: TextView = findViewById(R.id.galleryTitle)
         val galleryImages = request.gallery
-        val baseUrl = ApiServiceInstance.BASE_URL
 
-        galleryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        galleryRecyclerView.adapter = GalleryAdapter(galleryImages, { position ->
-            showZoomDialog(galleryImages, position, baseUrl)
-        }, baseUrl)
+        if (galleryImages.isNullOrEmpty()) {
+            galleryRecyclerView.visibility = View.GONE
+            galleryTitle?.visibility = View.GONE
+        } else {
+            galleryRecyclerView.visibility = View.VISIBLE
+            galleryTitle?.visibility = View.VISIBLE
+
+            val baseUrl = ApiServiceInstance.BASE_URL
+            galleryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            galleryRecyclerView.adapter = GalleryAdapter(galleryImages, { position ->
+                showZoomDialog(galleryImages, position, baseUrl)
+            }, baseUrl)
+        }
     }
+
+    private val statusTranslations = mapOf(
+        "Completed" to "Užbaigtas"
+    )
 
     fun showZoomDialog(images: List<String>, startPosition: Int, baseUrl: String) {
         val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)

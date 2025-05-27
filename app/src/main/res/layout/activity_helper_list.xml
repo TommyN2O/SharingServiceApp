@@ -3,52 +3,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textDirection="anyRtl"
     tools:context=".activitys.HelperListActivity"
     tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="-4dp">
+    tools:layout_editor_absoluteY="-4dp"
+    android:background="@color/white">
 
-    <ImageView
-        android:id="@+id/btn_back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:src="@drawable/chevron_arrow_left"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-        app:layout_constraintEnd_toStartOf="@+id/txt_select_tasker"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.096" />
-
-    <TextView
-        android:id="@+id/txt_select_tasker"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:letterSpacing="0.05"
-        android:text="Select a Tasker"
-        android:textColor="@color/grey"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:padding="16dp">
 
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/chevron_arrow_left"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/txt_select_tasker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.05"
+            android:text="@string/tasker_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:id="@+id/btn_filter"
+            android:layout_width="39dp"
+            android:layout_height="31dp"
+            android:background="@drawable/filter_btn"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"  />
+    </RelativeLayout>
     <LinearLayout
         android:id="@+id/buttons_section"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="1dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_select_tasker">
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
 
         <Button
             android:id="@+id/btn_customer"
@@ -56,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/my_light_primary"
-            android:text="Taskers"
+            android:text="@string/tasker_toggle_btn_tasker"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
@@ -66,32 +72,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/white"
-            android:text="Open Tasks"
+            android:text="@string/tasker_toggle_btn_open_tasks"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/btn_filter"
-        android:layout_width="39dp"
-        android:layout_height="31dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/filter_btn"
-        android:text="Filter"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/txt_select_tasker"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

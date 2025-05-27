@@ -5,6 +5,7 @@ data class Message(
     val lastMessageId: Int,
     val lastMessage: String,
     val lastMessageTime: String,
+    val lastMessageUserId: Int,
     val otherUser: User
 )
 

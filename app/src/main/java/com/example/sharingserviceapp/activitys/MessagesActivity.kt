@@ -47,7 +47,6 @@ class MessagesActivity : AppCompatActivity() {
     private fun fetchMessages() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
-
         if (token.isNullOrEmpty()) {
             Toast.makeText(this, getString(R.string.error_user_auth), Toast.LENGTH_LONG).show()
             startActivity(Intent(this, LoginActivity::class.java))

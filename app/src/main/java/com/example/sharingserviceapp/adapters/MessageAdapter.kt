@@ -1,5 +1,6 @@
 package com.example.sharingserviceapp.adapters
 
+import android.content.Context.MODE_PRIVATE
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import java.util.*
 class MessageAdapter(
     private var messages: MutableList<Message>,
     private val onClick: (Message) -> Unit) :
+
     RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
     class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,6 +26,7 @@ class MessageAdapter(
         val txtSenderName: TextView = itemView.findViewById(R.id.txt_sender_name)
         val txtLastMessage: TextView = itemView.findViewById(R.id.txt_last_message)
         val txtTime: TextView = itemView.findViewById(R.id.txt_time)
+        val lastSender: TextView = itemView.findViewById(R.id.txt_last_message_sender)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
@@ -53,6 +56,14 @@ class MessageAdapter(
         }
 
         holder.txtSenderName.text = "${message.otherUser?.name?.replaceFirstChar { it.uppercase() }} ${message.otherUser?.surname?.firstOrNull()?.uppercaseChar() ?: ""}."
+        val sharedPreferences = context.getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val user = sharedPreferences.getInt("user_id", -1)
+        if(user == message.lastMessageUserId) {
+            holder.lastSender.visibility= View.VISIBLE
+        }
+        else{
+            holder.lastSender.visibility= View.GONE
+        }
         holder.txtLastMessage.text = message.lastMessage
         val formattedTime = formatMessageTime(message.lastMessageTime)
         holder.txtTime.text = formattedTime
@@ -65,7 +76,7 @@ class MessageAdapter(
     private fun formatMessageTime(timeString: String?): String {
         if (timeString.isNullOrEmpty()) return ""
 
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
 
         val messageDate: Date = try {
@@ -78,21 +89,26 @@ class MessageAdapter(
         val messageCal = Calendar.getInstance()
         messageCal.time = messageDate
 
-        return when {
+        val lithuanianLocale = Locale("lt")
+
+        val result = when {
             isSameDay(now, messageCal) -> {
-                SimpleDateFormat("HH:mm", Locale.getDefault()).format(messageDate)
+                SimpleDateFormat("HH:mm", lithuanianLocale).format(messageDate)
             }
             isSameWeek(now, messageCal) -> {
-                SimpleDateFormat("EEE", Locale.getDefault()).format(messageDate)
+                SimpleDateFormat("EEE", lithuanianLocale).format(messageDate)
             }
             isSameYear(now, messageCal) -> {
-                SimpleDateFormat("MMM dd", Locale.getDefault()).format(messageDate)
+                SimpleDateFormat("MMM dd", lithuanianLocale).format(messageDate)
             }
             else -> {
-                SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(messageDate)
+                SimpleDateFormat("d MMM yyyy", lithuanianLocale).format(messageDate)
             }
         }
+
+        return result.replaceFirstChar { if (it.isLowerCase()) it.titlecase(lithuanianLocale) else it.toString() }
     }
+
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)

@@ -6,40 +6,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="@color/white"
     tools:context=".activitys.EditProfileDetailsActivity">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/header_layout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:paddingBottom="10dp">
 
             <ImageView
                 android:id="@+id/button_back"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_back"
-                android:layout_gravity="center_vertical" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/chevron_arrow_left"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:focusable="true"/>
 
             <TextView
                 android:id="@+id/title_profile_details"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Edit Profile Details"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:text="@string/edit_profile_details_title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_centerInParent="true" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fillViewport="true"
             android:layout_marginTop="20dp"
@@ -64,14 +63,14 @@
                     android:id="@+id/btn_upload_photo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Upload Photo"
+                    android:text="@string/edit_profile_details_btn_upload_photo"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name"
+                    android:text="@string/edit_profile_details_name_header"
                     android:textSize="14sp"
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="16dp"
@@ -81,18 +80,28 @@
                     android:id="@+id/edit_fullname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="John Doe"
                     android:textSize="16sp"
-                    android:textColor="@android:color/black"
                     android:background="@drawable/rounded_edittext"
-                    android:hint="Enter your name"
+                    android:hint="@string/edit_profile_details_name_hint"
                     android:padding="10dp"
                     android:layout_marginTop="4dp"/>
 
                 <TextView
+                    android:id="@+id/error_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/create_my_tasker_error_text"/>
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Surname"
+                    android:text="@string/edit_profile_details_surname_header"
                     android:textSize="14sp"
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="16dp"/>
@@ -101,33 +110,53 @@
                     android:id="@+id/edit_surname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Doe"
                     android:textSize="16sp"
-                    android:textColor="@android:color/black"
                     android:background="@drawable/rounded_edittext"
-                    android:hint="Enter your surname"
+                    android:hint="@string/edit_profile_details_surname_hint"
                     android:padding="10dp"
                     android:layout_marginTop="4dp"/>
 
                 <TextView
+                    android:id="@+id/error_surname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/create_my_tasker_error_text"/>
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Date of Birth"
+                    android:text="@string/edit_profile_details_birth_day_header"
                     android:textSize="14sp"
                     android:textColor="@android:color/darker_gray"
                     android:layout_marginTop="16dp"/>
 
-                <EditText
+                <TextView
                     android:id="@+id/edit_birthdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="01 January 1990"
                     android:textSize="16sp"
-                    android:textColor="@android:color/black"
                     android:background="@drawable/rounded_edittext"
-                    android:hint="Enter your date of birth"
+                    android:hint="@string/edit_profile_details_birth_day_hint"
                     android:padding="10dp"
                     android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/error_day_of_birth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/create_my_tasker_error_text"/>
 
             </LinearLayout>
         </ScrollView>
@@ -136,7 +165,7 @@
             android:id="@+id/btn_submit_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Profile"
+            android:text="@string/edit_profile_details_btn_save"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
 

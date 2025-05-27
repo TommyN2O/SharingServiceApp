@@ -1,14 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.SharingServiceApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
      <item name="colorPrimary">@color/my_light_primary</item>
     </style>
 
     <style name="Theme.SharingServiceApp" parent="Base.Theme.SharingServiceApp" />
 
     <style name="RatingBarTheme" parent="Theme.AppCompat.Light">
-        <item name="colorControlActivated">#FFD700</item> <!-- Gold color -->
+        <item name="colorControlActivated">#FFD700</item>
     </style>
 
+    <style name="CustomDatePickerDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorPrimary">@color/my_light_primary</item> <!-- Header background -->
+        <item name="colorOnPrimary">@color/my_light_primary</item> <!-- Header text color -->
+        <item name="colorAccent">@color/my_light_primary</item> <!-- Selected date circle -->
+    </style>
 </resources>

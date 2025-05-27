@@ -15,39 +15,35 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="0dp">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/btn_back_filter"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Back"
-                    android:src="@drawable/chevron_arrow_left" />
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/chevron_arrow_left"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"/>
 
                 <TextView
                     android:id="@+id/filter_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Filter"
-                    android:textSize="20sp"
+                    android:text="@string/request_offer_filter_title"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    android:textColor="#333333"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:layout_marginRight="52dp"/>
-            </LinearLayout>
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="City:"
+                android:text="@string/request_offer_filter_city_header"
+                android:layout_marginTop="8dp"
                 android:textSize="16sp"
                 android:textColor="#666666" />
 
@@ -55,10 +51,9 @@
                 android:id="@+id/text_city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
+                android:padding="10dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/rounded_edittext"
-                android:text="Select city"
-                android:textColor="#000"
                 android:textSize="16sp"
                 android:gravity="center_vertical"
                 android:drawableEnd="@android:drawable/arrow_down_float" />
@@ -66,19 +61,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date:"
+                android:text="@string/request_offer_filter_date_header"
                 android:textSize="16sp"
                 android:textColor="#666666"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="8dp" />
 
             <TextView
                 android:id="@+id/text_date_picker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Select date"
-                android:padding="12dp"
+                android:padding="10dp"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/rounded_edittext"
-                android:textColor="#000"
                 android:drawableEnd="@drawable/ic_calendar"
                 android:gravity="center_vertical" />
 
@@ -98,9 +93,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Min Budget ($):"
-                        android:textSize="16sp"
-                        android:textColor="#666666" />
+                        android:text="@string/tasker_filter_min_price_header"
+                        android:textColor="#666666"
+                        android:textSize="16sp" />
 
                     <EditText
                         android:id="@+id/edit_min_budget"
@@ -109,6 +104,7 @@
                         android:inputType="numberDecimal"
                         android:background="@drawable/rounded_edittext"
                         android:padding="10dp"
+                        android:textSize="16sp"
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
 
@@ -125,7 +121,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Max Budget ($):"
+                        android:text="@string/tasker_filter_max_price_header"
                         android:textSize="16sp"
                         android:textColor="#666666" />
 
@@ -136,6 +132,7 @@
                         android:inputType="numberDecimal"
                         android:background="@drawable/rounded_edittext"
                         android:padding="10dp"
+                        android:textSize="16sp"
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
             </LinearLayout>
@@ -143,7 +140,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Duration (hours):"
+                android:text="@string/tasker_filter_duration_header"
                 android:textSize="16sp"
                 android:textColor="#666666"
                 android:layout_marginTop="16dp" />
@@ -154,6 +151,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/rounded_edittext"
                 android:padding="10dp"
+                android:textSize="16sp"
                 android:layout_marginTop="8dp"
                 android:drawableEnd="@android:drawable/arrow_down_float" />
 
@@ -165,10 +163,10 @@
         android:id="@+id/btn_apply_filters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_corner"
-        android:text="Apply Filters"
+        android:text="@string/request_offer_filter_btn_apply"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
+        android:layout_margin="16dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp" />
 </RelativeLayout>
