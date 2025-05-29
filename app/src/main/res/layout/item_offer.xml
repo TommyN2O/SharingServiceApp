@@ -1,121 +1,142 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="12dp"
-    android:gravity="center_vertical">
+    android:layout_margin="12dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="4dp">
 
-    <ImageView
-        android:id="@+id/imgPhoto"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/placeholder_image_user"
-        android:layout_marginEnd="12dp"
-        android:contentDescription="User Photo" />
-
+    <!-- Outer vertical layout -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:orientation="vertical">
 
+        <!-- Horizontal content layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imgPhoto"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="12dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_image_user"
+                android:contentDescription="User Photo" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Full Name"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:layout_marginBottom="4dp" />
+
+                <!-- Date and Time -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="2dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_calendar"
+                        android:layout_marginEnd="6dp"
+                        android:contentDescription="Date Icon" />
+
+                    <TextView
+                        android:id="@+id/txtDateTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2025-05-28, 07:00"
+                        android:textSize="14sp"
+                        android:textColor="#555555" />
+                </LinearLayout>
+
+                <!-- Duration -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="2dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_duration"
+                        android:layout_marginEnd="6dp"
+                        android:contentDescription="Duration Icon" />
+
+                    <TextView
+                        android:id="@+id/txtDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1 hour"
+                        android:textSize="14sp"
+                        android:textColor="#555555" />
+                </LinearLayout>
+
+                <!-- Price -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_price"
+                        android:layout_marginEnd="6dp"
+                        android:contentDescription="Price Icon" />
+
+                    <TextView
+                        android:id="@+id/txtPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="€15.00"
+                        android:textSize="14sp"
+                        android:textColor="#333333" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnAccept"
+                android:layout_width="wrap_content"
+                android:layout_height="95dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Accept"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_confirm" />
+        </LinearLayout>
+
+        <!-- Description BELOW main content -->
         <TextView
-            android:id="@+id/txtName"
-            android:layout_width="wrap_content"
+            android:id="@+id/txtDescription"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Full Name"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:layout_marginBottom="4dp" />
-
-        <!-- Date and Time Row -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="2dp">
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_calendar"
-                android:layout_marginEnd="6dp"
-                android:contentDescription="Date Icon" />
-
-            <TextView
-                android:id="@+id/txtDateTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Date and Time"
-                android:textSize="14sp"
-                android:textColor="#555555" />
-        </LinearLayout>
-
-        <!-- Duration Row -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="2dp">
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_duration"
-                android:layout_marginEnd="6dp"
-                android:contentDescription="Duration Icon" />
-
-            <TextView
-                android:id="@+id/txtDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Duration"
-                android:textSize="14sp"
-                android:textColor="#555555" />
-        </LinearLayout>
-
-        <!-- Price Row -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="2dp">
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_price"
-                android:layout_marginEnd="6dp"
-                android:contentDescription="Price Icon" />
-
-            <TextView
-                android:id="@+id/txtPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Price"
-                android:textSize="14sp"
-                android:textColor="#333333" />
-        </LinearLayout>
-
+            android:text="This is a detailed description placed below the main layout."
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="4dp" />
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end|center_vertical"
-        android:layout_marginStart="8dp">
-
-        <ImageButton
-            android:id="@+id/btnAccept"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_confirm"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Accept"
-            android:scaleType="centerInside"
-            android:padding="10dp" />
-    </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

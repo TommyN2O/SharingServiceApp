@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
+import com.example.sharingserviceapp.activitys.MyTaskerProfileActivity
 import com.example.sharingserviceapp.models.TaskerHelper
 import com.example.sharingserviceapp.adapters.GalleryAdapter
 import com.example.sharingserviceapp.adapters.ReviewAdapter
@@ -21,15 +22,36 @@ import retrofit2.Response
 import java.net.URL
 
 class TaskerHelperDetailActivity : AppCompatActivity() {
+    private lateinit var detailProfileImage: ImageView
+    private lateinit var detailName: TextView
+    private lateinit var detailRating: TextView
+    private lateinit var detailReviews: TextView
+    private lateinit var detailCategories: TextView
+    private lateinit var detailCities: TextView
+    private lateinit var detailHourlyRate: TextView
+    private lateinit var detailDescription: TextView
+    private lateinit var readMore: TextView
+    private lateinit var reviewHeader: TextView
+    private lateinit var reviewRecyclerView: RecyclerView
     private var isExpanded = false
     private var userId: Int = -1
     private var categoryId: Int = -1
     private var selectedCityIds: List<String> = emptyList()
     private var selectedCategoryIds: List<String> = emptyList()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tasker_helper_detail)
+        detailProfileImage = findViewById(R.id.detail_profile_image)
+        detailName = findViewById(R.id.detail_name)
+        detailRating = findViewById(R.id.detail_rating)
+        detailReviews = findViewById(R.id.detail_reviews)
+        detailCategories = findViewById(R.id.detail_categories)
+        detailCities = findViewById(R.id.detail_cities)
+        detailHourlyRate = findViewById(R.id.helper_price)
+        detailDescription = findViewById(R.id.detail_description)
+        readMore = findViewById(R.id.read_more)
+        reviewHeader = findViewById(R.id.reviewHeader)
+        reviewRecyclerView = findViewById(R.id.reviewRecyclerView)
 
         userId = intent.getIntExtra("user_id", -1)
         if (userId == -1) {
@@ -80,11 +102,16 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<ReviewList>>, response: Response<List<ReviewList>>) {
                 if (response.isSuccessful) {
                     val reviews = response.body() ?: emptyList()
-                    val reviewAdapter = ReviewAdapter(reviews)
-
-                    val recyclerView = findViewById<RecyclerView>(R.id.reviewRecyclerView)
-                    recyclerView.adapter = reviewAdapter
-                    recyclerView.layoutManager = LinearLayoutManager(this@TaskerHelperDetailActivity)
+                    if (reviews.isEmpty()) {
+                        reviewRecyclerView.visibility = View.GONE
+                        reviewHeader.visibility = View.GONE
+                    } else {
+                        val reviewAdapter = ReviewAdapter(reviews)
+                        reviewRecyclerView.adapter = reviewAdapter
+                        reviewRecyclerView.layoutManager = LinearLayoutManager(this@TaskerHelperDetailActivity)
+                        reviewRecyclerView.visibility = View.VISIBLE
+                        reviewHeader.visibility = View.VISIBLE
+                    }
                 } else {
                     Toast.makeText(this@TaskerHelperDetailActivity, getString(R.string.payments_error_fetch), Toast.LENGTH_SHORT).show()
                 }
@@ -121,16 +148,6 @@ class TaskerHelperDetailActivity : AppCompatActivity() {
     }
 
     fun showTaskerProfile(profileResponse: TaskerHelper) {
-        val detailProfileImage: ImageView = findViewById(R.id.detail_profile_image)
-        val detailName: TextView = findViewById(R.id.detail_name)
-        val detailRating: TextView = findViewById(R.id.detail_rating)
-        val detailReviews: TextView = findViewById(R.id.detail_reviews)
-        val detailCategories: TextView = findViewById(R.id.detail_categories)
-        val detailCities: TextView = findViewById(R.id.detail_cities)
-        val detailHourlyRate: TextView = findViewById(R.id.helper_price)
-        val detailDescription: TextView = findViewById(R.id.detail_description)
-        val readMore: TextView = findViewById(R.id.read_more)
-
         detailName.text = "${profileResponse.name ?: "Nežinoma"} ${profileResponse.surname?.firstOrNull()?.uppercase() ?: ""}.".trim()
         detailRating.text = "Įvertinimas: ${profileResponse.rating}"
         detailReviews.text = "(${getReviewsText(profileResponse.review_count)})"

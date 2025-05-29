@@ -37,7 +37,9 @@ class ReviewsActivity : AppCompatActivity() {
     private fun setupListeners(){
         backButton = findViewById(R.id.btn_back)
         backButton.setOnClickListener {
-            startActivity(Intent(this, HistoryActivity::class.java))
+            startActivity(Intent(this, MyTasksDetailedHistoryActivity::class.java).apply {
+                intent.putExtra("TASK_ID", taskId)
+            })
             finish()
         }
 

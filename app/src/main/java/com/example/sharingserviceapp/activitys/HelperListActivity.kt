@@ -19,8 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sharingserviceapp.R
+import com.example.sharingserviceapp.activitys.HomeActivity
+import com.example.sharingserviceapp.adapters.CategoryAdapter
 import com.example.sharingserviceapp.adapters.TaskerHelperAdapter
 import com.example.sharingserviceapp.adapters.OpenTasksHelperAdapter
+import com.example.sharingserviceapp.models.Category
 import com.example.sharingserviceapp.models.TaskerHelper
 import com.example.sharingserviceapp.models.OpenedTasksHelper
 import com.example.sharingserviceapp.network.ApiServiceInstance
@@ -48,6 +51,7 @@ class HelperListActivity : AppCompatActivity() {
     private var opentasksList: MutableList<OpenedTasksHelper> = mutableListOf()
     private var isTaskerMode: Boolean = false
     private var cities: List<City> = emptyList()
+    private var categoryId: Int? = null
     private var selectedCityIds: MutableList<Int> = mutableListOf()
     private var selectedCityNames: MutableList<String> = mutableListOf()
     private var selectedMinPrice: Int? = null
@@ -80,6 +84,9 @@ class HelperListActivity : AppCompatActivity() {
         btnCustomer.setOnClickListener { toggleTaskerMode(false) }
         btnTasker.setOnClickListener { toggleTaskerMode(true) }
 
+        categoryId = intent.getIntExtra("category_id", -1)
+
+        fetchCategory()
         fetchCities()
         toggleTaskerMode(false)
         setupListeners()
@@ -149,7 +156,7 @@ class HelperListActivity : AppCompatActivity() {
             finish()
             return
         }
-        val categoryId = intent.getIntExtra("category_id", -1)
+
         val apiService = ApiServiceInstance.Auth.apiServices
 
         apiService.getTaskerList(
@@ -531,6 +538,26 @@ class HelperListActivity : AppCompatActivity() {
             recyclerView.adapter = taskerhelperAdapter
             fetchTaskers()
         }
+    }
+
+    private fun fetchCategory() {
+        val apiService = ApiServiceInstance.Auth.apiServices
+        val id= categoryId
+        apiService.categoryById(id!!).enqueue(object : Callback<Category> {
+            override fun onResponse(call: Call<Category>, response: Response<Category>) {
+                if (response.isSuccessful) {
+                    val category = response.body()
+                    category?.let {
+                        pageTitle.text = it.name
+                    }
+                } else {
+                    Toast.makeText(this@HelperListActivity, getString(R.string.failed_load_categories), Toast.LENGTH_SHORT).show()
+                }
+            }
+            override fun onFailure(call: Call<Category>, t: Throwable) {
+                Toast.makeText(this@HelperListActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun clearFilters() {

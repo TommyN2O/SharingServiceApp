@@ -29,7 +29,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:letterSpacing="0.05"
-            android:text="@string/tasker_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_centerInParent="true" />

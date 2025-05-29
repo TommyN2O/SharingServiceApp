@@ -13,6 +13,7 @@ data class TaskResponse(
     val gallery: List<String>,
     val status: String,
     val created_at: String,
-    val budget: Double?
+    val budget: Double?,
+    val is_open_task: Boolean?
 )
 

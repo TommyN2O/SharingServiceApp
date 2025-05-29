@@ -20,6 +20,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activitys.CashOutActivity"
+            android:exported="false" />
+        <activity
             android:name=".activitys.ResetPasswordConfirmActivity"
             android:exported="false" />
         <activity

@@ -50,7 +50,7 @@ class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
             finish()
             return
         }
-        loadRequestDetailed(taskId)
+        loadRequestDetailed()
         setupBackButton()
     }
 
@@ -62,7 +62,7 @@ class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadRequestDetailed(taskId: Int) {
+    private fun loadRequestDetailed() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", null)
 
@@ -85,6 +85,7 @@ class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
     }
 
     private fun showRequestDetailed(request: TaskResponse) {
+        val tasknr: TextView = findViewById(R.id.titleText)
         val profileImage: ImageView = findViewById(R.id.customerProfileImage)
         val customerName: TextView = findViewById(R.id.customerName)
         val taskCategory: TextView = findViewById(R.id.taskCategory)
@@ -96,6 +97,7 @@ class PeopleRequestDetailedHistoryActivity : AppCompatActivity() {
         val taskDescription: TextView = findViewById(R.id.taskDescription)
         val galleryRecyclerView: RecyclerView = findViewById(R.id.galleryRecyclerView)
 
+        tasknr.text ="Užklausa #${request.id}"
         customerName.text = "${request.sender.name.replaceFirstChar { it.uppercase() }} ${request.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
         taskCategory.text = "Paslauga: ${request.categories.joinToString { it.name }}"
         val slot = request.availability.firstOrNull()

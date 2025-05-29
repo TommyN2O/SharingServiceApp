@@ -82,13 +82,13 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
                     Toast.makeText(this@MyTasksDetailedHistoryActivity, getString(R.string.history_detailed_my_tasks_error_load), Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<TaskResponse>, t: Throwable) {
                 Toast.makeText(this@MyTasksDetailedHistoryActivity, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
     private fun showRequestDetailed(task: TaskResponse) {
+        val tasknr: TextView = findViewById(R.id.titleText)
         val taskCategory: TextView = findViewById(R.id.taskCategory)
         val taskDateTime: TextView = findViewById(R.id.taskDateTime)
         val taskDuration: TextView = findViewById(R.id.taskDuration)
@@ -100,6 +100,7 @@ class MyTasksDetailedHistoryActivity : AppCompatActivity() {
         val taskerProfileImage: ImageView = findViewById(R.id.taskerProfileImage)
         val taskerName: TextView = findViewById(R.id.taskerName)
 
+        tasknr.text ="Užklausa #${task.id}"
         taskCategory.text = "Paslauga: ${task.categories.joinToString { it.name }}"
         val slot = task.availability.firstOrNull()
         taskDateTime.text = slot?.let {"Data ir laikas: ${it.date}, ${it.time.dropLast(3)}"}

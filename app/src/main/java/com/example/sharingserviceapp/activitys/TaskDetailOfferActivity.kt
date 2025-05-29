@@ -26,6 +26,7 @@ class TaskDetailOfferActivity : AppCompatActivity() {
     private lateinit var errorDescription: TextView
     private lateinit var errorHourlyRate: TextView
     private var selectedDuration: String? = null
+    private var taskId: Int = -1
     private var availableSlots: List<AvailabilitySlot> = emptyList()
     private var availableDates: List<String> = emptyList()
     private var availableTimesForSelectedDate: List<String> = emptyList()
@@ -43,8 +44,7 @@ class TaskDetailOfferActivity : AppCompatActivity() {
         errorDescription = findViewById(R.id.error_description)
         errorHourlyRate = findViewById(R.id.error_hourly_rate)
 
-        val taskId = intent.getIntExtra("task_id", -1)
-        if (taskId == -1) return
+        taskId = intent.getIntExtra("task_id", -1)
 
         val durationSet = intent.getIntExtra("duration", -1)
         val durationStrings = arrayOf("1 val.", "2 val.", "3 val.", "4 val.", "5 val.", "6 val.", "7 val.")
@@ -174,7 +174,8 @@ class TaskDetailOfferActivity : AppCompatActivity() {
             finish()
             return
         }
-        ApiServiceInstance.Auth.apiServices.sendOpenTaskOffer("Bearer $token",request, taskId)
+       val id = taskId
+        ApiServiceInstance.Auth.apiServices.sendOpenTaskOffer("Bearer $token",request, id)
             .enqueue(object : Callback<OpenTaskOffer> {
                 override fun onResponse(call: Call<OpenTaskOffer>, response: Response<OpenTaskOffer>) {
                     if (response.isSuccessful) {

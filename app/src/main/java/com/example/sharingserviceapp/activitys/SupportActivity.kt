@@ -76,8 +76,9 @@ class SupportActivity : AppCompatActivity() {
             getString(R.string.type_payment),
             getString(R.string.type_fraud),
             getString(R.string.type_task),
+            getString(R.string.type_open_task),
             getString(R.string.type_account),
-            getString(R.string.type_other)
+            getString(R.string.type_other),
         )
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, types)
 

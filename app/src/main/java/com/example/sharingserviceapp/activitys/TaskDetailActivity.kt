@@ -49,6 +49,7 @@ class TaskDetailActivity : AppCompatActivity() {
     private lateinit var btnCancelOpenTask: Button
     private lateinit var btnOffers: ImageView
     private lateinit var btnMessage: ImageView
+    private lateinit var btnRemoveTasker: ImageView
     private lateinit var btnSetAsOpenTask:Button
     private var taskId: Int = -1
     private var receiverId: Int ?= -1
@@ -63,6 +64,7 @@ class TaskDetailActivity : AppCompatActivity() {
         btnMessage = findViewById(R.id.messageButton)
         btnSetAsOpenTask = findViewById(R.id.btn_SetAsOpenTask)
         btnCancelOpenTask = findViewById(R.id.btnDeleteOpenTask)
+        btnRemoveTasker = findViewById(R.id.btn_remove_tasker)
 
         taskId = intent.getIntExtra("TASK_ID", -1)
         if (taskId == -1) {
@@ -82,17 +84,18 @@ class TaskDetailActivity : AppCompatActivity() {
         btnCancelOpenTask.setOnClickListener {
             showCancelConfirmationDialog("OpenTask")
         }
+        btnRemoveTasker.setOnClickListener {
+            showCancelConfirmationDialog("Tasker")
+        }
         setupPaymentButton()
         loadTaskDetailed(taskId)
         setupBackButton()
         setupChatActivity()
     }
 
-
     private fun showSetAsOpTaskDialog(taskId: Int) {
         val dialog = BottomSheetDialog(this)
         val dialogView = layoutInflater.inflate(R.layout.dialog_set_as_open_task, null)
-
 
         dialogView.layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -338,9 +341,14 @@ class TaskDetailActivity : AppCompatActivity() {
             val btnYes = dialog.findViewById<Button>(R.id.btnYes)
             btnYes.setOnClickListener {
                 updateTaskStatus("Canceled by sender")
-                val intent = Intent(this, RequestsOffersActivity::class.java)
-                startActivity(intent)
-                finish()
+                dialog.dismiss()
+            }
+        }
+        else if(taskType == "Tasker"){
+            confirmationMessage.text = getString(R.string.request_offer_my_task_remove_tasker_dialog)
+            val btnYes = dialog.findViewById<Button>(R.id.btnYes)
+            btnYes.setOnClickListener {
+                updateTaskStatus("Canceled")
                 dialog.dismiss()
             }
         }
@@ -350,9 +358,6 @@ class TaskDetailActivity : AppCompatActivity() {
             val btnYes = dialog.findViewById<Button>(R.id.btnYes)
             btnYes.setOnClickListener {
                 deleteOpenTaskStatus()
-                val intent = Intent(this, RequestsOffersActivity::class.java)
-                startActivity(intent)
-                finish()
                 dialog.dismiss()
             }
         }
@@ -379,7 +384,9 @@ class TaskDetailActivity : AppCompatActivity() {
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    loadTaskDetailed(taskId)
+                    val intent = Intent(this@TaskDetailActivity, RequestsOffersActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 } else {
                     Toast.makeText(this@TaskDetailActivity, getString(R.string.request_offer_my_task_status_update), Toast.LENGTH_SHORT).show()
                 }
@@ -407,7 +414,9 @@ class TaskDetailActivity : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@TaskDetailActivity, getString(R.string.request_offer_my_task_delete_open_task_successful), Toast.LENGTH_SHORT).show()
-                    loadTaskDetailed(taskId)
+                    val intent = Intent(this@TaskDetailActivity, RequestsOffersActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 } else {
                     Toast.makeText(this@TaskDetailActivity, getString(R.string.request_offer_my_task_delete_open_task_failed), Toast.LENGTH_SHORT).show()
                 }
@@ -482,7 +491,6 @@ class TaskDetailActivity : AppCompatActivity() {
             val paramsDecline = btnCancel.layoutParams
             paramsDecline.width = dpToPx(140f)
             btnCancel.layoutParams = paramsDecline
-
         } else {
             btnPayment.visibility = View.GONE
         }
@@ -512,8 +520,13 @@ class TaskDetailActivity : AppCompatActivity() {
                 showZoomDialog(galleryImages, position, baseUrl)
             }, baseUrl)
         }
-
         val slot = task.availability.firstOrNull()
+        if(task.is_open_task== true)
+        {
+            btnRemoveTasker.visibility =View.VISIBLE
+        }else{
+            btnRemoveTasker.visibility =View.GONE
+        }
 
         if (task.tasker == null || rawStatus == "Open") {
             titleTasker.visibility = View.GONE
@@ -590,7 +603,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
             taskPrice.text = spannablePrice
             taskDateTime.text = slot?.let {"Data ir laikas: ${it.date}, ${it.time.dropLast(3)}"}
-            tasknr.text ="Task #${task.id}"
+            tasknr.text ="Užklausa #${task.id}"
         }
     }
     private val statusTranslations = mapOf(

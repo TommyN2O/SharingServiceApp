@@ -129,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/create_task_date_and_time_header" />
+                android:text="@string/request_task_date_and_time_header" />
 
             <LinearLayout
                 android:layout_width="match_parent"

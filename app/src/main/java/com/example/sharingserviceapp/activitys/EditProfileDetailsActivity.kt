@@ -43,7 +43,8 @@ class EditProfileDetailsActivity : AppCompatActivity() {
     private lateinit var errorName: TextView
     private lateinit var errorSurname: TextView
     private lateinit var errorDateOfBirth: TextView
-
+    private lateinit var errorIban: TextView
+    private lateinit var editIban: EditText
     private val PROFILE_IMAGE_PICK_REQUEST = 1
     private var profilePhotoUri: Uri? = null
 
@@ -58,7 +59,8 @@ class EditProfileDetailsActivity : AppCompatActivity() {
         errorName = findViewById(R.id.error_name)
         errorSurname = findViewById(R.id.error_surname)
         errorDateOfBirth = findViewById(R.id.error_day_of_birth)
-
+        editIban = findViewById(R.id.edit_iban)
+        errorIban = findViewById(R.id.error_iban)
         fetchUserProfile()
         setupListeners()
     }
@@ -98,6 +100,9 @@ class EditProfileDetailsActivity : AppCompatActivity() {
                         editFullname.setText(user.name)
                         editSurname.setText(user.surname)
                         editBirthdate.setText(formatDate(user.date_of_birth))
+                        if (user.wallet_bank_iban != null){
+                            editIban.setText(user.wallet_bank_iban)
+                        }
                         if (user.profile_photo.isNullOrEmpty()) {
                             Glide.with(this@EditProfileDetailsActivity)
                                 .load(R.drawable.placeholder_image_user)
@@ -213,6 +218,8 @@ class EditProfileDetailsActivity : AppCompatActivity() {
         val fullname = editFullname.text.toString().trim()
         val surname = editSurname.text.toString().trim()
         val birthdate = editBirthdate.text.toString().trim()
+        val iban = editIban.text.toString().trim()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
         clearErrors()
         var isValid = true
@@ -240,7 +247,32 @@ class EditProfileDetailsActivity : AppCompatActivity() {
             val paddingInPx = (12 * scale + 0.5f).toInt()
             editBirthdate.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
             isValid = false
+        }else {
+            val dobDate = try {
+                dateFormat.parse(birthdate)
+            } catch (e: Exception) {
+                null
+            }
+            if (dobDate != null) {
+                val calendar = Calendar.getInstance().apply { add(Calendar.YEAR, -16) }
+                if (dobDate.after(calendar.time)) {
+                    errorDateOfBirth.text = getString(R.string.reg_error_smallest_year_old_date_of_birth)
+                    val scale = resources.displayMetrics.density
+                    val paddingInPx = (12 * scale + 0.5f).toInt()
+                    editBirthdate.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+                    isValid = false
+                }
+            }
         }
+        if (iban.isNotEmpty() && iban.length < 20) {
+            errorIban.visibility = View.VISIBLE
+            editIban.setBackgroundResource(R.drawable.spinner_border_error)
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (12 * scale + 0.5f).toInt()
+            editIban.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            isValid = false
+        }
+
         if (!isValid) {
             Toast.makeText(this, getString(R.string.edit_my_tasker_profile_error_fill_field), Toast.LENGTH_SHORT).show()
             return
@@ -274,7 +306,8 @@ class EditProfileDetailsActivity : AppCompatActivity() {
         val profileData = mapOf(
             "fullname" to fullname,
             "surname" to surname,
-            "birthdate" to birthdate
+            "birthdate" to birthdate,
+            "wallet_bank_iban" to iban
         )
 
         val gson = Gson()
@@ -311,6 +344,8 @@ class EditProfileDetailsActivity : AppCompatActivity() {
         editSurname.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
         errorDateOfBirth.visibility = View.GONE
         editBirthdate.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
+        errorIban.visibility = View.GONE
+        editIban.background = ContextCompat.getDrawable(this, R.drawable.rounded_edittext)
     }
 
 }

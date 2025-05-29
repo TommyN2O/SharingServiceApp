@@ -30,9 +30,31 @@ import okhttp3.RequestBody
 
 class MyTaskerProfileActivity : AppCompatActivity() {
     private var isExpanded = false
+    private lateinit var detailProfileImage: ImageView
+    private lateinit var detailName: TextView
+    private lateinit var detailRating: TextView
+    private lateinit var detailReviews: TextView
+    private lateinit var detailCategories: TextView
+    private lateinit var detailCities: TextView
+    private lateinit var detailHourlyRate: TextView
+    private lateinit var detailDescription: TextView
+    private lateinit var readMore: TextView
+    private lateinit var reviewHeader: TextView
+    private lateinit var reviewRecyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_tasker_profile)
+        detailProfileImage = findViewById(R.id.detail_profile_image)
+        detailName = findViewById(R.id.detail_name)
+        detailRating = findViewById(R.id.detail_rating)
+        detailReviews = findViewById(R.id.detail_reviews)
+        detailCategories = findViewById(R.id.detail_categories)
+        detailCities = findViewById(R.id.detail_cities)
+        detailHourlyRate = findViewById(R.id.detail_hourly_rate)
+        detailDescription = findViewById(R.id.detail_description)
+        readMore = findViewById(R.id.read_more)
+        reviewHeader = findViewById(R.id.reviewHeader)
+        reviewRecyclerView = findViewById(R.id.reviewRecyclerView)
         loadTaskerProfile()
         setupListeners()
     }
@@ -208,16 +230,6 @@ class MyTaskerProfileActivity : AppCompatActivity() {
     }
 
     fun showTaskerProfile(profileResponse: TaskerProfileResponse) {
-        val detailProfileImage: ImageView = findViewById(R.id.detail_profile_image)
-        val detailName: TextView = findViewById(R.id.detail_name)
-        val detailRating: TextView = findViewById(R.id.detail_rating)
-        val detailReviews: TextView = findViewById(R.id.detail_reviews)
-        val detailCategories: TextView = findViewById(R.id.detail_categories)
-        val detailCities: TextView = findViewById(R.id.detail_cities)
-        val detailHourlyRate: TextView = findViewById(R.id.detail_hourly_rate)
-        val detailDescription: TextView = findViewById(R.id.detail_description)
-        val readMore: TextView = findViewById(R.id.read_more)
-
         detailName.text = "${profileResponse.name ?: "Unknown"} ${profileResponse.surname?.firstOrNull()?.uppercase() ?: ""}.".trim()
         detailRating.text = "Įvertinimas: ${profileResponse.rating}"
         detailReviews.text = "(${getReviewsText(profileResponse.review_count)})"
@@ -272,6 +284,7 @@ class MyTaskerProfileActivity : AppCompatActivity() {
         val userId=profileResponse.id
         fetchReviews(userId)
     }
+
     private fun getReviewsText(count: Int): String {
         return when {
             count == 1 -> "$count atsiliepimas"
@@ -296,10 +309,16 @@ class MyTaskerProfileActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<ReviewList>>, response: Response<List<ReviewList>>) {
                 if (response.isSuccessful) {
                     val reviews = response.body() ?: emptyList()
-                    val reviewAdapter = ReviewAdapter(reviews)
-                    val recyclerView = findViewById<RecyclerView>(R.id.reviewRecyclerView)
-                    recyclerView.adapter = reviewAdapter
-                    recyclerView.layoutManager = LinearLayoutManager(this@MyTaskerProfileActivity)
+                    if (reviews.isEmpty()) {
+                        reviewRecyclerView.visibility = View.GONE
+                        reviewHeader.visibility = View.GONE
+                    } else {
+                        val reviewAdapter = ReviewAdapter(reviews)
+                        reviewRecyclerView.adapter = reviewAdapter
+                        reviewRecyclerView.layoutManager = LinearLayoutManager(this@MyTaskerProfileActivity)
+                        reviewRecyclerView.visibility = View.VISIBLE
+                        reviewHeader.visibility = View.VISIBLE
+                    }
                 } else {
                     Toast.makeText(this@MyTaskerProfileActivity, getString(R.string.my_tasker_profile_failed_load_reviews), Toast.LENGTH_SHORT).show()
                 }

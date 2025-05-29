@@ -33,19 +33,18 @@
             android:textStyle="bold"
             android:layout_centerInParent="true" />
 
-        <TextView
+
+        <ImageView
             android:id="@+id/text_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_details_btn_edit"
-            android:textSize="18sp"
-            android:textColor="@android:color/holo_blue_dark"
-            android:src="@drawable/chevron_arrow_left"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_edit"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:clickable="true"
-            android:focusable="true"
-            android:onClick="onEditClicked" />
+            android:focusable="true" />
+
+
 
     </RelativeLayout>
 
@@ -133,6 +132,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="john.doe@example.com"
+                android:textSize="16sp"
+                android:textColor="@android:color/black"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_details_iban_header"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/text_iban"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LT45456456456123"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"/>
 

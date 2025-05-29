@@ -22,12 +22,14 @@ import java.util.*
 class ProfileDetailsActivity : AppCompatActivity() {
 
     private lateinit var backButton: ImageView
-    private lateinit var editButton: TextView
+    private lateinit var editButton: ImageView
     private lateinit var textName: TextView
     private lateinit var textSurname: TextView
     private lateinit var textBirthdate: TextView
     private lateinit var profileImage: ImageView
     private lateinit var deleteButton: Button
+    private lateinit var textEmail: TextView
+    private lateinit var textIban: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,8 @@ class ProfileDetailsActivity : AppCompatActivity() {
         textBirthdate = findViewById(R.id.text_birthdate)
         profileImage = findViewById(R.id.img_profile_photo)
         deleteButton = findViewById(R.id.btn_delete_account)
+        textIban = findViewById(R.id.text_iban)
+        textEmail = findViewById(R.id.text_email)
 
         setUpButtonListeners()
         fetchUserProfile()
@@ -85,7 +89,12 @@ class ProfileDetailsActivity : AppCompatActivity() {
                         textName.text = it.name
                         textSurname.text = it.surname
                         textBirthdate.text = formatDate(it.date_of_birth)
-
+                        textEmail.text = it.email
+                        textIban.text = it.wallet_bank_iban
+                        if(textIban == null)
+                        {
+                            textIban.text =" "
+                        }
                         if (it.profile_photo.isNullOrEmpty()) {
                             Glide.with(this@ProfileDetailsActivity)
                                 .load(R.drawable.placeholder_image_user)

@@ -448,7 +448,6 @@ class RequestsOffersActivity : AppCompatActivity() {
                         selectedCityIds.add(city.id)
                     }
                 }
-
                 cityTextView.text = selectedCityNames.joinToString(", ")
             }
             .setNegativeButton("Atšaukti", null)
@@ -493,11 +492,13 @@ class RequestsOffersActivity : AppCompatActivity() {
         val intent = Intent(this, TaskDetailActivity::class.java)
         intent.putExtra("TASK_ID", task.id)
         startActivity(intent)
+        finish()
     }
 
     private fun navigateToRequestDetails(request: TaskResponse) {
         val intent = Intent(this, RequestDetailActivity::class.java)
         intent.putExtra("task_id", request.id)
         startActivity(intent)
+        finish()
     }
 }

@@ -8,7 +8,6 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -22,7 +21,6 @@ import java.net.URL
 class OfferListAdapter(
     private val offers: List<Offer>,
     private val onAccept: (Offer) -> Unit,
-
 ) : RecyclerView.Adapter<OfferListAdapter.OfferViewHolder>() {
 
     inner class OfferViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,6 +30,7 @@ class OfferListAdapter(
         val txtDuration: TextView = itemView.findViewById(R.id.txtDuration)
         val txtPrice: TextView = itemView.findViewById(R.id.txtPrice)
         val btnAccept: ImageView = itemView.findViewById(R.id.btnAccept)
+        val textDescripton: TextView = itemView.findViewById(R.id.txtDescription)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfferViewHolder {
@@ -52,14 +51,15 @@ class OfferListAdapter(
             .circleCrop()
             .into(holder.imgPhoto)
         holder.txtName.text = offer.tasker.name
-        holder.txtDateTime.text = "Data ir laikas: ${offer.availability.date}, ${offer.availability.time}"
+        val timeFormatted = offer.availability.time.take(5)
+        holder.txtDateTime.text = "Data ir laikas: ${offer.availability.date}, $timeFormatted"
         holder.txtDuration.text = "Trukmė: ${offer.duration} val."
         val priceText = "Valandinis: ${offer.price}€/val."
         val spannablePrice = SpannableString(priceText)
         val greenColor = ContextCompat.getColor(holder.itemView.context, R.color.my_light_primary)
         val valandinisLength = "Valandinis: ".length
         spannablePrice.setSpan(
-            ForegroundColorSpan(greenColor), // Use the actual color value
+            ForegroundColorSpan(greenColor),
             valandinisLength,
             priceText.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -71,6 +71,7 @@ class OfferListAdapter(
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         holder.txtPrice.text = spannablePrice
+        holder.textDescripton.text = offer.description
         holder.btnAccept.setOnClickListener { onAccept(offer) }
     }
 

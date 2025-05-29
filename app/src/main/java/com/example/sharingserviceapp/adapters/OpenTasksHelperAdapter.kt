@@ -130,7 +130,7 @@ class OpenTasksHelperAdapter(
                     if (!isTasker) {
                         showTaskerProfileAlertDialog()
                     } else {
-                        navigateToTaskDetailOfferActivity(tasker)
+                        navigateToTaskDetailOfferActivity(tasker.id,tasker.duration)
                     }
                 }
             }
@@ -150,10 +150,10 @@ class OpenTasksHelperAdapter(
                 .show()
         }
 
-        private fun navigateToTaskDetailOfferActivity(task: OpenedTasksHelper) {
+        private fun navigateToTaskDetailOfferActivity(taskerId: Int,taskerDuration: Int) {
             val intent = Intent(context, TaskDetailOfferActivity::class.java).apply {
-                putExtra("task_id", task.id)
-                putExtra("duration", task.duration)
+                putExtra("task_id", taskerId)
+                putExtra("duration", taskerDuration)
             }
             context.startActivity(intent)
         }

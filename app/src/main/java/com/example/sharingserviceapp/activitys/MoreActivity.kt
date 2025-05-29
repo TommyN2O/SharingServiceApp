@@ -26,13 +26,6 @@ class MoreActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-
-        val iconSaved = findViewById<LinearLayout>(R.id.icon_saved)
-        iconSaved?.setOnClickListener {
-            startActivity(Intent(this, SavedActivity::class.java))
-            finish()
-        }
-
         val iconMyCreatedTasker = findViewById<LinearLayout>(R.id.icon_my_created_tasker)
         iconMyCreatedTasker?.setOnClickListener {
             checkIfTaskerProfileExists()

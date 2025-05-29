@@ -10,8 +10,10 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/actionButtonsLayout"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:orientation="vertical"

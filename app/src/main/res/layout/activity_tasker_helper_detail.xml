@@ -164,7 +164,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Read More"
+                android:text="@string/my_tasker_profile_read_more_btn"
                 android:textColor="@android:color/holo_blue_dark"
                 android:textSize="14sp"
                 android:clickable="true"
@@ -188,6 +188,7 @@
                 android:scrollbars="horizontal"/>
 
             <TextView
+                android:id="@+id/reviewHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"

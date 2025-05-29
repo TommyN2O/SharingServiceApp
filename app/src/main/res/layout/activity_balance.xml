@@ -34,9 +34,19 @@
             android:layout_centerInParent="true"
             android:layout_marginEnd="20dp"
             android:text="@string/balance_title"
-
             android:textSize="24sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/cash_out"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:tint="@color/my_light_primary"
+            android:src="@drawable/ic_payout" />
     </RelativeLayout>
 
     <TextView

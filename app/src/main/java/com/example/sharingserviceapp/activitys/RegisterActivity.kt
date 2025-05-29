@@ -89,7 +89,7 @@ class RegisterActivity : AppCompatActivity() {
         val password = passwordInput.text.toString().trim()
         val dateOfBirth = dateOfBirthInput.text.toString().trim()
 
-        val passwordPattern = Regex("^(?=.*[A-Z])(?=.*[!@#\$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/~`|\\\\])(?=.*\\d).{6,}\$")
+        val passwordPattern = Regex("^(?=.*[A-Z])(?=.*[!@#\$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/~`|\\\\])(?=.*\\d).{8,}\$")
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
         nameLayout.error = null

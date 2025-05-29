@@ -55,14 +55,16 @@ class ChangePasswordActivity : AppCompatActivity() {
             val newPassword = newPasswordField.text.toString().trim()
             val confirmPassword = confirmPasswordField.text.toString().trim()
 
+            val passwordPattern = Regex("^(?=.*[A-Z])(?=.*[!@#\$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/~`|\\\\])(?=.*\\d).{8,}\$")
+
             var hasError = false
 
             if (oldPassword.isEmpty()) {
                 oldPasswordLayout.error = getString(R.string.change_password_error_message_old_password_empty)
                 hasError = true
             }
-            if (newPassword.length < 6) {
-                newPasswordLayout.error = getString(R.string.change_password_error_message_new_password_short)
+            if (!newPassword.matches(passwordPattern)) {
+                newPasswordLayout.error = getString(R.string.reg_error_bad_psw)
                 hasError = true
             }
             if (confirmPassword != newPassword) {

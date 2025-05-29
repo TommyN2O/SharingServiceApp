@@ -53,7 +53,6 @@ class  RequestDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_detail)
-
         tasksname=findViewById(R.id.titleText)
         customerName = findViewById(R.id.customerName)
         taskCategory = findViewById(R.id.taskCategory)
@@ -79,6 +78,7 @@ class  RequestDetailActivity : AppCompatActivity() {
         setupListeners()
         setupBackButton()
         setupChatActivity()
+
     }
    private fun setupListeners(){
        btnAccept.setOnClickListener {
@@ -208,7 +208,7 @@ class  RequestDetailActivity : AppCompatActivity() {
     }
 
     private fun showRequestDetailed(request: TaskResponse) {
-        tasksname.text ="Task #${request.id}"
+        tasksname.text ="Užklausa #${request.id}"
         customerName.text = "${request.sender.name.replaceFirstChar { it.uppercase() }} ${request.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
         taskCategory.text = "Paslauga: ${request.categories.joinToString { it.name }}"
         val slot = request.availability.firstOrNull()

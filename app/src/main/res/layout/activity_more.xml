@@ -40,52 +40,56 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="10dp"
+        android:weightSum="2"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu_bar">
 
         <LinearLayout
-            android:id="@+id/icon_saved"
-            android:layout_width="175dp"
+            android:id="@+id/icon_requests"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
+            android:layout_weight="1"
             android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="vertical"
             android:padding="10dp">
 
             <ImageView
-                android:id="@+id/icon_saved_image"
+                android:id="@+id/icon_requests_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginRight="50dp"
-                android:src="@drawable/ic_saved" />
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_requests_offers" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="49dp"
-                android:gravity="center"
-                android:text="@string/btn_saved"
+                android:gravity="left"
+                android:layout_marginLeft="5dp"
+                android:text="@string/btn_requests_offers"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/icon_my_created_tasker"
-            android:layout_width="185dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -93,14 +97,14 @@
                 android:id="@+id/icon_my_created_tasker_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_my_created_tasker" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:gravity="center"
+                android:layout_marginLeft="5dp"
+                android:gravity="left"
                 android:text="@string/btn_tasker_prof"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
@@ -109,10 +113,11 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="10dp"
+        android:weightSum="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,43 +125,15 @@
         app:layout_goneMarginTop="50dp">
 
         <LinearLayout
-            android:id="@+id/icon_history"
-            android:layout_width="175dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_item_background"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <ImageView
-                android:id="@+id/icon_history_image"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginRight="50dp"
-                android:src="@drawable/ic_history" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="50dp"
-                android:gravity="center"
-                android:text="@string/btn_history"
-                android:textColor="@android:color/black"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/icon_balance"
-            android:layout_width="185dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginEnd="10dp"
             android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -164,40 +141,28 @@
                 android:id="@+id/icon_balance_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_balance" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="25dp"
-                android:gravity="center"
+                android:layout_marginLeft="5dp"
+                android:gravity="left"
                 android:text="@string/btn_balance"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/linearLayoutsSupport"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_goneMarginTop="50dp">
-
 
         <LinearLayout
             android:id="@+id/icon_support"
-            android:layout_width="175dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -205,14 +170,14 @@
                 android:id="@+id/icon_support_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_support" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="50dp"
-                android:gravity="center"
+                android:layout_marginLeft="12dp"
+                android:gravity="left"
                 android:text="@string/btn_support"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
@@ -221,52 +186,53 @@
 
     <LinearLayout
         android:id="@+id/linearLayout_requests_offers"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-
         android:orientation="horizontal"
         android:padding="10dp"
+        android:weightSum="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <LinearLayout
-            android:id="@+id/icon_requests"
-            android:layout_width="175dp"
+            android:id="@+id/icon_history"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
+            android:layout_weight="1"
             android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="vertical"
             android:padding="10dp">
 
             <ImageView
-                android:id="@+id/icon_requests_image"
+                android:id="@+id/icon_history_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginRight="50dp"
-                android:src="@drawable/ic_requests_offers" />
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_history" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="12dp"
-                android:text="@string/btn_requests_offers"
+                android:layout_marginLeft="14dp"
+                android:text="@string/btn_history"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
-
         <LinearLayout
             android:id="@+id/icon_creat_task"
-            android:layout_width="185dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@drawable/rounded_item_background"
             android:clickable="true"
             android:focusable="true"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="vertical"
             android:padding="10dp">
 
@@ -274,13 +240,14 @@
                 android:id="@+id/icon_creat_task_image"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_creat_task" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="40dp"
+                android:layout_marginLeft="5dp"
                 android:text="@string/btn_create_task"
                 android:textColor="@android:color/black"
                 android:textSize="12sp" />

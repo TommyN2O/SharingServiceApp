@@ -34,6 +34,7 @@ import java.util.Locale
 import java.util.TimeZone
 
 class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
+    private lateinit var taskNr: TextView
     private lateinit var customerName: TextView
     private lateinit var taskCategory: TextView
     private lateinit var taskDateTime: TextView
@@ -53,6 +54,7 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_people_planned_tasks_detailed)
+        taskNr = findViewById(R.id.titleText)
         customerName = findViewById(R.id.customerName)
         taskCategory = findViewById(R.id.taskCategory)
         taskDateTime = findViewById(R.id.taskDateTime)
@@ -201,6 +203,7 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
     }
 
     private fun showRequestDetailed(request: TaskResponse) {
+        taskNr.text ="Užklausa #${request.id}"
         customerName.text = "${request.sender.name.replaceFirstChar { it.uppercase() }} ${request.sender.surname.firstOrNull()?.uppercaseChar() ?: ""}."
         taskCategory.text = "Paslauga: ${request.categories.joinToString { it.name }}"
         val slot = request.availability.firstOrNull()

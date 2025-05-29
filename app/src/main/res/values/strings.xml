@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SharingServiceApp</string>
-
+    <!--    -->
     <!--             Register               -->
     <string name="reg_title">Sukurti paskyrą</string>
     <string name="reg_welcome">Sveiki atvykę į NestHelper!</string>
@@ -55,7 +55,7 @@
     <!---->
     <!--                   Home                           -->
     <string name="app_title">NestHelper</string>
-    <string name="failed_load_categories">Nepavyko užkrauti kategorijų</string>
+    <string name="failed_load_categories">Nepavyko užkrauti paslaugų</string>
     <!---->
     <!--                  Messages                           -->
     <string name="messages_title">Žinutės</string>
@@ -86,7 +86,8 @@
     <string name="type_select_issue">Pasirinkite problemos tipą</string>
     <string name="type_payment">Mokėjimas</string>
     <string name="type_fraud">Sukčiavimas</string>
-    <string name="type_task">Užduotis</string>
+    <string name="type_task">Užklausa</string>
+    <string name="type_open_task">Atvira užklausa</string>
     <string name="type_account">Paskyra</string>
     <string name="type_other">Kita</string>
     <string name="error_type_issue">Prašome pasirinkti problemos tipą</string>
@@ -103,6 +104,15 @@
     <string name="balance_title">Mokėjimai ir piniginė</string>
     <string name="payments_header">Mokėjimų istorija</string>
     <string name="payments_error_fetch">Klaida gaunant duomenis</string>
+    <string name="payments_payout_title">Įveskite norima išmokamos sumą</string>
+    <string name="payments_payout_error_empty">Prašome įvesti sumą</string>
+    <string name="payments_payout_error_amount">Prašome įvesti teigiamą skaičių</string>
+    <string name="payments_payout_request_sent">Išmokos prašymas išsiųstas!</string>
+    <string name="payments_payout_request_network_error">Tinklo klaida</string>
+    <string name="payments_payout_request_accepted">Išmokos užklausa priimta</string>
+    <string name="payments_payout_request_accepted_text">Jūsų išmokos užklausa bus peržiūrėta, o išmoka pervesta į jūsų banko sąskaitą per 2 darbo dienas.</string>
+    <string name="payments_payout_request_try_title">IBAN nėra pridėtas!</string>
+    <string name="payments_payout_request_try_text">Jūsų paskyroje nėra pridėto banko sąskaitos numerio, todėl negalite atlikti išmokos.</string>
     <!---->
     <!--                  History                        -->
     <string name="history_title">Istorija</string>
@@ -166,6 +176,7 @@
     <string name="request_offer_open_task_offers_failed_accepted">Nepavyko priimti pasiūlymo</string>
     <string name="request_offer_my_task_failed_create_chat">Nepavyko sukurti pokalbio</string>
     <string name="request_offer_my_task_delete_task_request_dialog">Ar tikrai norite ištrinti šią užklausą?</string>
+    <string name="request_offer_my_task_remove_tasker_dialog">Ar tikrai norite atmesti paslaugų teikėjo pasiūlymą? Jūsų užklausa vėl taps atvira.</string>
     <string name="request_offer_my_task_delete_open_task_dialog">Ar tikrai norite ištrinti šią atvirą užklausą?</string>
     <string name="request_offer_my_task_status_update">Nepavyko atnaujinti būsenos</string>
     <string name="request_offer_my_task_delete_open_task_successful">Atvira užklausa sėkmingai ištrinta</string>
@@ -219,6 +230,7 @@
     <string name="create_task_city_header">Miestas</string>
     <string name="create_task_city_hint">Pasirinkite miestą</string>
     <string name="create_task_date_and_time_header">Dienos ir laikas</string>
+    <string name="request_task_date_and_time_header">Diena ir laikas</string>
     <string name="create_task_btn_date_and_time">Pasirinkite dienas ir laiką</string>
     <string name="create_task_duration_header">Trukmė</string>
     <string name="create_task_duration_hint">Pasirinkite trukmę</string>
@@ -351,6 +363,7 @@
     <string name="profile_details_surname_header">Pavardė</string>
     <string name="profile_details_date_of_birth_header">Gimimo data</string>
     <string name="profile_details_email_header">El. paštas</string>
+    <string name="profile_details_iban_header">IBAN</string>
     <string name="profile_details_btn_delete_account">Ištrinti paskyrą</string>
     <string name="profile_details_btn_edit">Redaguoti</string>
     <string name="profile_delete_profile_dialog_header">Nepavyko ištrinti!</string>
@@ -370,6 +383,9 @@
     <string name="edit_profile_details_surname_hint">Įveskite pavardę</string>
     <string name="edit_profile_details_birth_day_header">Gimimo data</string>
     <string name="edit_profile_details_birth_day_hint">Įveskite gimimo datą</string>
+    <string name="edit_profile_details_iban_header">IBAN</string>
+    <string name="edit_profile_details_iban_hint">Įveskite IBAN numerį</string>
+    <string name="edit_profile_details_iban_error">Neteisingas IBAN</string>
     <string name="edit_profile_details_btn_save">Išsaugoti</string>
     <!---->
     <!--                Change Password                      -->
@@ -390,7 +406,7 @@
     <string name="chat_text_field">Rašykite žinutę...</string>
     <!---->
     <!--                  Planned Tasks                           -->
-    <string name="planned_tasks_title">Suplanuoti Darbai</string>
+    <string name="planned_tasks_title">Suplanuoti darbai</string>
     <string name="planned_tasks_btn_my_tasks">Mano darbai</string>
     <string name="planned_tasks_btn_people_tasks">Klientų darbai</string>
     <string name="planned_tasks_failed_load_people_tasks">Nepavyko užkrauti klientų darbų</string>
@@ -411,7 +427,6 @@
     <string name="helper_list_failed_check_if_tasker">Nepavyko patikrinti profilio</string>
     <string name="tasker_toggle_btn_tasker">Paslaugų teikėjai</string>
     <string name="tasker_toggle_btn_open_tasks">Klientų užklausos</string>
-    <string name="tasker_title">Pasirinkite paslaugų teikėją</string>
     <string name="tasker_filter_time_from_header">Laikas nuo</string>
     <string name="tasker_filter_time_to_header">Laikas iki</string>
     <string name="tasker_filter_min_price_header">Kaina nuo</string>

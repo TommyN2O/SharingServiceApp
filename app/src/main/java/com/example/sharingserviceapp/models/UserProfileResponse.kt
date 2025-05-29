@@ -7,5 +7,6 @@ data class UserProfileResponse(
     val email: String,
     val date_of_birth: String,
     val is_tasker: Boolean,
-    val profile_photo: String
+    val profile_photo: String,
+    val wallet_bank_iban: String
 )

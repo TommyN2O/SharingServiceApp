@@ -319,4 +319,15 @@ interface ApiService {
     fun deleteUserProfile(
         @Header("Authorization") token: String,
     ): Call<Void>
+
+    @GET ("category/{id}")
+    fun categoryById(
+        @Path("id") id: Int
+    ): Call<Category>
+
+    @POST ("payout/request")
+    fun postPayoutRequests(
+        @Header("Authorization") authToken: String,
+        @Body body: PayoutRequests
+    ): Call<Void>
 }
