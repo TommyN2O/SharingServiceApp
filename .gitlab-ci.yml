@@ -6,7 +6,7 @@ stages:
 build_app:
   stage: build
   script:
-    - powershell -Command "& { ./gradlew assembleDebug }"
+    - .\gradlew assembleDebug
   artifacts:
     paths:
       - app/build/outputs/ 
