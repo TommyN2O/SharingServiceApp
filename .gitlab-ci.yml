@@ -6,7 +6,4 @@ stages:
 build_app:
   stage: build
   script:
-    - powershell -Command "& { Set-Item -Path Env:ANDROID_HOME -Value 'C:\Users\tomas\AppData\Local\Android\Sdk'; & .\gradlew assembleDebug }"
-  artifacts:
-    paths:
-      - app/build/outputs/ 
+    - powershell -Command "& { Set-Item -Path Env:ANDROID_HOME -Value 'C:\Users\tomas\AppData\Local\Android\Sdk'; & .\gradlew assembleDebug }" 
