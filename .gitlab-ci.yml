@@ -6,7 +6,7 @@ stages:
 build_app:
   stage: build
   script:
-    - pwsh -Command "& { ./gradlew assembleDebug }"
+    - powershell -Command "& { ./gradlew assembleDebug }"
   artifacts:
     paths:
       - app/build/outputs/ 
