@@ -1,0 +1,12 @@
+image: openjdk:11
+
+stages:
+  - build
+
+build_app:
+  stage: build
+  script:
+    - pwsh -Command "& { ./gradlew assembleDebug }"
+  artifacts:
+    paths:
+      - app/build/outputs/ 
