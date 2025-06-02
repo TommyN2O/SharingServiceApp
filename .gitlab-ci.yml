@@ -6,4 +6,4 @@ stages:
 build_app:
   stage: build
   script:
-    - powershell -Command "& { Set-Item -Path Env:ANDROID_HOME -Value 'C:\Users\tomas\AppData\Local\Android\Sdk'; & .\gradlew assembleDebug }" 
+    - powershell -Command "& { git config --global core.longPaths true; Set-Item -Path Env:ANDROID_HOME -Value 'C:\Users\tomas\AppData\Local\Android\Sdk'; & .\gradlew assembleDebug }" 
