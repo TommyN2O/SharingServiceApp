@@ -1,8 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/edit_account"
-        android:title="Edit Account"/>
+        android:title="@string/profile_menu_edit_account"/>
     <item android:id="@+id/set_time_date"
-        android:title="Set Time and Date Availability"/>
+        android:title="@string/profile_menu_availability"/>
     <item android:id="@+id/delete_account"
-        android:title="Delete Account"/>
+        android:title="@string/profile_menu_delete_account"
+        android:visible="false"/>
 </menu>

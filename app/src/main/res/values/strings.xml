@@ -75,7 +75,7 @@
     <string name="more_title">Meniu</string>
     <string name="btn_saved">Išsaugota</string>
     <string name="btn_tasker_prof">Paslaugų teikėjo paskyra</string>
-    <string name="btn_requests_offers">Užklausos / Pasiūlymai</string>
+    <string name="btn_requests_offers">Užklausos</string>
     <string name="btn_create_task">Sukurti užduotį</string>
     <string name="btn_history">Istorija</string>
     <string name="btn_balance">Mokėjimai ir piniginė</string>
@@ -104,7 +104,7 @@
     <string name="balance_title">Mokėjimai ir piniginė</string>
     <string name="payments_header">Mokėjimų istorija</string>
     <string name="payments_error_fetch">Klaida gaunant duomenis</string>
-    <string name="payments_payout_title">Įveskite norima išmokamos sumą</string>
+    <string name="payments_payout_title">Įveskite norima sumą</string>
     <string name="payments_payout_error_empty">Prašome įvesti sumą</string>
     <string name="payments_payout_error_amount">Prašome įvesti teigiamą skaičių</string>
     <string name="payments_payout_request_sent">Išmokos prašymas išsiųstas!</string>
@@ -127,12 +127,12 @@
     <string name="history_detailed_my_tasks_task_description_header">Aprašymas</string>
     <string name="history_detailed_my_tasks_task_gallery_header">Užduoties nuotraukos</string>
     <string name="history_detailed_my_tasks_error_load">Nepavyko užkrauti užduoties</string>
-    <string name="history_detailed_my_tasks_send_review">Parašyti Atsiliepimą</string>
+    <string name="history_detailed_my_tasks_send_review">Parašyti atsiliepimą</string>
     <!---->
     <!--                   Task Review                        -->
     <string name="review_title">Įvertinkite savo patirtį</string>
     <string name="review_hint">Parašykite savo atsiliepimą...</string>
-    <string name="review_btn_submit">Pateikti Atsiliepimą</string>
+    <string name="review_btn_submit">Pateikti atsiliepimą</string>
     <string name="review_successful_submit">Atsiliepimas pateiktas!</string>
     <string name="review_error_empty_content">Šis laukas negali būti tuščias</string>
     <!---->
@@ -165,7 +165,7 @@
     <string name="request_offer_filter_city_header">Miestai</string>
     <string name="request_offer_filter_date_header">Data</string>
     <string name="request_offer_filter_status_header">Būsena</string>
-    <string name="request_offer_filter_btn_apply">Taikyti Filtrus</string>
+    <string name="request_offer_filter_btn_apply">Taikyti filtrus</string>
     <!---->
     <!--                  RequestOffers My task                       -->
     <string name="request_offer_open_task_title">Atvira užklausa</string>
@@ -236,13 +236,13 @@
     <string name="create_task_duration_hint">Pasirinkite trukmę</string>
     <string name="create_task_gallery_header">Įkelkite užduoties nuotraukas</string>
     <string name="create_task_btn_add_gallery">Pridėti nuotraukas</string>
-    <string name="create_task_btn_create_open_task">Sukurti Atvirą Užklausą</string>
+    <string name="create_task_btn_create_open_task">Sukurti atvirą užklausą</string>
     <string name="create_task_failed_load_category">Nepavyko užkrauti paslaugų sąrašą</string>
     <string name="create_task_failed_load_cities">Nepavyko užkrauti miestų</string>
     <string name="create_task_select_category_dialog_title">Pasirinkite paslaugą</string>
     <string name="create_task_select_duration_dialog_title">Pasirinkite trukmę</string>
     <string name="create_task_select_location_dialog_title">Pasirinkite vietą</string>
-    <string name="create_task_open_task_created">Atvira užduotis sukurta!</string>
+    <string name="create_task_open_task_created">Atvira užklausa sukurta!</string>
     <string name="create_task_open_task_failed_create">Nepavyko sukurti atviros užduoties</string>
     <string name="create_task_delete_image_dialog_title">Ištrinti nuotrauką</string>
     <string name="create_task_delete_image_dialog_text">Ar tikrai norite pašalinti šią nuotrauką?</string>
@@ -285,7 +285,7 @@
     <string name="create_my_tasker_error_text">Šis laukas yra privalomas ir negali būti tuščias</string>
     <string name="create_my_tasker_error_text_hourly_rate">Šis laukas yra privalomas ir turi būti įvestas teigiamas skaičius</string>
     <string name="create_my_tasker_error_fill_field">Prašome teisingai užpildyti visus privalomus laukus</string>
-    <string name="create_my_tasker_title">Paslaugų teikėjo paskyrą</string>
+    <string name="create_my_tasker_title">Paslaugų teikėjo paskyra</string>
     <string name="create_my_tasker_btn_upload_profile_photo">Įkelti nuotrauką</string>
     <string name="create_my_tasker_description_header">Aprašymas</string>
     <string name="create_my_tasker_description_text">Aprašykite savo įgūdžius, privalumus...</string>
@@ -302,7 +302,7 @@
     <string name="create_my_tasker_btn_create">Sukurti paskyrą</string>
     <!---->
     <!--                  My Tasker Profile                       -->
-    <string name="my_tasker_profile_availability_updated">Prieinamumas atnaujintas</string>
+    <string name="my_tasker_profile_availability_updated">Sėkmingai atnaujintas darbo grafikas</string>
     <string name="my_tasker_profile_availability_update_failed">Atnaujinimas nepavyko</string>
     <string name="my_tasker_profile_availability_load_failed">Nepavyko užkrauti prieinamumo</string>
     <string name="my_tasker_profile_delete_profile_successful">Paskyra sėkmingai ištrinta!</string>
@@ -344,21 +344,21 @@
     <string name="day_and_time_past_date">Negalima rinktis praėjusios datos!</string>
     <string name="day_and_time_empty_error">Pasirinkite datą ir laiką!</string>
     <string name="day_and_time_select_date_first">Pirmiausia pasirinkite datą!</string>
-    <string name="day_and_time_title">Darbo grafikas</string>
+    <string name="day_and_time_title">Datos ir laikai</string>
     <string name="day_and_time_dates_header">Pasirinkite datas</string>
     <string name="day_and_time_time_header">Pasirinkite laikus</string>
     <string name="day_and_time_btn_availability">Išsaugoti</string>
     <!---->
     <!--                 Settings                      -->
     <string name="settings_title">Nustatymai</string>
-    <string name="settings_profile_details">Paskyros informacija</string>
+    <string name="settings_profile_details">Mano paskyra</string>
     <string name="settings_change_password">Keisti slaptažodį</string>
     <string name="settings_btn_log_out">Atsijungti</string>
     <!---->
     <!--                 Profile Details                      -->
     <string name="profile_details_error_fetch">Nepavyko gauti duomenų</string>
     <string name="profile_details_network_error">Tinklo klaida</string>
-    <string name="profile_details_title">Jūsų Paskyra</string>
+    <string name="profile_details_title">Mano paskyra</string>
     <string name="profile_details_name_header">Vardas</string>
     <string name="profile_details_surname_header">Pavardė</string>
     <string name="profile_details_date_of_birth_header">Gimimo data</string>
@@ -465,7 +465,7 @@
     <string name="create_offer_offer_send_failed">Nepavyko išsiųsti pasiūlymo</string>
     <!---->
     <!--                 Profile menu                       -->
-    <string name="profile_menu_edit_account">Edit Account</string>
-    <string name="profile_menu_availability">Set Time and Date Availability</string>
-    <string name="profile_menu_delete_account">Delete Account</string>
+    <string name="profile_menu_edit_account">Redaguoti paskyrą</string>
+    <string name="profile_menu_availability">Nustatyti darbo grafiką</string>
+    <string name="profile_menu_delete_account">Ištrinti paskyrą</string>
 </resources>

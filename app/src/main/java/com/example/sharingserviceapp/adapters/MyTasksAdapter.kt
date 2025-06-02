@@ -22,10 +22,10 @@ class MyTasksAdapter(
     private val statusTranslations = mapOf(
         "Pending" to "Laukiama patvirtinimo",
         "Waiting for Payment" to "Laukiama apmokėjimo",
-        "Declined" to "Atmestas",
-        "Canceled" to "Atšauktas",
+        "Declined" to "Atmesta",
+        "Canceled" to "Atšaukta",
         "Completed" to "Užbaigtas",
-        "Open" to "Atidarytas"
+        "Open" to "Atidaryta"
     )
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgProfile: ImageView = itemView.findViewById(R.id.img_category)

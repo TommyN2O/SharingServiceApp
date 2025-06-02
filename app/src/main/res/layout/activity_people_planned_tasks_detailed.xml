@@ -271,7 +271,7 @@
             android:layout_weight="1"
             android:layout_marginLeft="8dp"
             android:backgroundTint="@color/my_light_primary"
-            android:text="Completed"
+            android:text="Atlikta"
             android:visibility="gone"
             android:textColor="@android:color/white" />
 

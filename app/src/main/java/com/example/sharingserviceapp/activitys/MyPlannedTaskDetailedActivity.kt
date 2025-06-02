@@ -257,7 +257,7 @@ class MyPlannedTaskDetailedActivity : AppCompatActivity() {
     }
     private val statusTranslations = mapOf(
         "Paid" to "Apmokėta",
-        "Canceled" to "Atšauktas",
+        "Canceled" to "Atšaukta",
     )
 
     private fun translateStatus(status: String): String {

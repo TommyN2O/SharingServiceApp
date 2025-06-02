@@ -276,7 +276,7 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
         }
     }
     private val statusTranslations = mapOf(
-        "Canceled" to "Atšauktas",
+        "Canceled" to "Atšaukta",
         "Paid" to "Apmokėta",
     )
 
@@ -364,7 +364,7 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
 
     private fun checkLocalDate() {
         val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(System.currentTimeMillis())
-        if (isSameDay(currentDate, taskDate)) {     //check date
+        if (isSameDayLocal(currentDate, taskDate)) {     //check date
             btnCompleted.visibility = View.VISIBLE
             val paramsCanceled = btnCanceled.layoutParams
             paramsCanceled.width = dpToPx(140f)
@@ -374,19 +374,19 @@ class PeoplePlannedTasksDetailedActivity : AppCompatActivity() {
         }
     }
 
-//    private fun isSameDayLocal(currentDate: String, taskDate: String?): Boolean {
-//        if (taskDate == null) return false
-//        return try {
-//            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-//            val today = dateFormat.parse(currentDate)
-//            val task = dateFormat.parse(taskDate)
-//
-//            today != null && task != null && !today.before(task)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            false
-//        }
-//    }
+    private fun isSameDayLocal(currentDate: String, taskDate: String?): Boolean {
+        if (taskDate == null) return false
+        return try {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val today = dateFormat.parse(currentDate)
+            val task = dateFormat.parse(taskDate)
+
+            today != null && task != null && !today.before(task)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 
     private fun isSameDay(serverDateTime: String, taskDate: String?): Boolean {
         if (taskDate == null) return false

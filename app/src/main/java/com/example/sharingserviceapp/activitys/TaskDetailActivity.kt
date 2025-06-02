@@ -609,9 +609,9 @@ class TaskDetailActivity : AppCompatActivity() {
     private val statusTranslations = mapOf(
         "Pending" to "Laukiama patvirtinimo",
         "Waiting for Payment" to "Laukiama apmokėjimo",
-        "Declined" to "Atmestas",
-        "Canceled" to "Atšauktas",
-        "Open" to "Atidarytas",
+        "Declined" to "Atmesta",
+        "Canceled" to "Atšaukta",
+        "Open" to "Atidaryta",
         "Paid" to "Apmokėta"
     )
 

@@ -112,11 +112,8 @@ class CreatTaskActivity : AppCompatActivity() {
             }
             val intent = Intent(this, DaysAndTimeActivity::class.java)
             intent.putParcelableArrayListExtra("PREVIOUS_AVAILABILITY", ArrayList(availabilitySlotList))
-            startActivityForResult(intent, REQUEST_CODE_SELECT_DAYS_AND_TIME_OPEN_TASK)
+            startActivityForResult(intent, REQUEST_CODE_SELECT_DAYS_AND_TIME)
         }
-    }
-    companion object {
-        const val REQUEST_CODE_SELECT_DAYS_AND_TIME_OPEN_TASK = 2222
     }
     private fun fetchCategories() {
         ApiServiceInstance.Auth.apiServices.getCategories()

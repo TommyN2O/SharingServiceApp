@@ -23,8 +23,8 @@ class PeopleRequestsAdapter(
     private val statusTranslations = mapOf(
         "Pending" to "Laukiama patvirtinimo",
         "Waiting for Payment" to "Laukiama apmokėjimo",
-        "Declined" to "Atmestas",
-        "Canceled" to "Atšauktas",
+        "Declined" to "Atmesta",
+        "Canceled" to "Atšaukta",
         "Completed" to "Užbaigtas",
     )
     inner class PeopleRequestViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
